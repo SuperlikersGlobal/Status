@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Status · Superlikers</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand"><span class="logo">S</span><span><b>Status</b><small>Superlikers</small></span></div>
+      <nav>
+        <button class="nav active" data-view="board">▦ <span>Mi trabajo</span></button>
+        <button class="nav" data-view="team">◎ <span>Equipo</span></button>
+        <button class="nav" data-view="projects">◫ <span>Proyectos</span></button>
+        <button class="nav" data-view="timeline">↦ <span>Timeline</span></button>
+      </nav>
+      <div class="people"><small>PERSONAS</small><div class="person"><span class="avatar">BA</span><span><b>Bruno</b><small>AI / Automation</small></span></div></div>
+      <div class="connection"><span id="dot"></span><span><b id="mode">Conectando…</b><small id="repo">SuperlikersGlobal/Status</small></span></div>
+    </aside>
+
+    <main>
+      <header>
+        <div><small>Bruno · Plan personal</small><h1>Pernod</h1><p>Meta actual: finalizar el alcance antes del 1 de octubre.</p></div>
+        <div class="actions"><input id="search" placeholder="Buscar tarea…"><button id="refresh">Sincronizar</button></div>
+      </header>
+      <section class="metrics" id="metrics"></section>
+      <section class="content" id="content"><div class="loading">Cargando estado operativo…</div></section>
+    </main>
+  </div>
+
+  <div class="backdrop" id="backdrop" hidden></div>
+  <aside class="drawer" id="drawer">
+    <button class="close" id="close">×</button>
+    <div id="drawerContent"></div>
+  </aside>
+  <div class="toast" id="toast" hidden></div>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
