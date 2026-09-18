@@ -18,8 +18,8 @@ let demoTasks = JSON.parse(await readFile(join(ROOT,'data','demo.json'),'utf8'))
 const demoComments = new Map();
 
 function send(res,status,payload,type) {
-  const body = typeof payload === 'string' ? payload : JSON.stringify(payload);
-  res.writeHead(status,{'Content-Type':type || (typeof payload === 'string' ? 'text/plain; charset=utf-8' : 'application/json; charset=utf-8'),'Cache-Control':'no-store'});
+  const body = Buffer.isBuffer(payload) ? payload : (typeof payload === 'string' ? payload : JSON.stringify(payload));
+  res.writeHead(status,{'Content-Type':type || (Buffer.isBuffer(payload) ? 'application/octet-stream' : (typeof payload === 'string' ? 'text/plain; charset=utf-8' : 'application/json; charset=utf-8')),'Cache-Control':'no-store'});
   res.end(body);
 }
 
