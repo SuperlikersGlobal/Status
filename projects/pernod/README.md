@@ -1,59 +1,59 @@
 # Pernod
 
-**Owner:** Bruno Antoniassi  
-**Status:** In progress  
-**Target:** Finish current scope by **2026-10-01**  
-**Last updated:** 2026-09-17
+**Responsable:** Bruno Antoniassi  
+**Estado:** En progreso  
+**Fecha objetivo:** Finalizar el alcance actual antes del **2026-10-01**  
+**Última actualización:** 2026-09-17
 
-## Objective
+## Objetivo
 
-Complete the current Pernod work with a clear operational flow, validated integration assumptions and enough documentation for another person or agent to understand what exists, what remains and what should happen next.
+Completar el alcance actual de Pernod con un flujo operativo claro, supuestos de integración validados y suficiente documentación para que otra persona o agente pueda entender qué existe, qué falta y cuál debe ser el siguiente paso.
 
-## Current state
+## Estado actual
 
-The work is currently in **technical discovery / integration definition**.
+El trabajo se encuentra actualmente en **definición técnica / definición de integración**.
 
-The main open thread is turning the real Pernod operational input into a reliable flow that can be implemented and validated without depending on undocumented assumptions.
+El frente principal consiste en convertir el input operativo real de Pernod en un flujo confiable que pueda implementarse y validarse sin depender de supuestos no documentados.
 
-## Progress so far
+## Avances hasta ahora
 
-- Pernod has a dedicated campaign repository: `SuperlikersGlobal/campaign-ti-PERNOD`.
-- The integration flow has been discussed with Andrés.
-- A Git-based source of truth is being prepared so technical information can remain updated and shareable.
-- The expected interaction includes receiving source evidence through an upload flow and transforming it into the structure required by the integration.
-- A relevant operational constraint was identified: the Pernod process works with **bottles rather than tickets**, so the transformation/mapping needs to account for that input model.
-- The participant lookup path in the Superlikers API has been tested from the local environment.
-- The tested email lookup did **not yet confirm a participant or expose the expected distinct ID / UID**, so that API path still needs validation before it can be considered solved.
+- Pernod cuenta con un repositorio dedicado: `SuperlikersGlobal/campaign-ti-PERNOD`.
+- Se avanzó en la definición del flujo de integración con Andrés.
+- Se está usando Git como fuente de verdad para mantener la información técnica actualizada y compartible.
+- El flujo esperado contempla recibir evidencia o información de origen mediante una carga y transformarla a la estructura requerida por la integración.
+- Se identificó una restricción operativa importante: el proceso de Pernod trabaja con **botellas y no con tickets**, por lo que la transformación debe contemplar ese modelo de entrada.
+- Se probó desde el entorno local la ruta de búsqueda de participantes en la API de Superlikers.
+- La búsqueda probada por email **todavía no confirmó al participante ni expuso el distinct ID / UID esperado**, por lo que ese punto aún necesita validación antes de considerarse resuelto.
 
-## In progress
+## En progreso
 
-- Define exactly where the integrated information will be stored and in what format.
-- Prepare at least one concrete example of the expected input → transformation → stored result.
-- Validate the mapping required for bottle-based inputs.
-- Confirm the correct participant lookup / identity resolution flow.
-- Keep the implementation context documented in Git so another person can continue without relying on meeting memory.
+- Definir exactamente dónde se almacenará la información integrada y en qué formato.
+- Preparar al menos un ejemplo concreto de entrada → transformación → resultado almacenado.
+- Validar el mapeo necesario para inputs basados en botellas.
+- Confirmar el flujo correcto de búsqueda y resolución de identidad del participante.
+- Mantener el contexto de implementación documentado en Git para que otra persona pueda continuar sin depender de memoria de reuniones.
 
-## Pending / blockers
+## Pendientes / bloqueos
 
-- Final confirmation of the canonical data shape and storage location.
-- Working example that can be used as the integration reference.
-- Confirmation of the participant identifier lookup.
-- End-to-end validation with a realistic Pernod case.
+- Confirmación final de la estructura canónica de datos y del lugar de almacenamiento.
+- Ejemplo funcional que sirva como referencia de integración.
+- Confirmación de la búsqueda del identificador del participante.
+- Validación end-to-end con un caso realista de Pernod.
 
-## Completion criteria
+## Criterios de finalización
 
-Pernod can be marked complete for this action plan when:
+Pernod podrá marcarse como completado para este plan de acción cuando:
 
-1. the input and output structures are explicit;
-2. the bottle-based transformation is defined;
-3. identity / participant resolution is validated or its dependency is clearly documented;
-4. at least one representative end-to-end case is validated;
-5. the resulting workflow and remaining dependencies are documented in Git.
+1. las estructuras de entrada y salida estén explícitamente definidas;
+2. la transformación basada en botellas esté definida;
+3. la resolución de identidad / participante esté validada o su dependencia quede claramente documentada;
+4. al menos un caso representativo end-to-end haya sido validado;
+5. el flujo resultante y las dependencias restantes queden documentados en Git.
 
-## Next step
+## Siguiente paso
 
-Produce the canonical example for the integration and use it to close the remaining assumptions one by one before **2026-10-01**.
+Crear el ejemplo canónico de integración y usarlo para cerrar uno a uno los supuestos pendientes antes del **2026-10-01**.
 
-## History
+## Historial
 
-See `updates/` for dated progress notes.
+Ver `updates/` para las actualizaciones fechadas.
