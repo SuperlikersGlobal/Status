@@ -11,7 +11,7 @@
 
 **Meta:** Finalizar el trabajo de Pernod antes del **2026-10-01**.
 
-**Estado actual:** En progreso. Se está avanzando en la definición técnica y de integración.
+**Estado actual:** En progreso. El plan operativo hasta el 1 de octubre ya está definido por etapas: parser remoto y homologación, elegibilidad e integración con Andrés, acumulación e idempotencia, UAT, producción controlada y margen final de go-live.
 
 **Criterio de éxito:** El flujo de Pernod debe quedar suficientemente definido, implementado y validado para considerar terminado el alcance actual, dejando documentadas de forma explícita las dependencias o seguimientos que permanezcan abiertos.
 
