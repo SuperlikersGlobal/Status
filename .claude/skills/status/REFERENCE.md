@@ -13,7 +13,25 @@ Estas reglas complementan `STATUS_RULES.md` y son obligatorias para la skill `/s
 7. patrones observados;
 8. defaults de esta skill.
 
-## 2. Marcador de tareas Status v0
+## 2. Fuente operativa para Claude Code
+
+Claude Code debe intentar primero:
+
+```bash
+curl -s http://localhost:4173/api/status
+curl -s http://localhost:4173/api/tasks
+```
+
+Si la API local responde, usar `/api/tasks` como la vista operativa actual porque el servidor la obtiene desde GitHub Issues.
+
+Si la API local no está disponible:
+
+- leer `data/status.json`;
+- revisar `generated_at`;
+- tratarlo como snapshot, no como consulta en vivo;
+- si la antigüedad del snapshot cambia materialmente la respuesta, decirlo de forma breve.
+
+## 3. Marcador de tareas Status v0
 
 Las tareas operativas de Status v0 son GitHub Issues cuyo cuerpo contiene:
 
@@ -35,7 +53,7 @@ Los metadatos soportados actualmente son:
 
 No confundir cualquier Issue del repositorio con una tarea Status v0. El marcador es obligatorio.
 
-## 3. Cuerpo de una tarea
+## 4. Cuerpo de una tarea
 
 Las secciones actuales son:
 
@@ -46,7 +64,7 @@ Las secciones actuales son:
 
 Para respuestas no técnicas, priorizar las tres primeras.
 
-## 4. Estado actual vs contexto histórico
+## 5. Estado actual vs contexto histórico
 
 La Issue representa el estado operativo actual de la tarea.
 
@@ -56,7 +74,7 @@ Si una Issue dice `done` pero un README antiguo dice `En progreso`, no repetir e
 
 Si el documento más reciente contradice una Issue sin que exista evidencia suficiente para decidir cuál es correcta, señalar la discrepancia en vez de resolverla por intuición.
 
-## 5. Comentarios
+## 6. Comentarios
 
 Los comentarios de una Issue representan actualizaciones cronológicas, pero no cambian automáticamente el estado estructurado.
 
@@ -64,7 +82,7 @@ Usarlos para responder "qué cambió" y "último avance".
 
 No convertir frases exploratorias de un comentario en hechos cerrados.
 
-## 6. Evaluación de cronograma
+## 7. Evaluación de cronograma
 
 Para responder si algo está a tiempo:
 
@@ -76,7 +94,7 @@ Para responder si algo está a tiempo:
 
 No especular sobre la causa.
 
-## 7. Traducción semántica
+## 8. Traducción semántica
 
 La traducción debe preservar significado. Simplificar no significa alterar.
 
@@ -88,13 +106,13 @@ Ejemplo incorrecto:
 
 `idempotencia mínima` → "garantizar que nunca habrá errores".
 
-## 8. Respuesta por audiencia
+## 9. Respuesta por audiencia
 
 Por defecto, asumir una audiencia ejecutiva/no técnica.
 
 Si el usuario pide detalle técnico, se puede incluir una segunda sección breve llamada `Detalle técnico`, después de la explicación simple.
 
-## 9. Trazabilidad
+## 10. Trazabilidad
 
 Cuando ayude a verificar el dato, mencionar:
 
@@ -104,7 +122,7 @@ Cuando ayude a verificar el dato, mencionar:
 
 No mostrar SHAs, comandos Git o rutas internas salvo solicitud explícita.
 
-## 10. Escritura
+## 11. Escritura
 
 La skill `/status` v0 es de lectura y explicación. No debe editar Issues, cambiar estados ni escribir documentos por defecto.
 
