@@ -60,7 +60,9 @@ Antes de responder debe leer siempre:
 
 1. `STATUS_RULES.md`;
 2. `.claude/skills/status/REFERENCE.md`;
-3. las fuentes relevantes del repositorio.
+3. la API local de Status cuando esté activa;
+4. `data/status.json` como fallback cuando la API no esté disponible;
+5. las fuentes relevantes de la branch personal.
 
 Su objetivo es explicar el estado para una persona no técnica, no enseñar Git.
 
