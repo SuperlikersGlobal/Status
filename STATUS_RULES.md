@@ -21,13 +21,13 @@ Antes de responder sobre estado, leer en este orden:
 
 1. este archivo `STATUS_RULES.md`;
 2. `README.md`;
-3. GitHub Issues que contengan el marcador `STATUS_V0`;
-4. branch personal de la persona cuando exista, comenzando por `PERSONAL_PLAN.md`;
-5. README del proyecto relevante;
-6. actualización fechada más reciente del proyecto;
-7. comentarios recientes de las Issues relevantes cuando estén disponibles.
+3. si Status v0 está ejecutándose localmente, consultar `http://localhost:4173/api/tasks` y usar esa respuesta como estado operativo actual;
+4. si la API local no está disponible, leer `data/status.json` como snapshot de fallback y revisar su campo `generated_at`;
+5. branch personal de la persona cuando exista, comenzando por `PERSONAL_PLAN.md`;
+6. README del proyecto relevante;
+7. actualización fechada más reciente del proyecto.
 
-Para el estado operativo actual de una tarea, la Issue estructurada tiene prioridad sobre un plan histórico anterior.
+La API local obtiene el estado desde las Issues `STATUS_V0` y por eso tiene prioridad operativa. `data/status.json` es un fallback para lectura del agente, no una señal de que la información está en vivo.
 
 Para contexto, objetivo o explicación del proyecto, usar los documentos de la branch personal.
 
