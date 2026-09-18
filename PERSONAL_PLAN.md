@@ -1,41 +1,41 @@
-# Bruno — Personal Action Plan
+# Bruno — Plan de acción personal
 
-**Owner:** Bruno Antoniassi  
+**Responsable:** Bruno Antoniassi  
 **Branch:** `bruno`  
-**Plan window:** 2026-09-17 → 2026-10-17  
-**Last updated:** 2026-09-17
+**Periodo del plan:** 2026-09-17 → 2026-10-17  
+**Última actualización:** 2026-09-17
 
-## Current priority
+## Prioridad actual
 
 ### 1. Pernod
 
-**Goal:** Finalize the Pernod work by **2026-10-01**.
+**Meta:** Finalizar el trabajo de Pernod antes del **2026-10-01**.
 
-**Current state:** In progress. Technical discovery and integration definition are underway.
+**Estado actual:** En progreso. Se está avanzando en la definición técnica y de integración.
 
-**Success condition:** The Pernod flow is sufficiently defined, implemented and validated to be considered finished for the current scope, with remaining dependencies or follow-ups explicitly documented.
+**Criterio de éxito:** El flujo de Pernod debe quedar suficientemente definido, implementado y validado para considerar terminado el alcance actual, dejando documentadas de forma explícita las dependencias o seguimientos que permanezcan abiertos.
 
-See: `projects/pernod/README.md`
+Ver: `projects/pernod/README.md`
 
-## 30-day focus
+## Enfoque de los próximos 30 días
 
-| Period | Focus | Status |
+| Periodo | Foco | Estado |
 |---|---|---|
-| Sep 17 → Oct 1 | Finalize Pernod | In progress |
-| October onward | Human | To be decided |
-| October onward | MyDesk | To be decided |
+| 17 sep → 1 oct | Finalizar Pernod | En progreso |
+| Octubre en adelante | Human | Por definir |
+| Octubre en adelante | MyDesk | Por definir |
 
-## Monitoring rules
+## Reglas de seguimiento
 
-This file is the high-level view for leadership.
+Este archivo es la vista ejecutiva para liderazgo.
 
-For active projects:
+Para cada proyecto activo:
 
-- update the project README when the current state changes;
-- add dated notes under `projects/<project>/updates/` for meaningful progress;
-- keep blockers explicit;
-- do not mark a goal complete until its success condition is actually met.
+- actualizar el README del proyecto cuando cambie su estado;
+- registrar avances relevantes en `projects/<proyecto>/updates/`;
+- mantener los bloqueos y pendientes explícitos;
+- no marcar una meta como completada hasta cumplir realmente su criterio de éxito.
 
-## Next review
+## Próxima revisión
 
-Review the Pernod completion status before or on **2026-10-01** and then define the next priority between Human and MyDesk.
+Revisar el estado de finalización de Pernod antes o el **2026-10-01** y, después, definir la siguiente prioridad entre Human y MyDesk.
