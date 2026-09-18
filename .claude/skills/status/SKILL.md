@@ -12,6 +12,8 @@ allowed-tools:
   - Bash(git status *)
   - Bash(git log *)
   - Bash(git show *)
+  - Bash(curl -s http://localhost:4173/api/status)
+  - Bash(curl -s http://localhost:4173/api/tasks)
 ---
 
 # Superlikers Status
@@ -27,9 +29,11 @@ Antes de responder CUALQUIER pregunta de estado:
 1. leer `STATUS_RULES.md` completo;
 2. leer `REFERENCE.md` completo;
 3. leer el `README.md` del repositorio;
-4. identificar la persona/proyecto solicitado;
-5. leer las fuentes relevantes definidas por `STATUS_RULES.md`;
-6. solo entonces producir la respuesta.
+4. intentar leer `http://localhost:4173/api/status` y `http://localhost:4173/api/tasks` si la v0 local está activa;
+5. si no está activa, leer `data/status.json` como snapshot de fallback;
+6. identificar la persona/proyecto solicitado;
+7. leer las demás fuentes relevantes definidas por `STATUS_RULES.md`;
+8. solo entonces producir la respuesta.
 
 Si `STATUS_RULES.md` o `REFERENCE.md` no pueden leerse, no dar una respuesta de estado como si estuviera verificada. Explicar de forma breve qué regla/fuente falta.
 
