@@ -1,58 +1,60 @@
 # Status
 
-Repositorio interno para acompanhamento de metas pessoais, projetos ativos e progresso operacional da equipe Superlikers.
+Repositorio interno para el seguimiento de metas personales, proyectos activos y progreso operativo del equipo de Superlikers.
 
 ## Objetivo
 
-Permitir que lideranca e cada membro da equipe consigam responder rapidamente:
+Permitir que liderazgo y cada miembro del equipo puedan responder rápidamente:
 
-- Em que a pessoa esta focada agora?
-- Qual e a meta e o prazo?
-- O que ja avancou?
-- O que esta bloqueado ou pendente?
-- Qual e o proximo passo?
+- ¿En qué está enfocada la persona ahora?
+- ¿Cuál es la meta y cuál es la fecha objetivo?
+- ¿Qué avances concretos ya existen?
+- ¿Qué está bloqueado o pendiente?
+- ¿Cuál es el siguiente paso?
 
-## Modelo de organizacao
+## Modelo de organización
 
-Cada pessoa possui uma branch propria.
+Cada persona tiene una branch propia.
 
 ```text
 main
 ├── README.md
-└── branches por pessoa
+└── branches por persona
     ├── bruno
-    ├── <proxima-pessoa>
+    ├── <siguiente-persona>
     └── ...
 ```
 
-A branch da pessoa e a fonte de verdade do seu status pessoal.
+La branch de cada persona funciona como fuente de verdad de su estado personal.
 
 Dentro de cada branch:
 
 ```text
 PERSONAL_PLAN.md
 projects/
-  <project>/
+  <proyecto>/
     README.md
     updates/
       YYYY-MM-DD.md
 ```
 
-## Regras de uso
+## Reglas de uso
 
-1. Registrar fatos e avancos concretos, evitando relatorios longos.
-2. Separar claramente objetivo, estado atual, avancos, pendencias e proximo passo.
-3. Toda meta relevante deve ter prazo ou estar marcada como `To be decided`.
-4. Atualizacoes devem ser datadas para preservar historico.
-5. Informacao ainda nao confirmada deve ser marcada como pendente, nunca escrita como concluida.
-6. Nao incluir senhas, tokens, chaves privadas ou outros segredos.
-7. A branch pessoal deve continuar compreensivel sem depender de contexto externo ou de conversas privadas.
+1. Registrar hechos y avances concretos, evitando reportes largos sin señal útil.
+2. Separar claramente objetivo, estado actual, avances, pendientes y siguiente paso.
+3. Toda meta relevante debe tener una fecha objetivo o estar marcada como `Por definir`.
+4. Las actualizaciones deben estar fechadas para conservar el historial.
+5. La información aún no confirmada debe marcarse como pendiente, nunca como completada.
+6. No incluir contraseñas, tokens, llaves privadas ni otros secretos.
+7. La branch personal debe poder entenderse sin depender de contexto externo, reuniones o conversaciones privadas.
 
-## Como ler
+## Cómo leer este repositorio
 
-Para acompanhar uma pessoa, abra sua branch e comece por `PERSONAL_PLAN.md`. Depois, entre em `projects/<project>/README.md` para ver o estado atual e em `updates/` para o historico.
+Para seguir a una persona, abre su branch y comienza por `PERSONAL_PLAN.md`.
+
+Después, entra en `projects/<proyecto>/README.md` para ver el estado actual y en `updates/` para revisar el historial de avances.
 
 ## Estado inicial
 
-- Bruno: ativo
-- Demais pessoas: ainda nao configuradas
+- Bruno: activo
+- Otras personas: aún no configuradas
