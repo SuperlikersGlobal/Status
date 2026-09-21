@@ -17,6 +17,41 @@ Ya existe un flujo E2E funcional entre **WhatsApp/Kapso → Lambda → Textract 
 
 El trabajo actual es cerrar el **freeze audit del parser**, generar un paquete reproducible y volver a ejecutar un E2E remoto antes de avanzar a elegibilidad e integración final con Andrés.
 
+## Velocidad de avance esperada
+
+La velocidad técnica actual es alta porque la mayor parte de la incertidumbre del parser ya fue reducida. A partir de este punto, el ritmo depende menos de investigación abierta y más de cerrar gates concretos.
+
+**Estimación operativa si no aparecen bloqueos externos nuevos:**
+
+| Bloque | Tiempo estimado | Dependencia principal |
+|---|---:|---|
+| Freeze final del parser + paquete reproducible | **~1 día de trabajo** | Que el freeze audit no detecte un blocker funcional |
+| Deploy en Lambda test + nuevo E2E WhatsApp | **mismo día / siguiente día** | Acceso al entorno de test |
+| Elegibilidad + contrato de avance en botellas | **1–2 días** | Confirmación funcional con Andrés |
+| Acumulación + idempotencia mínima | **1–2 días** | Definir dónde se mantiene el estado acumulado |
+| UAT multiformato + correcciones | **2–3 días** | Disponibilidad de tickets representativos |
+| Producción controlada + rollback + handover | **1–2 días** | Aprobación para pasar a producción |
+
+Esto no es una promesa de duración fija: los bloques técnicos propios pueden avanzar rápido, pero las etapas que dependen de una definición o validación externa pueden mover el calendario.
+
+### Qué puede avanzar sin esperar a terceros
+
+- freeze audit;
+- manifest y empaquetado;
+- regresiones locales;
+- Lambda de test;
+- pruebas de parser;
+- preparación de UAT;
+- documentación técnica y rollback.
+
+### Qué puede limitar la velocidad
+
+- definición de qué referencias/marcas son elegibles;
+- confirmación con Andrés del contrato exacto de integración;
+- definición de dónde acumular múltiples tickets;
+- disponibilidad de casos reales para UAT;
+- aprobación para producción.
+
 ## Avances confirmados
 
 - Integración de WhatsApp/Kapso funcionando con carga real de imágenes.
