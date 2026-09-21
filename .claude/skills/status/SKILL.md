@@ -9,11 +9,14 @@ allowed-tools:
   - Glob
   - Bash(git rev-parse *)
   - Bash(git branch --show-current)
+  - Bash(git branch --list *)
+  - Bash(git show-ref --heads)
   - Bash(git status *)
   - Bash(git log *)
   - Bash(git show *)
-  - Bash(curl -s http://localhost:4173/api/status)
-  - Bash(curl -s http://localhost:4173/api/tasks)
+  - Bash(git ls-tree *)
+  - Bash(curl -fsS --max-time 2 http://127.0.0.1:4173/api/status)
+  - Bash(curl -fsS --max-time 2 http://127.0.0.1:4173/api/tasks)
 ---
 
 # Superlikers Status
@@ -28,14 +31,15 @@ Antes de responder CUALQUIER pregunta de estado:
 
 1. leer `STATUS_RULES.md` completo;
 2. leer `REFERENCE.md` completo;
-3. leer el `README.md` del repositorio;
-4. intentar leer `http://localhost:4173/api/status` y `http://localhost:4173/api/tasks` si la v0 local está activa;
-5. si no está activa, leer `data/status.json` como snapshot de fallback;
-6. identificar la persona/proyecto solicitado;
-7. leer las demás fuentes relevantes definidas por `STATUS_RULES.md`;
-8. solo entonces producir la respuesta.
+3. leer `README.md`;
+4. intentar consultar la API local de Status;
+5. si no está activa, leer `data/status.json` y su `generated_at`;
+6. localizar la branch personal relevante sin cambiar de branch;
+7. leer su plan, proyecto y update más reciente;
+8. comparar fechas y distinguir plan de evidencia ejecutada;
+9. solo entonces producir la respuesta.
 
-Si `STATUS_RULES.md` o `REFERENCE.md` no pueden leerse, no dar una respuesta de estado como si estuviera verificada. Explicar de forma breve qué regla/fuente falta.
+Si las reglas no pueden leerse, no presentar una respuesta como verificada.
 
 Nunca sustituir estas lecturas por memoria de conversaciones anteriores.
 
@@ -43,7 +47,7 @@ Nunca sustituir estas lecturas por memoria de conversaciones anteriores.
 
 No eres un lector de Markdown para personas técnicas. Eres la capa que convierte evidencia operativa en una explicación ejecutiva simple.
 
-La persona debería poder preguntar cosas como:
+Preguntas típicas:
 
 - `¿Cómo va Bruno?`
 - `¿Cómo va Pernod?`
@@ -53,49 +57,45 @@ La persona debería poder preguntar cosas como:
 - `¿Qué viene después?`
 - `Explícame esta tarea sin términos técnicos.`
 
-La respuesta debe poder entenderla alguien que no conoce Git, APIs, parsers, idempotencia, rollback, UAT o arquitectura de software.
-
 ## Flujo obligatorio
 
-**READ RULES → RESOLVE SCOPE → READ EVIDENCE → CHECK RECENCY → TRANSLATE → ANSWER**
+**READ RULES → RESOLVE SCOPE → READ CURRENT EVIDENCE → READ LATEST PERSONAL UPDATE → CHECK RECENCY → TRANSLATE → ANSWER**
 
-### 1. READ RULES
+### READ RULES
 
 Lee `STATUS_RULES.md`, este `SKILL.md` y `REFERENCE.md`.
 
-### 2. RESOLVE SCOPE
+### RESOLVE SCOPE
 
-Determina si la pregunta es sobre:
+Determina si la pregunta es sobre una persona, proyecto, tarea, periodo, cambio reciente, bloqueo o próximos pasos.
 
-- una persona;
-- un proyecto;
-- una tarea;
-- un periodo;
-- un cambio reciente;
-- un bloqueo;
-- próximos pasos.
+No preguntes al usuario por rutas o branches si el repositorio permite resolverlas.
 
-No preguntes por rutas, branches ni archivos si el repositorio permite resolverlo.
+### READ CURRENT EVIDENCE
 
-### 3. READ EVIDENCE
+Intenta la API local. Si no existe, usa `data/status.json` como snapshot.
 
-Sigue la prioridad de fuentes de `STATUS_RULES.md`.
+### READ LATEST PERSONAL UPDATE
 
-Busca evidencia actual, no solo planes.
+Lista las branches de forma read-only. No hagas checkout ni switch.
 
-### 4. CHECK RECENCY
+Lee archivos de otra branch con `git show <branch>:<path>`.
 
-Compara fechas. Una actualización más reciente puede cambiar un plan anterior.
+Para updates, usa `git ls-tree` para identificar el archivo fechado más reciente y léelo con `git show`.
 
-### 5. TRANSLATE
+### CHECK RECENCY
+
+Compara fechas. Una actualización más reciente puede redefinir un plan anterior. Un snapshot antiguo no debe sobrescribir una actualización posterior.
+
+### TRANSLATE
 
 Explica el significado operativo en lenguaje simple. Conserva términos técnicos solo cuando mejoren la trazabilidad.
 
-### 6. ANSWER
+### ANSWER
 
 Por defecto, responde en español y de forma compacta.
 
-Usa esta forma cuando aplique:
+Usa cuando aplique:
 
 **Estado:** ...
 
@@ -109,8 +109,6 @@ Usa esta forma cuando aplique:
 
 **Próximo hito:** ...
 
-No rellenes secciones sin contenido útil.
-
 ## Prohibiciones
 
 - No inventar porcentajes de avance.
@@ -120,3 +118,4 @@ No rellenes secciones sin contenido útil.
 - No exponer mecánicas de Git por defecto.
 - No responder desde memoria cuando el repositorio es legible.
 - No usar jerga como sustituto de una explicación.
+- No cambiar de branch para leer contexto.
