@@ -173,5 +173,5 @@ createServer(async function(req,res){
   return staticFile(res,url.pathname);
 }).listen(PORT,HOST,function(){
   console.log('Status v0 running on http://' + HOST + ':' + PORT);
-  console.log(LIVE ? 'GitHub live mode: ' + REPOSITORY : 'Demo mode: configure GITHUB_TOKEN for live GitHub writes.');
+  console.log(LIVE ? 'Modo GitHub live: ' + REPOSITORY : 'Modo demo: configura GITHUB_TOKEN para escribir en GitHub.');
 });
