@@ -2,7 +2,7 @@
   "schema_version": "status-v0",
   "generated_at": "2026-09-21",
   "source": "GitHub Issues #1-#6",
-  "note": "Fallback snapshot for agents when the local Status API is not running. Compare this date with the latest personal branch update before answering.",
+  "note": "Snapshot de fallback para agentes cuando la API local de Status no está activa. Comparar esta fecha con la actualización más reciente de la branch personal antes de responder.",
   "tasks": [
     {
       "title": "Parser remoto + homologación",
