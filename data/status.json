@@ -1,33 +1,33 @@
 {
   "schema_version": "status-v0",
-  "generated_at": "2026-09-18",
+  "generated_at": "2026-09-21",
   "source": "GitHub Issues #1-#6",
-  "note": "Fallback snapshot for agents when the local Status API is not running. Prefer http://localhost:4173/api/tasks when available.",
+  "note": "Fallback snapshot for agents when the local Status API is not running. Compare this date with the latest personal branch update before answering.",
   "tasks": [
     {
-      "number": 1,
       "title": "Parser remoto + homologación",
       "url": "https://github.com/SuperlikersGlobal/Status/issues/1",
       "state": "open",
-      "commentsCount": 0,
+      "commentsCount": 1,
       "project": "Pernod",
       "owner": "Bruno",
       "status": "in_progress",
       "priority": "high",
       "start": "2026-09-17",
-      "due": "2026-09-19",
+      "due": "2026-09-22",
       "order": 1,
-      "summary": "Cerrar el componente que recibe e interpreta la información enviada de forma remota y validar su funcionamiento antes de continuar con la integración.",
-      "why": "Esta etapa crea una base estable para las siguientes fases. Si el procesamiento de entrada no está homologado, las pruebas posteriores pueden producir resultados inconsistentes.",
+      "summary": "Cerrar el freeze final del parser, generar un paquete reproducible y repetir el flujo completo en el entorno remoto de prueba antes de avanzar a elegibilidad e integración.",
+      "why": "La lectura y normalización ya funcionan con casos reales y dos estructuras distintas. Este gate confirma que el resultado local se reproduce de forma segura en el entorno remoto antes de conectar las siguientes etapas.",
       "acceptance": [
-        "Parser remoto funcionando con el flujo esperado.",
-        "Homologación completada.",
-        "Resultado validado y listo para iniciar elegibilidad e integración."
+        "FULL_PARSER_FREEZE_AUDIT finalizado sin blocker funcional.",
+        "Manifest/runtime y hashes generados.",
+        "ZIP reproducible generado.",
+        "Deploy realizado únicamente en Lambda de test.",
+        "Nuevo E2E por WhatsApp confirma el mismo comportamiento de los replays locales."
       ],
-      "technical": "Parser remoto + homologación. Ventana prevista: 17–19/09/2026."
+      "technical": "La etapa original de parser/homologación está en cierre final. Ventana vigente del gate: **21–22/09/2026**."
     },
     {
-      "number": 2,
       "title": "Elegibilidad + integración con Andrés",
       "url": "https://github.com/SuperlikersGlobal/Status/issues/2",
       "state": "open",
@@ -36,20 +36,20 @@
       "owner": "Bruno",
       "status": "ready",
       "priority": "high",
-      "start": "2026-09-20",
-      "due": "2026-09-23",
+      "start": "2026-09-22",
+      "due": "2026-09-24",
       "order": 2,
-      "summary": "Definir qué casos son elegibles dentro del flujo y cerrar el punto concreto donde el trabajo de Bruno se conecta con la integración de Andrés.",
-      "why": "Evita que cada parte avance con supuestos diferentes y establece un contrato claro entre ambos lados de la solución.",
+      "summary": "Definir qué referencias/marcas son elegibles y cerrar con Andrés el contrato exacto para entregar el avance en botellas.",
+      "why": "Evita que parser e integración avancen con reglas distintas y define exactamente qué información debe entrar y salir entre ambos lados del flujo.",
       "acceptance": [
         "Reglas de elegibilidad definidas.",
-        "Punto de integración con Andrés acordado.",
-        "Entrada y salida del intercambio documentadas."
+        "Referencias/marcas incluidas y excluidas explícitas.",
+        "Punto de integración con Andrés confirmado.",
+        "Formato de entrega del avance en botellas documentado."
       ],
-      "technical": "Elegibilidad + punto de integración con Andrés. Ventana prevista: 20–23/09/2026."
+      "technical": "Elegibilidad + contrato/punto de integración con Andrés. Ventana prevista: **22–24/09/2026**, sujeta al cierre del gate anterior."
     },
     {
-      "number": 3,
       "title": "Acumulación + idempotencia mínima",
       "url": "https://github.com/SuperlikersGlobal/Status/issues/3",
       "state": "open",
@@ -71,7 +71,6 @@
       "technical": "Acumulación + idempotencia mínima. Ventana prevista: 24–25/09/2026."
     },
     {
-      "number": 4,
       "title": "UAT con casos variados + correcciones",
       "url": "https://github.com/SuperlikersGlobal/Status/issues/4",
       "state": "open",
@@ -93,7 +92,6 @@
       "technical": "UAT con tickets/casos variados + correcciones. Ventana prevista: 26–28/09/2026."
     },
     {
-      "number": 5,
       "title": "Producción controlada + rollback + handover",
       "url": "https://github.com/SuperlikersGlobal/Status/issues/5",
       "state": "open",
@@ -115,7 +113,6 @@
       "technical": "Producción controlada + rollback + handover. Ventana prevista: 29–30/09/2026."
     },
     {
-      "number": 6,
       "title": "Go-live / ajuste final",
       "url": "https://github.com/SuperlikersGlobal/Status/issues/6",
       "state": "open",
