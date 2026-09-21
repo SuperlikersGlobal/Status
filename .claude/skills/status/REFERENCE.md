@@ -2,46 +2,50 @@
 
 Estas reglas complementan `STATUS_RULES.md` y son obligatorias para la skill `/status`.
 
-## 1. Prioridad de reglas
+## 1. Prioridad
 
 1. seguridad y protección de datos;
 2. instrucción explícita del usuario actual;
 3. `STATUS_RULES.md`;
-4. reglas documentadas del repositorio;
-5. evidencia operativa estructurada;
+4. evidencia con fecha más reciente y respaldo explícito;
+5. estado estructurado actual;
 6. documentos de contexto;
-7. patrones observados;
-8. defaults de esta skill.
+7. defaults de esta skill.
 
-## 2. Fuente operativa para Claude Code
+La estructura por sí sola no da mayor autoridad a una fuente antigua.
 
-Claude Code debe intentar primero:
+## 2. Fuente operativa
 
-```bash
-curl -s http://localhost:4173/api/status
-curl -s http://localhost:4173/api/tasks
-```
+Intentar primero:
 
-Si la API local responde, usar `/api/tasks` como la vista operativa actual porque el servidor la obtiene desde GitHub Issues.
+- `curl -fsS --max-time 2 http://127.0.0.1:4173/api/status`
+- `curl -fsS --max-time 2 http://127.0.0.1:4173/api/tasks`
 
-Si la API local no está disponible:
+Si responde, la API refleja las Issues `STATUS_V0`.
 
-- leer `data/status.json`;
-- revisar `generated_at`;
-- tratarlo como snapshot, no como consulta en vivo;
-- si la antigüedad del snapshot cambia materialmente la respuesta, decirlo de forma breve.
+Si no responde, leer `data/status.json`, revisar `generated_at` y tratarlo como snapshot.
 
-## 3. Marcador de tareas Status v0
+Después comparar siempre con las actualizaciones fechadas de la branch personal. Una actualización posterior al snapshot puede aportar hechos nuevos o redefinir el plan.
 
-Las tareas operativas de Status v0 son GitHub Issues cuyo cuerpo contiene:
+## 3. Lectura de branch personal
 
-```text
-<!-- STATUS_V0
-{...metadata JSON...}
--->
-```
+Nunca cambiar de branch solo para consultar estado.
 
-Los metadatos soportados actualmente son:
+Ejemplo:
+
+- `git branch --list`
+- `git show bruno:PERSONAL_PLAN.md`
+- `git show bruno:projects/pernod/README.md`
+- `git ls-tree -r --name-only bruno projects/pernod/updates/`
+- `git show bruno:projects/pernod/updates/2026-09-21.md`
+
+Elegir el update con fecha más reciente.
+
+## 4. Tareas Status v0
+
+Una tarea Status v0 es una GitHub Issue cuyo cuerpo contiene el marcador `STATUS_V0` con metadata JSON.
+
+Metadatos actuales:
 
 - `project`
 - `owner`
@@ -51,79 +55,62 @@ Los metadatos soportados actualmente son:
 - `due`
 - `order`
 
-No confundir cualquier Issue del repositorio con una tarea Status v0. El marcador es obligatorio.
+## 5. Cuerpo de una tarea
 
-## 4. Cuerpo de una tarea
-
-Las secciones actuales son:
+Secciones usadas:
 
 - `Qué estamos haciendo`
 - `Por qué importa`
+- `Avance confirmado` cuando aplica
+- `Dependencia de entrada` cuando aplica
 - `Criterio de finalización`
 - `Detalle técnico`
 
-Para respuestas no técnicas, priorizar las tres primeras.
+Para una audiencia no técnica, priorizar significado, avance, criterio y siguiente gate.
 
-## 5. Estado actual vs contexto histórico
+## 6. Estado actual vs historia
 
-La Issue representa el estado operativo actual de la tarea.
+- Issue y update coinciden → responder normalmente.
+- Issue antigua y update posterior redefine fechas → explicar el plan vigente del update.
+- Issue dice `done` pero update posterior muestra trabajo pendiente → señalar la inconsistencia; no declarar terminado sin resolverla.
+- README histórico antiguo contradice una Issue/update más reciente → no repetirlo como estado actual.
 
-La branch personal y sus documentos representan contexto, objetivos y evolución.
+## 7. Comentarios de Issues
 
-Si una Issue dice `done` pero un README antiguo dice `En progreso`, no repetir el estado antiguo como actual. Puede mencionarse como contexto histórico si es relevante.
+Los comentarios representan actualizaciones cronológicas. Usarlos para `Último avance` cuando sean más recientes que otros registros.
 
-Si el documento más reciente contradice una Issue sin que exista evidencia suficiente para decidir cuál es correcta, señalar la discrepancia en vez de resolverla por intuición.
+Un comentario no cambia automáticamente el estado estructurado.
 
-## 6. Comentarios
-
-Los comentarios de una Issue representan actualizaciones cronológicas, pero no cambian automáticamente el estado estructurado.
-
-Usarlos para responder "qué cambió" y "último avance".
-
-No convertir frases exploratorias de un comentario en hechos cerrados.
-
-## 7. Evaluación de cronograma
+## 8. Evaluación de plazo
 
 Para responder si algo está a tiempo:
 
-- comparar la fecha actual con `start` y `due`;
-- verificar el estado actual;
-- verificar la última evidencia registrada;
-- no afirmar retraso antes de que venza la fecha;
-- si la fecha venció y la tarea sigue abierta, describir el hecho: "la fecha objetivo ya pasó y la tarea sigue abierta".
+- comparar fecha actual y fecha objetivo;
+- identificar el gate actual;
+- revisar evidencia más reciente;
+- si una fecha intermedia venció pero existe un replanning explícito posterior, describir el replanning;
+- si la fecha final venció y el alcance sigue abierto, decir el hecho sin especular sobre causa.
 
-No especular sobre la causa.
+## 9. Traducción semántica
 
-## 8. Traducción semántica
+Simplificar sin alterar.
 
-La traducción debe preservar significado. Simplificar no significa alterar.
+Correcto: `idempotencia mínima` → evitar que repetir el mismo procesamiento genere duplicados.
 
-Ejemplo correcto:
+Incorrecto: `idempotencia mínima` → garantizar que nunca habrá errores.
 
-`idempotencia mínima` → "evitar que repetir el mismo procesamiento genere duplicados o efectos adicionales".
+## 10. Audiencia
 
-Ejemplo incorrecto:
+Por defecto, asumir liderazgo/no técnico. Si el usuario pide detalle técnico, añadir una sección breve después de la explicación simple.
 
-`idempotencia mínima` → "garantizar que nunca habrá errores".
+## 11. Trazabilidad
 
-## 9. Respuesta por audiencia
-
-Por defecto, asumir una audiencia ejecutiva/no técnica.
-
-Si el usuario pide detalle técnico, se puede incluir una segunda sección breve llamada `Detalle técnico`, después de la explicación simple.
-
-## 10. Trazabilidad
-
-Cuando ayude a verificar el dato, mencionar:
-
-- número de Issue;
-- fecha de la actualización;
-- nombre del proyecto.
+Cuando aporte valor, mencionar número de Issue, fecha de actualización o proyecto.
 
 No mostrar SHAs, comandos Git o rutas internas salvo solicitud explícita.
 
-## 11. Escritura
+## 12. Escritura
 
-La skill `/status` v0 es de lectura y explicación. No debe editar Issues, cambiar estados ni escribir documentos por defecto.
+`/status` v0 es una skill de lectura y explicación. No debe editar Issues ni cambiar estados por defecto.
 
-Si el usuario pide una modificación, explicar que esa es una acción de actualización y seguir el mecanismo de escritura aprobado para el repositorio, sin fingir que `/status` ya realizó el cambio.
+Si el usuario pide una modificación, esa es una acción separada de actualización.
