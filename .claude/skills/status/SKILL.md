@@ -10,6 +10,7 @@ allowed-tools:
   - Bash(git rev-parse *)
   - Bash(git branch --show-current)
   - Bash(git branch --list *)
+  - Bash(git branch -a --list *)
   - Bash(git show-ref --heads)
   - Bash(git status *)
   - Bash(git log *)
@@ -79,7 +80,7 @@ Intenta la API local. Si no existe, usa `data/status.json` como snapshot.
 
 Lista las branches de forma read-only. No hagas checkout ni switch.
 
-Lee archivos de otra branch con `git show <branch>:<path>`.
+Lee archivos de otra branch con `git show <branch>:<path>`. Si la branch no existe localmente pero aparece como remota, usa `origin/<branch>` sin hacer checkout.
 
 Para updates, usa `git ls-tree` para identificar el archivo fechado más reciente y léelo con `git show`.
 
