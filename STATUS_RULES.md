@@ -1,39 +1,49 @@
 # Status v0 — Reglas de lectura y respuesta
 
-Estas reglas son la fuente obligatoria para cualquier agente que lea o explique el estado de trabajo de este repositorio.
+Estas reglas son obligatorias para cualquier agente que lea o explique el estado de trabajo de este repositorio.
 
 ## 1. Propósito
 
-Status existe para que una persona no técnica pueda entender rápidamente:
+Status debe permitir que una persona no técnica entienda rápidamente qué está haciendo alguien, qué debe entregar, qué cambió, qué está bloqueado, cuál es el siguiente paso y cuál es la fecha objetivo.
 
-- qué está haciendo una persona;
-- qué debe entregar;
-- qué cambió;
-- qué está bloqueado;
-- cuál es el siguiente paso;
-- cuál es la fecha objetivo.
+## 2. Regla principal: evidencia + recencia
 
-El objetivo no es enseñar Git, Jira ni detalles de implementación.
+Nunca decidir el estado solo por el tipo de archivo.
 
-## 2. Fuentes y prioridad
+Una fuente estructurada pero antigua **no puede anular** una actualización posterior respaldada por evidencia.
 
-Antes de responder sobre estado, leer en este orden:
+Antes de responder:
 
-1. este archivo `STATUS_RULES.md`;
-2. `README.md`;
-3. si Status v0 está ejecutándose localmente, consultar `http://localhost:4173/api/tasks` y usar esa respuesta como estado operativo actual;
-4. si la API local no está disponible, leer `data/status.json` como snapshot de fallback y revisar su campo `generated_at`;
-5. branch personal de la persona cuando exista, comenzando por `PERSONAL_PLAN.md`;
-6. README del proyecto relevante;
-7. actualización fechada más reciente del proyecto.
+1. leer este archivo;
+2. leer `README.md`;
+3. consultar el estado estructurado disponible;
+4. localizar la branch personal de la persona;
+5. leer `PERSONAL_PLAN.md`, el README del proyecto y la actualización fechada más reciente;
+6. comparar las fechas de todas las fuentes relevantes;
+7. resolver el estado usando la evidencia más reciente y explícita.
 
-La API local obtiene el estado desde las Issues `STATUS_V0` y por eso tiene prioridad operativa. `data/status.json` es un fallback para lectura del agente, no una señal de que la información está en vivo.
+## 3. Fuentes operativas
 
-Para contexto, objetivo o explicación del proyecto, usar los documentos de la branch personal.
+Si la API local de Status está activa, consultar `http://127.0.0.1:4173/api/status` y `http://127.0.0.1:4173/api/tasks`.
 
-Nunca responder únicamente desde memoria de conversación cuando el repositorio puede ser leído.
+Si no está activa, leer `data/status.json` y revisar siempre `generated_at`.
 
-## 3. Estados permitidos
+**Regla crítica:** si existe una actualización fechada en la branch personal posterior a `generated_at`, el snapshot no puede usarse para negar o sobrescribir esa evidencia más nueva.
+
+## 4. Cómo leer branches personales
+
+No cambiar de branch solo para consultar información.
+
+Usar lectura segura, por ejemplo:
+
+- `git branch --list`
+- `git show bruno:PERSONAL_PLAN.md`
+- `git show bruno:projects/pernod/README.md`
+- `git ls-tree -r --name-only bruno projects/pernod/updates/`
+
+Para updates, identificar el archivo fechado más reciente y leerlo con `git show`.
+
+## 5. Estados permitidos
 
 - `backlog` → Backlog
 - `ready` → Ready
@@ -43,73 +53,59 @@ Nunca responder únicamente desde memoria de conversación cuando el repositorio
 
 No inventar porcentajes de avance.
 
-No considerar una tarea terminada porque fue discutida, iniciada o parcialmente validada. Para `done`, debe existir evidencia suficiente de que el criterio de finalización fue cumplido.
+No considerar una tarea terminada porque fue discutida, iniciada o parcialmente validada.
 
-## 4. Traducción para personas no técnicas
+## 6. Traducción para personas no técnicas
 
-La respuesta debe explicar primero el significado operativo y después, solo si aporta valor, mencionar el término técnico.
+Explicar primero el significado operativo y después, solo si aporta valor, el término técnico.
 
-Ejemplos:
-
-- `parser remoto` → componente que recibe e interpreta la información enviada de forma remota;
+- `parser remoto` → componente que recibe e interpreta información enviada de forma remota;
 - `homologación` → validación del funcionamiento antes de producción;
-- `idempotencia` → repetir el mismo procesamiento no debe generar duplicados ni efectos adicionales;
+- `idempotencia` → repetir el mismo procesamiento no debe generar duplicados;
 - `rollback` → forma segura de volver atrás si algo falla;
-- `handover` → documentación y contexto suficientes para que otra persona pueda asumir el trabajo;
+- `handover` → documentación suficiente para que otra persona pueda asumir el trabajo;
 - `UAT` → pruebas con casos representativos antes de producción;
 - `go-live` → activación del flujo para uso real.
 
-No ocultar el término técnico cuando sea útil para trazabilidad, pero nunca usarlo como única explicación.
+## 7. Disciplina de evidencia
 
-## 5. Disciplina de evidencia
+Separar hechos confirmados, trabajo en progreso, pendientes, bloqueos, próximos pasos y objetivos futuros.
 
-Separar siempre:
+No convertir una intención en resultado. No inferir responsables, fechas, bloqueos o decisiones que no estén documentados.
 
-- hechos registrados;
-- trabajo en progreso;
-- pendientes o bloqueos;
-- próximos pasos;
-- objetivos futuros.
+Si dos fuentes se contradicen:
 
-No convertir una intención en resultado.
+1. comparar fechas;
+2. distinguir plan de evidencia ejecutada;
+3. preferir la evidencia más reciente respaldada;
+4. si la contradicción no puede resolverse, decirlo explícitamente.
 
-No inferir responsables, fechas, bloqueos o decisiones que no estén documentados.
+## 8. Respuesta ejecutiva por defecto
 
-Si dos fuentes se contradicen, indicar la contradicción y preferir la evidencia operativa más reciente sin borrar el contexto anterior.
+Cuando aplique:
 
-## 6. Respuesta ejecutiva por defecto
+**Estado:** ...
 
-Cuando alguien pregunte por una persona o proyecto, responder normalmente con:
+**Ahora:** ...
 
-### Estado
-Una frase corta: En progreso / Bloqueado / Hecho / etc.
+**Meta:** ...
 
-### Ahora
-Qué está haciendo actualmente, en lenguaje simple.
+**Último avance:** ...
 
-### Meta
-Qué debe conseguir y para cuándo.
+**Riesgo o bloqueo:** ...
 
-### Último avance
-El cambio concreto más reciente respaldado por el repositorio.
+**Próximo hito:** ...
 
-### Riesgo o bloqueo
-Solo si existe evidencia de uno. Si no existe, decir que no hay un bloqueo registrado.
+No mostrar SHAs, branches, rutas internas o mecánicas de Git salvo solicitud explícita.
 
-### Próximo hito
-La siguiente entrega o transición con fecha cuando esté disponible.
+## 9. Preguntas sobre plazo
 
-No mostrar SHAs, branches, rutas internas o mecánicas de Git salvo que el usuario las pida.
+Para decir si algo está a tiempo, comparar fecha actual, fecha objetivo, gate actual y evidencia más reciente.
 
-## 7. Preguntas comparativas
+Si una fecha intermedia venció pero una actualización posterior redefinió explícitamente el gate, explicar el cambio de plan en vez de usar automáticamente la fecha antigua.
 
-Para preguntas como "¿qué cambió?" o "¿está atrasado?":
+No especular sobre la causa de un retraso.
 
-- comparar evidencia fechada;
-- citar fechas concretas;
-- no inventar causalidad;
-- no llamar algo "atrasado" si no existe fecha vencida o evidencia explícita de retraso.
-
-## 8. Idioma
+## 10. Idioma
 
 Las respuestas de Status para Superlikers deben ser en español, salvo instrucción explícita del usuario en ese momento.
