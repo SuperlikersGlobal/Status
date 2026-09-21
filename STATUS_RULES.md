@@ -36,12 +36,12 @@ No cambiar de branch solo para consultar información.
 
 Usar lectura segura, por ejemplo:
 
-- `git branch --list`
-- `git show bruno:PERSONAL_PLAN.md`
+- `git branch -a --list`
+- `git show bruno:PERSONAL_PLAN.md` (o `git show origin/bruno:PERSONAL_PLAN.md` en un clone nuevo)
 - `git show bruno:projects/pernod/README.md`
 - `git ls-tree -r --name-only bruno projects/pernod/updates/`
 
-Para updates, identificar el archivo fechado más reciente y leerlo con `git show`.
+Para updates, identificar el archivo fechado más reciente y leerlo con `git show`. Si la branch solo existe como referencia remota, usar `origin/<branch>` sin hacer checkout.
 
 ## 5. Estados permitidos
 
