@@ -33,13 +33,13 @@ Nunca cambiar de branch solo para consultar estado.
 
 Ejemplo:
 
-- `git branch --list`
-- `git show bruno:PERSONAL_PLAN.md`
+- `git branch -a --list`
+- `git show bruno:PERSONAL_PLAN.md` o, en un clone nuevo, `git show origin/bruno:PERSONAL_PLAN.md`
 - `git show bruno:projects/pernod/README.md`
 - `git ls-tree -r --name-only bruno projects/pernod/updates/`
 - `git show bruno:projects/pernod/updates/2026-09-21.md`
 
-Elegir el update con fecha más reciente.
+Elegir el update con fecha más reciente. Si la branch personal solo existe como referencia remota, usar `origin/<branch>` para `git show` y `git ls-tree`; no pedir al usuario que cambie de branch.
 
 ## 4. Tareas Status v0
 
