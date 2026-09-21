@@ -1,179 +1,77 @@
 # Status v0
 
-Status es una vista simple de trabajo para Superlikers: combina **GitHub Issues como backend operativo**, una **interfaz tipo Jira** y una **skill de Claude Code** que traduce el estado técnico a lenguaje ejecutivo.
+> **Uso interno de Superlikers. Antes de compartir este repositorio con el equipo, confirmar que la visibilidad en GitHub esté configurada como `Private`.**
+
+Status v0 permite entender el trabajo de una persona sin tener que leer Git, commits o documentación técnica.
 
 La primera prueba usa **Bruno / Pernod**.
 
-## Qué permite probar
+## Para probarlo hoy
 
-- ver tareas en un tablero Kanban;
-- mover tareas entre Backlog, Ready, En progreso, Bloqueado y Hecho;
-- ver una explicación no técnica de cada tarea;
-- registrar avances como comentarios de GitHub;
-- revisar persona, proyecto y timeline;
-- consultar el estado desde Claude Code con `/status`;
-- mantener GitHub como fuente de verdad sin crear una base de datos adicional.
+La experiencia principal no depende de la UI. Abre este repositorio en Claude Code sobre `main` y pregunta, por ejemplo:
 
-## Arquitectura v0
+- `/status ¿Cómo va Bruno con Pernod?`
+- `/status ¿Qué está haciendo Bruno ahora?`
+- `/status ¿Qué cambió desde la última actualización?`
+- `/status ¿Hay algún bloqueo?`
+- `/status ¿Qué viene después?`
 
-```text
-Status UI
-   ↓
-Node API
-   ↓
-GitHub Issues
-   ↓
-Status repo / branches personales
-   ↓
-Claude /status
-```
+La skill debe leer primero las reglas del repositorio y después traducir la evidencia a una respuesta breve y ejecutiva en español.
 
-### GitHub Issues
+## Qué es cada cosa
 
-Cada card de trabajo es una Issue con metadatos `STATUS_V0` dentro del cuerpo.
+### GitHub Issues = tareas operativas
 
-Esto permite que la UI trate GitHub como backend estructurado sin depender todavía de GitHub Projects ni de una base de datos propia.
+Las Issues con marcador `STATUS_V0` representan trabajo concreto: estado, responsable, fechas, objetivo y criterio de finalización.
 
-### Branches personales
+### Branch personal = contexto y evolución
 
-Las branches personales siguen guardando contexto de mayor nivel:
+Cada persona puede tener una branch propia. En el piloto, `bruno` contiene `PERSONAL_PLAN.md`, el contexto de Pernod y sus updates fechados.
 
-```text
-PERSONAL_PLAN.md
-projects/
-  <proyecto>/
-    README.md
-    updates/
-```
+### `/status` = traducción ejecutiva
 
-Para Bruno, la branch actual es `bruno`.
+La skill vive en `.claude/skills/status/` y debe leer reglas, estado estructurado, branch personal y fechas antes de responder.
 
-### Skill `/status`
+**Una fuente más antigua nunca debe anular evidencia más reciente solo por estar más estructurada.**
 
-La skill vive en:
+## Estado del piloto — 21/09/2026
 
-```text
-.claude/skills/status/
-```
+**Meta de Pernod:** cerrar el alcance actual antes del **1 de octubre**.
 
-Antes de responder debe leer siempre:
+**Ahora:** la capa de lectura y normalización ya fue validada con flujo real y dos layouts. El trabajo está en el **freeze final del parser + nuevo E2E remoto de prueba**.
 
-1. `STATUS_RULES.md`;
-2. `.claude/skills/status/REFERENCE.md`;
-3. la API local de Status cuando esté activa;
-4. `data/status.json` como fallback cuando la API no esté disponible;
-5. las fuentes relevantes de la branch personal.
-
-Su objetivo es explicar el estado para una persona no técnica, no enseñar Git.
-
-## Ejecutar la UI hoy
-
-Requisito: **Node.js 18 o superior**.
-
-### Modo demo
-
-No requiere credenciales:
-
-```bash
-npm start
-```
-
-Abrir:
-
-```text
-http://localhost:4173
-```
-
-El tablero funciona visualmente y permite simular cambios durante la sesión, pero no escribe en GitHub.
-
-### Modo GitHub live
-
-El servidor necesita un token con acceso al repositorio privado.
-
-```bash
-export GITHUB_TOKEN="<token-con-acceso-al-repo>"
-export GITHUB_REPO="SuperlikersGlobal/Status"
-npm start
-```
-
-Nunca colocar el token en `public/app.js` ni hacer commit del `.env`.
-
-En modo live:
-
-- mover un card actualiza el estado dentro de la Issue;
-- mover a **Hecho** cierra la Issue;
-- sacar de **Hecho** la reabre;
-- registrar un avance crea un comentario real en la Issue.
-
-## Estado inicial de Pernod
+**Próximo gate:** cerrar ese freeze y después avanzar a **elegibilidad + integración con Andrés**.
 
 | Ventana | Tarea | Estado |
 |---|---|---|
-| 17–19/09 | Parser remoto + homologación | En progreso |
-| 20–23/09 | Elegibilidad + integración con Andrés | Ready |
+| 21–22/09 | Freeze final del parser + E2E remoto | En progreso |
+| 22–24/09 | Elegibilidad + integración con Andrés | Ready |
 | 24–25/09 | Acumulación + idempotencia mínima | Backlog |
 | 26–28/09 | UAT + correcciones | Backlog |
 | 29–30/09 | Producción controlada + rollback/handover | Backlog |
 | 01/10 | Go-live / ajuste final | Backlog |
 
-Las seis tareas ya existen como Issues del repositorio.
+## Reglas importantes
 
-## Estados soportados
+- No inventar porcentajes de avance.
+- No marcar una tarea como terminada sin evidencia suficiente.
+- No convertir un plan futuro en trabajo realizado.
+- Comparar siempre las fechas de las fuentes.
+- Si dos fuentes se contradicen, usar la evidencia más reciente respaldada y explicar la discrepancia cuando importe.
+- Por defecto, responder para una audiencia no técnica.
 
-```text
-Backlog
-Ready
-En progreso
-Bloqueado
-Hecho
-```
+## UI experimental
 
-## Reglas de producto
+La UI estilo Jira existe como experimento, pero **no es necesaria para validar Status v0**.
 
-- GitHub es la fuente operativa de verdad para las tareas de esta v0.
-- No inventar progreso ni porcentajes manuales.
-- El estado actual de una tarea está en su Issue.
-- El contexto de la persona/proyecto puede vivir en su branch personal.
-- La interfaz muestra lenguaje simple primero y detalle técnico después.
-- Las credenciales quedan siempre del lado del servidor.
-- `/status` es de lectura y explicación en esta v0.
+Modo demo: `npm start` y abrir `http://127.0.0.1:4173`.
 
-## Estructura
+Modo GitHub live: definir `GITHUB_TOKEN` y `GITHUB_REPO` en el entorno antes de iniciar.
 
-```text
-.
-├── STATUS_RULES.md
-├── server.mjs
-├── package.json
-├── data/
-│   └── demo.json
-├── public/
-│   ├── index.html
-│   ├── styles.css
-│   └── app.js
-└── .claude/
-    └── skills/
-        └── status/
-            ├── SKILL.md
-            └── REFERENCE.md
-```
+Por seguridad, el servidor debe escuchar únicamente en `127.0.0.1` por defecto. El token nunca debe incluirse en archivos públicos ni commits.
 
-## Por qué esta v0 sirve para MyDesk
+## Relación con MyDesk
 
-El experimento valida un modelo de tarea que después puede moverse de GitHub a MyDesk sin cambiar el concepto principal:
+La v0 prueba el modelo antes de construir la interfaz definitiva: trabajo real → GitHub guarda tareas y evidencia → Status organiza contexto → Claude traduce para liderazgo → futura UI/MyDesk consume el mismo modelo.
 
-```text
-Task {
-  title
-  project
-  owner
-  status
-  priority
-  start
-  due
-  acceptance_criteria
-  updates[]
-}
-```
-
-La interfaz y la capa semántica pueden evolucionar mientras el backend cambia de GitHub a un servicio propio.
+Si este flujo resulta útil para Tati, la siguiente etapa es mejorar la experiencia de actualización y después conectar el modelo con MyDesk.
