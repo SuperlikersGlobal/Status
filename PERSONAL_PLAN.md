@@ -13,9 +13,23 @@
 
 **Estado actual:** En progreso. La capa de lectura del ticket está en freeze final. El flujo WhatsApp/Kapso → OCR → parser → SuperLikers Labs ya fue validado con tickets reales y dos estructuras distintas. El siguiente gate es cerrar la auditoría final del parser, generar el paquete reproducible y repetir el E2E remoto antes de avanzar a elegibilidad e integración con Andrés.
 
+**Velocidad posible:** Los bloques puramente técnicos ya están bastante acotados y pueden avanzar en ventanas de **1–2 días por etapa**. El principal factor que puede frenar el calendario a partir de ahora son las dependencias externas: elegibilidad, contrato con Andrés, acumulación y aprobación de producción.
+
 **Criterio de éxito:** El flujo debe quedar implementado, validado y operable de punta a punta: lectura, elegibilidad, avance en botellas, acumulación, idempotencia mínima, UAT, producción controlada y handover.
 
 Ver: `projects/pernod/README.md`
+
+## Ritmo esperado
+
+| Bloque | Ventana estimada | Tipo |
+|---|---:|---|
+| Freeze parser + E2E remoto | ~1–2 días | Trabajo técnico propio |
+| Elegibilidad + integración con Andrés | ~1–2 días después de definición | Dependencia compartida |
+| Acumulación + idempotencia | ~1–2 días | Trabajo técnico, después de contrato |
+| UAT + correcciones | ~2–3 días | Requiere casos reales |
+| Producción + handover | ~1–2 días | Requiere aprobación |
+
+La estimación expresa **capacidad de avance**, no un compromiso fijo. Si una definición externa llega rápido, las etapas pueden encadenarse casi inmediatamente; si queda pendiente, ese es el punto que mueve la fecha.
 
 ## Enfoque de los próximos 30 días
 
