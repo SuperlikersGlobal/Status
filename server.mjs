@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = fileURLToPath(new URL('.', import.meta.url));
 const PUBLIC = join(ROOT, 'public');
+const HOST = process.env.HOST || '127.0.0.1';
 const PORT = Number(process.env.PORT || 4173);
 const REPOSITORY = process.env.GITHUB_REPO || 'SuperlikersGlobal/Status';
 const TOKEN = (process.env.GITHUB_TOKEN || '').trim();
@@ -170,7 +171,7 @@ createServer(async function(req,res){
   const url = new URL(req.url || '/','http://' + (req.headers.host || 'localhost'));
   if (url.pathname.startsWith('/api/')) return api(req,res,url);
   return staticFile(res,url.pathname);
-}).listen(PORT,function(){
-  console.log('Status v0 running on http://localhost:' + PORT);
+}).listen(PORT,HOST,function(){
+  console.log('Status v0 running on http://' + HOST + ':' + PORT);
   console.log(LIVE ? 'GitHub live mode: ' + REPOSITORY : 'Demo mode: configure GITHUB_TOKEN for live GitHub writes.');
 });
