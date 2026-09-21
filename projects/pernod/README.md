@@ -1,74 +1,88 @@
 # Pernod
 
 **Responsable:** Bruno Antoniassi  
-**Estado:** En progreso  
+**Estado:** En progreso — parser en freeze final / preparación de release de prueba  
 **Fecha objetivo:** Finalizar el alcance actual antes del **2026-10-01**  
-**Última actualización:** 2026-09-17
+**Última actualización:** 2026-09-21
 
 ## Objetivo
 
-Completar el alcance actual de Pernod con un flujo operativo claro, supuestos de integración validados y suficiente documentación para que otra persona o agente pueda entender qué existe, qué falta y cuál debe ser el siguiente paso.
-
-## Meta hasta el 1 de octubre
-
-| Fechas | Objetivo |
-|---|---|
-| **17–19/09** | Cerrar **parser remoto + homologación** |
-| **20–23/09** | Resolver **elegibilidad + punto de integración con Andrés** |
-| **24–25/09** | Implementar **acumulación + idempotencia mínima** |
-| **26–28/09** | Ejecutar **UAT con tickets variados + correcciones** |
-| **29–30/09** | Pasar a **producción controlada + rollback/handover** |
-| **01/10** | Mantener margen para **go-live / ajuste final** |
-
-### Secuencia operativa
-
-```text
-parser remoto + homologación
-→ elegibilidad + integración con Andrés
-→ acumulación + idempotencia mínima
-→ UAT + correcciones
-→ producción controlada + rollback/handover
-→ go-live / ajuste final
-```
+Completar el alcance actual de Pernod con un flujo operativo validado de punta a punta: recepción de evidencia por WhatsApp, lectura y normalización del ticket, identificación de productos/cantidades, cálculo del avance elegible y entrega del resultado al flujo de SuperLikers.
 
 ## Estado actual
 
-El trabajo se encuentra actualmente en la primera etapa del plan: **cerrar parser remoto + homologación**, con ventana del **17 al 19 de septiembre**.
+La capa de lectura y normalización está en su etapa final de validación.
 
-En paralelo, se mantiene documentado el contexto técnico necesario para que las siguientes etapas puedan avanzar sin depender de supuestos no registrados.
+Ya existe un flujo E2E funcional entre **WhatsApp/Kapso → Lambda → Textract → parser → SuperLikers Labs**. Se probaron tickets reales con estructuras diferentes y el parser ya reconoce dos formatos reales sin depender de un único layout.
 
-## Avances hasta ahora
+El trabajo actual es cerrar el **freeze audit del parser**, generar un paquete reproducible y volver a ejecutar un E2E remoto antes de avanzar a elegibilidad e integración final con Andrés.
 
-- Pernod cuenta con un repositorio dedicado: `SuperlikersGlobal/campaign-ti-PERNOD`.
-- Se avanzó en la definición del flujo de integración con Andrés.
-- Se está usando Git como fuente de verdad para mantener la información técnica actualizada y compartible.
-- El flujo esperado contempla recibir evidencia o información de origen mediante una carga y transformarla a la estructura requerida por la integración.
-- Se identificó una restricción operativa importante: el proceso de Pernod trabaja con **botellas y no con tickets**, por lo que la transformación debe contemplar ese modelo de entrada.
-- Se probó desde el entorno local la ruta de búsqueda de participantes en la API de Superlikers.
-- La búsqueda probada por email **todavía no confirmó al participante ni expuso el distinct ID / UID esperado**, por lo que ese punto aún necesita validación antes de considerarse resuelto.
-- El cronograma de ejecución hasta el 1 de octubre ya está definido con ventanas concretas para homologación, integración, idempotencia, UAT, producción controlada y go-live.
+## Avances confirmados
 
-## En progreso
+- Integración de WhatsApp/Kapso funcionando con carga real de imágenes.
+- Upload a SuperLikers Labs validado con respuesta exitosa.
+- Identificación del participante por email validada en el flujo real.
+- OCR con AWS Textract validado con documentos reales.
+- Soporte para dos layouts reales:
+  - matriz por sucursales con columna TOTAL;
+  - formato largo sin header con sucursal, producto base e item vendido.
+- Normalización de presentaciones:
+  - `BOT / BOT.` → `BOTELLA`;
+  - `COP / CP / COPA` → `COPA`.
+- Conversión comercial gobernada: **14 copas = 1 botella**.
+- Los casos ambiguos permanecen en `NEEDS_REVIEW`; no se fuerza una cantidad o presentación incierta.
+- Se añadieron guardas para evitar falsos créditos por números que pertenecen al nombre/SKU del producto.
+- Se revisó el master contra **3.023 OCRs históricos**:
+  - 435 identidades con número terminal fueron auditadas;
+  - 73 aliases contaminados por cantidades fueron removidos de forma segura;
+  - no se rompieron referencias ni presentaciones.
+- Se corrigió la semántica de contabilidad:
+  - sin evidencia = `null`;
+  - cero conocido = `0`;
+  - una partición observada pero vacía = `0`;
+  - cantidad parcial/desconocida permanece `null`.
+- Las tablas de review/contexto permanecen disponibles para auditoría, pero no contaminan los agregados cuantitativos directos.
+- Replay completo del corpus histórico sin cambios inesperados en referencias, status o extracción.
+- Layout 1 validado con:
+  - BOTELLA observada: **45**;
+  - COPA observada: **129**;
+  - equivalente observado: **759 unidades base**.
+- Layout 2 validado con 32 líneas:
+  - **31 cantidades conocidas**;
+  - **1 cantidad nula**, preservada para revisión.
 
-### Etapa actual — 17–19/09
+## Estado de homologación
 
-- Cerrar el parser remoto.
-- Completar la homologación.
-- Dejar preparada la base para iniciar elegibilidad e integración con Andrés a partir del 20/09.
+La lectura técnica está prácticamente cerrada. Antes de considerar esta etapa lista para release de prueba quedan:
 
-## Próximas etapas
+1. finalizar el **FULL_PARSER_FREEZE_AUDIT**;
+2. generar un ZIP reproducible con hashes verificados;
+3. desplegar únicamente en la Lambda de test;
+4. ejecutar un nuevo E2E por WhatsApp;
+5. confirmar que el resultado remoto reproduce los replays locales.
 
-### 20–23/09
-- Elegibilidad.
-- Punto de integración con Andrés.
+No se ha hecho release de producción con este estado.
+
+## Próximo tramo
+
+### 21–22/09
+- Freeze audit del parser.
+- Manifest de runtime.
+- Nuevo ZIP de prueba.
+- Deploy controlado en Lambda test.
+- Nuevo E2E WhatsApp.
+
+### 22–24/09
+- Cerrar elegibilidad.
+- Confirmar con Andrés el contrato/punto de integración del avance en botellas.
 
 ### 24–25/09
-- Acumulación.
-- Idempotencia mínima.
+- Acumulación entre tickets.
+- Idempotencia mínima / protección contra doble conteo.
 
 ### 26–28/09
 - UAT con tickets variados.
-- Correcciones derivadas de las pruebas.
+- Correcciones derivadas de los casos reales.
 
 ### 29–30/09
 - Producción controlada.
@@ -76,31 +90,34 @@ En paralelo, se mantiene documentado el contexto técnico necesario para que las
 - Preparar handover.
 
 ### 01/10
-- Margen para go-live.
-- Ajuste final si es necesario.
+- Margen de go-live / ajuste final.
 
-## Pendientes / bloqueos
+## Dependencias y pendientes
 
-- Confirmación final de la estructura canónica de datos y del lugar de almacenamiento.
-- Ejemplo funcional que sirva como referencia de integración.
-- Confirmación de la búsqueda del identificador del participante.
-- Validación end-to-end con casos representativos de Pernod.
+- Definir qué referencias/marcas son elegibles para cada reto.
+- Confirmar con Andrés el contrato exacto para entregar el avance en botellas.
+- Confirmar dónde debe vivir la acumulación entre múltiples tickets.
+- Completar estrategia mínima de idempotencia para evitar doble contabilización.
+- Definir operación de casos `NEEDS_REVIEW`.
 
-## Criterios de finalización
+## Riesgo conocido
 
-Pernod podrá marcarse como completado para este plan de acción cuando:
+Existe un caso sintético en el que una tabla de precios puede tener exactamente la misma estructura observable que el Layout 2. No se agregó una heurística arbitraria para ocultar este riesgo; queda documentado para resolverlo con una regla comercial o una señal adicional si aparece en datos reales.
 
-1. parser remoto y homologación estén cerrados;
+## Criterio de finalización
+
+Pernod se considera terminado para este alcance cuando:
+
+1. parser y homologación estén cerrados;
 2. elegibilidad y punto de integración con Andrés estén resueltos;
 3. acumulación e idempotencia mínima estén implementadas;
-4. UAT haya sido ejecutado con casos variados y sus correcciones aplicadas;
+4. UAT con casos variados haya pasado;
 5. producción controlada, rollback y handover estén validados;
-6. el go-live o ajuste final del 1 de octubre haya quedado resuelto;
-7. el flujo resultante y las dependencias restantes queden documentados en Git.
+6. el flujo pueda operar sin depender de conocimiento no documentado.
 
 ## Siguiente paso
 
-Cerrar **parser remoto + homologación entre el 17 y el 19 de septiembre**. Al finalizar esa etapa, actualizar este documento con el resultado y avanzar a elegibilidad + integración con Andrés.
+Cerrar el **FULL_PARSER_FREEZE_AUDIT** y, si pasa, generar el paquete reproducible para el próximo E2E remoto.
 
 ## Historial
 
