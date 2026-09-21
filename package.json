@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Status v0 — lightweight Jira-like work view backed by GitHub Issues.",
+  "description": "Status v0 — seguimiento simple de trabajo respaldado por GitHub Issues.",
   "scripts": {
     "start": "node server.mjs",
     "dev": "node --watch server.mjs",
