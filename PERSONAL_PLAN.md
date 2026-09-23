@@ -11,7 +11,7 @@
 
 **Meta:** Llegar a una V1 operativa y segura antes del **2026-10-01**. La fecha se considera fija; si hace falta, se reduce alcance, no seguridad.
 
-**Estado actual:** En progreso. El parser quedó congelado localmente después de cerrar la variante real de OCR con celdas fusionadas y pasar las regresiones del corpus. El flujo de test WhatsApp/Kapso → Lambda → Textract → parser → SuperLikers Labs ya fue validado de punta a punta. El parser deja de ser el camino crítico; el foco pasa a **Submission Ledger, antifraude, idempotencia, revisión y contrato con Andrés**.
+**Estado actual:** En progreso. El parser está congelado localmente y el **Submission Ledger ya fue validado contra DynamoDB real** en AWS con concurrencia, retries, restart, reversión y soporte multi-beneficiario. El camino crítico pasa ahora a **evidencia durable + pipeline retomable**, elegibilidad, review operativo e integración real con Andrés.
 
 **Estrategia V1:** `review-first`. El engine propone el progreso y aplica antifraude; un revisor autoriza el crédito. Challenge, metas y coins quedan fuera del engine y pertenecen a la plataforma de Andrés/SuperLikers.
 
@@ -24,11 +24,13 @@ Ver: `projects/pernod/README.md`
 | Bloque | Estado | Dependencia principal |
 |---|---|---|
 | Freeze del parser | **Cerrado localmente** | Gate remoto del RAW exacto sigue pendiente antes de redeploy |
-| Contrato con Andrés + reglas comerciales | **Inmediato** | Identidad, periodo, elegibilidad y autoridad de crédito |
-| Submission Ledger | **Siguiente bloque técnico** | Persistencia y transacciones |
-| Antifraude + claims + evidencia | Pendiente | Ledger |
-| Review + crédito/reversión | Pendiente | Ledger + revisores |
-| Integración real con Andrés | Pendiente | Contrato aceptado |
+| Submission Ledger | **Validado localmente y en DynamoDB real** | Integración al pipeline |
+| Multi-beneficiario | **Validado** | Regla de identificación con Andrés |
+| Antifraude transaccional / dedup | **Base validada** | Evidencia durable + pipeline |
+| Evidencia durable + pipeline retomable | **Siguiente bloque técnico** | S3 / integración por etapas |
+| Elegibilidad | Pendiente | Allowlist/regla comercial |
+| Review + crédito/reversión | Ledger listo; operación pendiente | Revisores + flujo operativo |
+| Integración real con Andrés | Pendiente | Contrato app ↔ engine |
 | UAT adversarial | Pendiente | Flujo completo en test |
 | Producción controlada | Pendiente | UAT + rollback + aprobación |
 
@@ -36,10 +38,11 @@ Ver: `projects/pernod/README.md`
 
 | Periodo | Foco | Estado |
 |---|---|---|
-| 22 sep | Freeze parser + contrato/decisiones externas | En progreso |
-| 23–25 sep | Submission Ledger + antifraude + evidencia | Pendiente |
-| 25–27 sep | Review, elegibilidad, crédito/reversión e integración | Pendiente |
-| 28–29 sep | UAT real y adversarial | Pendiente |
+| 22 sep | Freeze parser + ledger + DynamoDB real | **Avance principal completado** |
+| 23–24 sep | Evidencia durable + pipeline retomable + antifraude integrado | Siguiente |
+| 24–26 sep | Elegibilidad + review + integración con Andrés | Pendiente |
+| 27 sep | Pruebas adversariales cross-channel | Pendiente |
+| 28–29 sep | UAT real | Pendiente |
 | 30 sep | Producción controlada, rollback y reconciliación | Pendiente |
 | 1 oct | Go-live controlado, review-first | Objetivo |
 | Octubre en adelante | Human | Por definir |
@@ -48,24 +51,26 @@ Ver: `projects/pernod/README.md`
 ## Avance ejecutivo
 
 - Flujo real de WhatsApp/Kapso, Lambda, OCR y SuperLikers Labs validado.
-- Parser congelado localmente con soporte para Layout 1, Layout 2 de 3 celdas y variante real de Layout 2 con contexto/item fusionados.
-- Suite completa y corpus histórico sin regresiones inesperadas; sólo el caso real esperado cambió de clasificación.
-- Master auditado contra 3.023 OCRs históricos y limpiado únicamente con cambios seguros.
-- Guardas contra falso crédito implementadas.
-- E2E remoto reveló una variante OCR que ahora está corregida localmente; el RAW exacto de esa ejecución sigue como gate antes de un nuevo deploy.
-- Análisis histórico confirmó que deduplicar sólo por archivo no es suficiente; antifraude e idempotencia pasan a ser P0.
-- Arquitectura de V1 redefinida como **Ticket Engine channel-independent**: WhatsApp es un canal; el app de Andrés podrá usar el mismo núcleo.
+- Parser congelado localmente con soporte para Layout 1, Layout 2 de 3 celdas y variante real con contexto/item fusionados.
+- Submission Ledger implementado con idempotencia, claims, review-first, crédito exactly-once, reversión append-only y kill switch.
+- Adapter DynamoDB validado localmente y luego contra **DynamoDB real** en AWS.
+- Validación real incluyó concurrencia de 20 callers, CAS/contention, unknown outcome, process restart, reversión y paridad semántica.
+- Regla confirmada con Andrés: un mismo ticket puede generar progreso para **dos beneficiarios**, con un único `reward_owner`.
+- Ledger multi-beneficiario validado atomicamente: ambos reciben el progreso o ninguno recibe.
+- Contabilidad interna definida en enteros: `COPA=1 progress_unit`, `BOTELLA=14 progress_units`.
+- Antifraude e idempotencia siguen como P0; el documento es único aunque aparezca por WhatsApp o app.
+- Arquitetura V1 permanece channel-independent: WhatsApp es un canal; el app de Andrés usará el mismo núcleo.
 - No se ha realizado release de producción con este estado.
 
 ## Pendientes principales
 
-- Cerrar contrato con Andrés: `participant_id`, modo de integración, periodo y comportamiento de reversión.
-- Definir allowlist inicial de productos/referencias elegibles.
-- Implementar Submission Ledger con idempotencia y concurrencia seguras.
-- Persistir evidencia de submission/documento y fingerprints antifraude.
-- Implementar revisión, crédito y reversal auditables.
-- Confirmar autoridad única de crédito para evitar doble contabilización.
-- UAT real, producción controlada, rollback y handover.
+- Integrar evidencia durable y el pipeline retomable con el ledger.
+- Validar S3 real para imagen, OCR bruto y parse.
+- Cerrar con Andrés: `participant_id`, origen de los dos beneficiarios, `reward_owner`, contrato app ↔ engine y tratamiento de reversal.
+- Definir allowlist inicial de productos/referencias elegibles y regla de periodo.
+- Implementar el flujo operacional de review.
+- Ejecutar UAT real y adversarial.
+- Preparar producción, kill switch, rollback, reconciliación y handover.
 
 ## Reglas de seguimiento
 
@@ -80,4 +85,4 @@ Para cada proyecto activo:
 
 ## Próxima revisión
 
-Revisar el resultado del primer bloque del Submission Ledger y el cierre del contrato con Andrés.
+Revisar el resultado de la integración de evidencia durable/pipeline y el cierre del contrato con Andrés.
