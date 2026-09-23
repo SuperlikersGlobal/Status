@@ -1,7 +1,7 @@
 # Pernod
 
 **Responsable:** Bruno Antoniassi  
-**Estado:** En progreso — parser congelado localmente / Submission Ledger como camino crítico  
+**Estado:** En progreso — parser congelado / ledger validado en DynamoDB real / durable pipeline como camino crítico  
 **Fecha objetivo:** V1 operativa y segura antes del **2026-10-01**  
 **Última actualización:** 2026-09-22
 
@@ -15,9 +15,9 @@ La V1 debe recibir evidencia, identificar el documento, procesar OCR/parser, apl
 
 ### Parser
 
-El parser quedó **congelado localmente** en un nuevo checkpoint después de cerrar una variante real del Layout 2 en la que Textract fusiona contexto, item y cantidad en una sola celda.
+El parser está **congelado localmente** después de cerrar una variante real del Layout 2 en la que Textract fusiona contexto, item y cantidad en una sola celda.
 
-El freeze local pasó:
+El freeze pasó:
 
 - Layout 1 sin regresiones;
 - Layout 2 original sin regresiones;
@@ -26,7 +26,7 @@ El freeze local pasó:
 - suite Python, Lambda handler y JS en verde;
 - corpus histórico de 3.023 documentos: sólo el caso real esperado cambió de clasificación.
 
-El E2E remoto previo había expuesto precisamente esta variante. El RAW exacto de esa ejecución sigue pendiente y será gate antes de volver a empaquetar/deployar el parser.
+El RAW exacto del E2E que expuso esa variante sigue pendiente y será gate antes de volver a empaquetar/deployar el parser.
 
 ### Runtime de test
 
@@ -36,27 +36,69 @@ Se verificó en AWS:
 
 - runtime Python 3.13;
 - handler correcto;
-- código congelado recibido por la Lambda;
-- smoke sin token → 401;
-- smoke autenticado → ruta y parsing correctos;
-- E2E real WhatsApp/Kapso completado.
+- smoke de autenticación y ruta;
+- E2E real WhatsApp/Kapso;
+- SuperLikers Labs aceptó la imagen con `distinct_id = email`.
 
 No hubo deploy de producción.
 
-### Cambio de prioridad
+### Submission Ledger
 
-El parser deja de ser el principal riesgo del proyecto. El camino crítico pasa a:
+El Submission Ledger ya no está sólo en diseño/local.
 
-1. contrato e identidad con Andrés;
-2. Submission Ledger;
-3. antifraude y deduplicación;
-4. review y crédito/reversión;
-5. elegibilidad;
-6. integración real;
-7. UAT;
-8. producción controlada.
+Se implementó y validó:
 
-La V1 será **review-first**: ningún resultado del parser autoriza crédito por sí solo.
+- idempotencia de `submission_id`;
+- claims globales de documento/contenido;
+- review-first;
+- crédito exactly-once;
+- reversión append-only;
+- kill switch;
+- saldo derivable por eventos;
+- soporte para 1–2 beneficiarios;
+- un único `reward_owner`;
+- atomicidad de crédito/reversión para todos los beneficiarios.
+
+La semántica multi-beneficiario confirmada con Andrés es:
+
+```text
+1 documento
+→ 1 autorización
+→ beneficiario A recibe +N
+→ beneficiario B recibe +N
+→ exactamente 1 reward_owner
+```
+
+Submitter y beneficiario dejan de ser conceptos equivalentes.
+
+### DynamoDB real
+
+El adapter DynamoDB pasó validação local y después fue probado contra una tabla real aislada en `us-east-1`.
+
+Resultado de la validación real:
+
+- smoke: PASS;
+- multi-beneficiario: PASS;
+- concurrencia real: PASS;
+- CAS/contention: PASS;
+- unknown outcome en CREDIT: PASS;
+- unknown outcome en REVERSAL: PASS;
+- process restart: PASS;
+- error mapping real: PASS;
+- semantic parity real: PASS.
+
+La batería incluyó:
+
+- 20 callers concurrentes para create/claim/credit/reversal;
+- dos documentos distintos actualizando el mismo participante;
+- mismo documento por WhatsApp/app;
+- tercero fuera del beneficiary set;
+- 50 seeds y 2.630 comparaciones de paridad;
+- reconciliación de saldos/eventos.
+
+Después de la batería, los datos sintéticos fueron eliminados y la tabla de integración quedó vacía.
+
+No hubo deploy ni cambio de Lambda/Kapso/SuperLikers durante esta validación.
 
 ## Arquitectura V1
 
@@ -81,7 +123,9 @@ App Andrés ─────┘          │
                    Challenge / Coins
 ```
 
-El engine no necesita administrar metas, rankings o coins.
+La V1 será **review-first**. Ningún resultado del parser autoriza crédito por sí solo.
+
+El engine no administra metas, rankings o coins.
 
 ## Unidad de progreso
 
@@ -94,112 +138,103 @@ Ejemplo:
 
 - 45 BOTELLAS + 129 COPAS = **759 progress_units**.
 
-No se redondea por ticket. La conversión a “botellas equivalentes” es derivada/informativa, no la unidad primaria del ledger.
+No se redondea por ticket. La conversión a botellas equivalentes es derivada/informativa.
 
 ## Antifraude V1
 
 Antifraude es P0 para 1/10.
 
-El mínimo previsto incluye:
+La base transaccional ya está validada:
 
 - idempotencia por submission;
-- SHA256 global de la imagen;
-- fingerprint de contenido OCR;
-- claims globales entre canales y participantes;
-- bloqueo de segundo crédito para el mismo documento;
-- carga/consulta de evidencia histórica cuando aplique;
-- plausibilidad y reason codes;
-- revisión humana obligatoria antes de CREDIT;
-- transacción atómica para evitar carreras entre WhatsApp/app/retries.
+- claims globales;
+- un único crédito original por documento;
+- dedup entre canales;
+- cross-participant control;
+- concorrencia segura;
+- reversal;
+- review obligatoria.
 
-El corpus histórico confirmó que deduplicar sólo por bytes no alcanza: existen reenvíos del mismo contenido en archivos distintos.
+El siguiente bloque integra esa base con evidencia durable:
 
-Near-duplicate visual avanzado no entra en el camino crítico de la V1 mientras el lanzamiento siga review-first.
+- SHA256 de imagen;
+- OCR/content fingerprint;
+- imagen original;
+- RAW OCR;
+- parse result;
+- versiones y reason codes.
 
-## Submission Ledger
-
-El siguiente bloque técnico implementa una única frontera de consistencia para:
-
-- `submission_id`;
-- `document_id`;
-- claims de imagen/contenido;
-- estado de procesamiento;
-- revisión;
-- CREDIT exactamente una vez;
-- REVERSAL append-only;
-- saldo/progreso derivable;
-- audit trail.
-
-Principios:
-
-- retry no crea otra submission;
-- misma submission con contenido distinto es conflicto;
-- mismo documento no puede generar dos créditos originales;
-- PENDING_REVIEW y REJECTED no alteran progreso;
-- CREDIT exige revisión;
-- REVERSAL no edita el histórico;
-- WhatsApp y app comparten el mismo dominio de dedup.
+Near-duplicate visual avanzado no entra en el camino crítico mientras la V1 siga review-first.
 
 ## Integración con Andrés
 
-El app de Andrés es un canal/consumidor, no parte del parser.
+Regla ya confirmada:
+
+- un mismo ticket puede sumar avance a dos personas;
+- ambas reciben el mismo avance;
+- sólo una queda habilitada para redención/recompensa.
 
 Pendiente cerrar:
 
 - `participant_id` canónico;
-- vínculo email/WhatsApp/app;
-- periodo comercial;
+- cómo el app determina/entrega los dos beneficiarios;
+- cómo informa el `reward_owner`;
+- contrato app → engine;
+- contrato engine → app;
+- regla de periodo;
 - allowlist elegible;
-- autoridad única de crédito;
-- modo de integración: snapshot versionado o feed de eventos;
-- comportamiento de reversal/reducción de progreso;
-- fecha y entorno de UAT real.
+- autoridad final de puntos/recompensa;
+- fecha y entorno de UAT.
 
 Challenge, metas y coins permanecen del lado de Andrés/SuperLikers.
 
-## Avances confirmados
+## Próximo bloque: durable pipeline
 
-- WhatsApp/Kapso recibe email e imagen y ejecuta el flujo real.
-- SuperLikers Labs acepta la evidencia y usa email como `distinct_id`.
-- AWS Textract integrado con documentos reales.
-- Parser soporta:
-  - matriz por sucursales con TOTAL;
-  - formato largo de 3 celdas;
-  - variante real con contexto/item fusionados.
-- Normalización de `BOT/BOT.` → `BOTELLA` y `COP/CP/COPA` → `COPA`.
-- Regla comercial confirmada: **14 copas = 1 botella**.
-- Ambigüedad permanece fail-closed / `NEEDS_REVIEW`.
-- Guardas contra números de SKU/nombre interpretados como cantidad.
-- Master auditado contra 3.023 OCRs históricos, con 73 aliases contaminados removidos de forma segura.
-- Tablas contextuales/review no contaminan totales directos.
-- Layout 1: BOTELLA 45, COPA 129, 759 progress_units observadas.
-- Layout 2: 31 cantidades conocidas, 1 cantidad nula preservada para revisión.
+El camino crítico inmediato es conectar el pipeline actual al ledger y hacer que el procesamiento sea retomable:
+
+```text
+submission
+→ persist image
+→ claim
+→ OCR
+→ persist RAW OCR
+→ fingerprint
+→ parser
+→ persist parse
+→ proposal
+→ PENDING_REVIEW
+```
+
+Una falla posterior no debe obligar a repetir desde cero ni duplicar efectos externos.
+
+La evidencia pesada debe quedar fuera de DynamoDB y ser persistida en storage privado; DynamoDB mantiene refs/hashes/estado.
 
 ## Roadmap hasta 1/10
 
-### 22/09
-- Freeze/checkpoint del parser.
-- Cerrar decisiones de arquitectura y contrato con Andrés.
+### 23–24/09
+- Evidencia durable.
+- Pipeline retomable.
+- Validación S3 real.
+- Integración de fingerprints/claims al fluxo.
 
-### 23–25/09
-- Submission Ledger.
-- Persistencia de evidencia.
-- Idempotencia y claims.
-- Antifraude V1.
-
-### 25–27/09
-- Revisión operativa.
-- Crédito/reversión atómicos.
+### 24–26/09
 - Elegibilidad versionada.
-- Integración con Andrés.
+- Review operacional.
+- Cerrar contrato con Andrés.
+- Integración app ↔ engine.
+
+### 27/09
+- Pruebas adversariales cross-channel y antifraude.
 
 ### 28–29/09
-- UAT con casos reales y adversariales:
-  - duplicata;
-  - re-encode;
-  - cross-user;
+- UAT con casos reales:
+  - Layout 1;
+  - Layout 2;
+  - otros formatos;
+  - duplicatas/re-encode;
   - retry;
   - concurrencia;
+  - multi-beneficiario;
   - reversal;
   - producto no elegible.
 
@@ -215,9 +250,10 @@ Challenge, metas y coins permanecen del lado de Andrés/SuperLikers.
 
 ## Dependencias y pendientes
 
+- Evidencia durable/S3.
 - Elegibilidad inicial aprobada.
 - Identidad canónica del participante.
-- Autoridad única de crédito.
+- Fuente de los dos beneficiarios y reward owner.
 - Revisores nombrados y flujo de decisión.
 - Contrato real con Andrés.
 - Canal/credenciales de producción.
@@ -227,30 +263,30 @@ Challenge, metas y coins permanecen del lado de Andrés/SuperLikers.
 ## Riesgos conocidos
 
 - Existe un caso sintético en que una tabla de precios puede ser estructuralmente indistinguible del Layout 2. En la V1 review-first esto no autoriza crédito automático.
-- El upload a SuperLikers ocurre antes del OCR en el flujo actual; una falla posterior puede encontrar duplicata en retry. El nuevo estado durável debe permitir retomar por etapa o desacoplar ese efecto.
-- El ZIP actualmente desplegado en test corresponde al checkpoint anterior; el nuevo parser congelado todavía no fue redeployado.
+- El flujo actual de SuperLikers ocurre antes del OCR; una falla posterior puede encontrar duplicate 177 en retry. El durable pipeline debe desacoplar/registrar ese efecto.
+- El ZIP actualmente desplegado en test corresponde al checkpoint anterior; el parser congelado más nuevo todavía no fue redeployado.
 - El RAW exacto del E2E que expuso la variante fusionada sigue pendiente.
 
 ## Criterio de finalización V1
 
-Pernod se considera listo para el alcance de 1/10 cuando:
+Pernod se considera listo para 1/10 cuando:
 
 1. la misma submission/documento no puede producir dos créditos;
-2. evidencia y decisiones son auditables;
+2. evidencia y decisiones son auditables y recuperables;
 3. antifraude mínimo opera entre canales y participantes;
 4. sólo productos elegibles generan propuesta;
 5. COPA/BOTELLA se convierten a progress_units sin redondeo por ticket;
-6. todo CREDIT tiene revisión registrada;
-7. REVERSAL es posible sin editar histórico;
-8. integración real con Andrés está validada;
-9. UAT adversarial pasó;
-10. producción, kill switch, rollback y reconciliación están comprobados.
+6. todo CREDIT tiene review registrada;
+7. dos beneficiarios reciben el progreso de forma atómica cuando corresponde;
+8. existe exactamente un reward owner;
+9. REVERSAL es posible sin editar histórico;
+10. integración real con Andrés está validada;
+11. UAT adversarial pasó;
+12. producción, kill switch, rollback y reconciliación están comprobados.
 
 ## Siguiente paso
 
-**START_SUBMISSION_LEDGER**.
-
-El parser queda fuera del camino crítico salvo bug de seguridad o gate necesario para el próximo redeploy.
+**INTEGRATE_DURABLE_EVIDENCE_AND_PIPELINE_WITH_LEDGER**.
 
 ## Historial
 
