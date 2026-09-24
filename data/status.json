@@ -1,31 +1,31 @@
 {
   "schema_version": "status-v0",
-  "generated_at": "2026-09-21",
-  "source": "GitHub Issues #1-#6",
-  "note": "Snapshot de fallback para agentes cuando la API local de Status no está activa. Comparar esta fecha con la actualización más reciente de la branch personal antes de responder.",
+  "generated_at": "2026-09-24",
+  "source": "GitHub Issues #1-#6 + actualización personal Bruno/Pernod 2026-09-24",
+  "note": "Snapshot de fallback. Comparar siempre con la actualización fechada más reciente de la branch personal.",
   "tasks": [
     {
       "title": "Parser remoto + homologación",
       "url": "https://github.com/SuperlikersGlobal/Status/issues/1",
-      "state": "open",
+      "state": "closed",
       "commentsCount": 1,
       "project": "Pernod",
       "owner": "Bruno",
-      "status": "in_progress",
+      "status": "done",
       "priority": "high",
       "start": "2026-09-17",
-      "due": "2026-09-22",
+      "due": "2026-09-24",
       "order": 1,
-      "summary": "Cerrar el freeze final del parser, generar un paquete reproducible y repetir el flujo completo en el entorno remoto de prueba antes de avanzar a elegibilidad e integración.",
-      "why": "La lectura y normalización ya funcionan con casos reales y dos estructuras distintas. Este gate confirma que el resultado local se reproduce de forma segura en el entorno remoto antes de conectar las siguientes etapas.",
+      "summary": "Cerrar el bloque técnico del Ticket Processing Engine y probar validation-before-upload de punta a punta en homologación.",
+      "why": "Confirma que OCR, parser, evidencia durable, validación, delivery e idempotencia funcionan antes de entregar el endpoint a Andrés.",
       "acceptance": [
-        "FULL_PARSER_FREEZE_AUDIT finalizado sin blocker funcional.",
-        "Manifest/runtime y hashes generados.",
-        "ZIP reproducible generado.",
-        "Deploy realizado únicamente en Lambda de test.",
-        "Nuevo E2E por WhatsApp confirma el mismo comportamiento de los replays locales."
+        "Parser/OCR/mapping congelados y validados.",
+        "Pipeline durable desplegado en homologación.",
+        "Smoke real ejecutado con VALID y upload ACCEPTED en SuperLikers LABS.",
+        "Replay del mismo request no genera un segundo efecto.",
+        "Sin deploy de producción."
       ],
-      "technical": "La etapa original de parser/homologación está en cierre final. Ventana vigente del gate: **21–22/09/2026**."
+      "technical": "Bloque técnico de homologación cerrado el 24/09/2026."
     },
     {
       "title": "Elegibilidad + integración con Andrés",
@@ -34,41 +34,41 @@
       "commentsCount": 0,
       "project": "Pernod",
       "owner": "Bruno",
-      "status": "ready",
+      "status": "in_progress",
       "priority": "high",
       "start": "2026-09-22",
       "due": "2026-09-24",
       "order": 2,
-      "summary": "Definir qué referencias/marcas son elegibles y cerrar con Andrés el contrato exacto para entregar el avance en botellas.",
-      "why": "Evita que parser e integración avancen con reglas distintas y define exactamente qué información debe entrar y salir entre ambos lados del flujo.",
+      "summary": "Cerrar la prueba de integración de Andrés y las reglas comerciales necesarias para convertir la policy de homologación en una policy real.",
+      "why": "El endpoint técnico ya funciona; ahora falta confirmar consumo desde el lado de Andrés y gobernar las reglas que hoy producen NOT_VALIDATED.",
       "acceptance": [
-        "Reglas de elegibilidad definidas.",
-        "Referencias/marcas incluidas y excluidas explícitas.",
-        "Punto de integración con Andrés confirmado.",
-        "Formato de entrega del avance en botellas documentado."
+        "Andrés prueba y confirma el contrato del endpoint.",
+        "Reglas comerciales necesarias quedan gobernadas.",
+        "Policy real de producción queda definida sin fixtures.",
+        "CDC/doble registro queda cerrado sobre validation-before-upload."
       ],
-      "technical": "Elegibilidad + contrato/punto de integración con Andrés. Ventana prevista: **22–24/09/2026**, sujeta al cierre del gate anterior."
+      "technical": "Gate actual: prueba de Andrés. Pendientes de negocio: copas, marca→usuario, cócteles, periodo y referencias."
     },
     {
       "title": "Acumulación + idempotencia mínima",
       "url": "https://github.com/SuperlikersGlobal/Status/issues/3",
-      "state": "open",
+      "state": "closed",
       "commentsCount": 0,
       "project": "Pernod",
       "owner": "Bruno",
-      "status": "backlog",
+      "status": "done",
       "priority": "high",
       "start": "2026-09-24",
-      "due": "2026-09-25",
+      "due": "2026-09-24",
       "order": 3,
-      "summary": "Garantizar que la información pueda acumularse correctamente y que procesar dos veces el mismo evento no genere duplicados o resultados inconsistentes.",
-      "why": "Reduce errores silenciosos y evita que una repetición del flujo altere los datos finales.",
+      "summary": "Asegurar processing durable e idempotente para que retries y replays no dupliquen efectos externos.",
+      "why": "Evita uploads duplicados y permite retomar el flujo de forma segura.",
       "acceptance": [
-        "Acumulación funcionando para el alcance previsto.",
-        "Reprocesamiento básico sin duplicar resultados.",
-        "Comportamiento mínimo de idempotencia validado."
+        "Ledger/evidence/pipeline durable validados.",
+        "Intent persistido antes del network call.",
+        "Replay real después de ACCEPTED produce cero segundo upload."
       ],
-      "technical": "Acumulación + idempotencia mínima. Ventana prevista: 24–25/09/2026."
+      "technical": "Idempotencia mínima cerrada. Acumulación económica de puntos queda fuera del boundary activo del Ticket Engine."
     },
     {
       "title": "UAT con casos variados + correcciones",
@@ -82,14 +82,14 @@
       "start": "2026-09-26",
       "due": "2026-09-28",
       "order": 4,
-      "summary": "Probar el flujo con distintos casos reales o representativos y corregir los problemas que aparezcan antes de producción.",
-      "why": "Es la validación práctica de que el sistema funciona fuera del caso ideal y permite corregir fallas antes de exponerlo a operación.",
+      "summary": "Probar el flujo con distintos casos reales o representativos y corregir problemas antes de producción.",
+      "why": "Valida el comportamiento fuera del happy path con la policy real y la integración final.",
       "acceptance": [
         "UAT ejecutado con casos variados.",
         "Problemas encontrados registrados.",
         "Correcciones críticas aplicadas y revalidadas."
       ],
-      "technical": "UAT con tickets/casos variados + correcciones. Ventana prevista: 26–28/09/2026."
+      "technical": "Depende de cerrar integración Andrés + reglas comerciales + policy real/CDC."
     },
     {
       "title": "Producción controlada + rollback + handover",
@@ -103,14 +103,14 @@
       "start": "2026-09-29",
       "due": "2026-09-30",
       "order": 5,
-      "summary": "Llevar el flujo a producción de forma controlada, comprobar que existe una forma segura de volver atrás si algo falla y dejar el proceso documentado para que otra persona pueda asumirlo.",
-      "why": "Reduce el riesgo del paso a producción y evita que el conocimiento quede concentrado únicamente en quien implementó la solución.",
+      "summary": "Llevar el flujo a producción de forma controlada, con rollback y handover verificables.",
+      "why": "Reduce riesgo de activación y evita dependencia de una sola persona.",
       "acceptance": [
         "Producción controlada ejecutada.",
-        "Rollback comprobado o documentado de forma verificable.",
-        "Handover preparado con el contexto necesario."
+        "Rollback comprobado o documentado.",
+        "Handover preparado."
       ],
-      "technical": "Producción controlada + rollback + handover. Ventana prevista: 29–30/09/2026."
+      "technical": "Ventana prevista: 29–30/09/2026."
     },
     {
       "title": "Go-live / ajuste final",
@@ -124,14 +124,14 @@
       "start": "2026-10-01",
       "due": "2026-10-01",
       "order": 6,
-      "summary": "Reservar el 1 de octubre como margen para activar definitivamente el flujo o realizar el último ajuste necesario antes de cerrar el alcance.",
-      "why": "Evita que el cronograma dependa de una transición perfecta y deja una ventana explícita para resolver el último detalle sin perder la fecha objetivo.",
+      "summary": "Reservar el 1 de octubre para activar definitivamente el flujo o realizar el último ajuste.",
+      "why": "Mantiene margen explícito antes de cerrar el alcance.",
       "acceptance": [
         "Go-live realizado o último ajuste aplicado.",
         "Estado final documentado.",
-        "Dependencias restantes, si existen, explícitas."
+        "Dependencias restantes explícitas."
       ],
-      "technical": "Margen final de go-live / ajuste. Fecha prevista: 01/10/2026."
+      "technical": "Hard deadline: 01/10/2026."
     }
   ]
 }
