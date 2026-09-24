@@ -1,292 +1,242 @@
 # Pernod
 
 **Responsable:** Bruno Antoniassi  
-**Estado:** En progreso — parser congelado / ledger validado en DynamoDB real / durable pipeline como camino crítico  
-**Fecha objetivo:** V1 operativa y segura antes del **2026-10-01**  
-**Última actualización:** 2026-09-22
+**Estado:** En progreso — V0 de homologación desplegada / smoke real LABS aprobado / prueba de Andrés pendiente  
+**Fecha objetivo:** flujo operativo y seguro antes del **2026-10-01**  
+**Última actualización:** 2026-09-24
 
 ## Objetivo
 
-Construir un **Pernod Ticket Processing Engine** independiente del canal de entrada. WhatsApp/Kapso es el primer canal; el app de Andrés podrá acoplarse al mismo núcleo.
+Construir un **Pernod Ticket Processing Engine** independiente del canal de entrada.
 
-La V1 debe recibir evidencia, identificar el documento, procesar OCR/parser, aplicar elegibilidad y antifraude, proponer progreso, exigir revisión humana, registrar crédito/reversión de forma idempotente y entregar progreso a la plataforma que administra challenge y coins.
+WhatsApp/Kapso y el app de Andrés deben poder usar el mismo núcleo para:
 
-## Estado actual
+1. recibir la imagen;
+2. preservar evidencia;
+3. ejecutar OCR y parser;
+4. deduplicar;
+5. validar el documento;
+6. decidir si puede seguir;
+7. registrar en SuperLikers cuando corresponda;
+8. mantener trazabilidad, retry e idempotencia.
 
-### Parser
+## Boundary activo
 
-El parser está **congelado localmente** después de cerrar una variante real del Layout 2 en la que Textract fusiona contexto, item y cantidad en una sola celda.
+La conversación más reciente con Andrés cambió el boundary respecto del diseño económico anterior.
 
-El freeze pasó:
+El engine actual **no controla**:
 
-- Layout 1 sin regresiones;
-- Layout 2 original sin regresiones;
-- variante fusionada real reconocida;
-- guardas de falso crédito preservadas;
-- suite Python, Lambda handler y JS en verde;
-- corpus histórico de 3.023 documentos: sólo el caso real esperado cambió de clasificación.
+- puntos;
+- metas;
+- challenge;
+- reward_owner;
+- redención;
+- balances;
+- crédito.
 
-El RAW exacto del E2E que expuso esa variante sigue pendiente y será gate antes de volver a empaquetar/deployar el parser.
+Andrés confirmó que esos elementos se manejan de su lado.
 
-### Runtime de test
-
-El ZIP reproducible anterior fue desplegado únicamente en `Pernod-kapso-ticket-test`.
-
-Se verificó en AWS:
-
-- runtime Python 3.13;
-- handler correcto;
-- smoke de autenticación y ruta;
-- E2E real WhatsApp/Kapso;
-- SuperLikers Labs aceptó la imagen con `distinct_id = email`.
-
-No hubo deploy de producción.
-
-### Submission Ledger
-
-El Submission Ledger ya no está sólo en diseño/local.
-
-Se implementó y validó:
-
-- idempotencia de `submission_id`;
-- claims globales de documento/contenido;
-- review-first;
-- crédito exactly-once;
-- reversión append-only;
-- kill switch;
-- saldo derivable por eventos;
-- soporte para 1–2 beneficiarios;
-- un único `reward_owner`;
-- atomicidad de crédito/reversión para todos los beneficiarios.
-
-La semántica multi-beneficiario confirmada con Andrés es:
+Por lo tanto:
 
 ```text
-1 documento
-→ 1 autorización
-→ beneficiario A recibe +N
-→ beneficiario B recibe +N
-→ exactamente 1 reward_owner
+DOCUMENT_VALIDATION
+≠
+POINTS / CHALLENGE ELIGIBILITY
 ```
 
-Submitter y beneficiario dejan de ser conceptos equivalentes.
+El subsistema económico previo se conserva, pero está fuera del flujo activo del app de Andrés.
 
-### DynamoDB real
-
-El adapter DynamoDB pasó validação local y después fue probado contra una tabla real aislada en `us-east-1`.
-
-Resultado de la validación real:
-
-- smoke: PASS;
-- multi-beneficiario: PASS;
-- concurrencia real: PASS;
-- CAS/contention: PASS;
-- unknown outcome en CREDIT: PASS;
-- unknown outcome en REVERSAL: PASS;
-- process restart: PASS;
-- error mapping real: PASS;
-- semantic parity real: PASS.
-
-La batería incluyó:
-
-- 20 callers concurrentes para create/claim/credit/reversal;
-- dos documentos distintos actualizando el mismo participante;
-- mismo documento por WhatsApp/app;
-- tercero fuera del beneficiary set;
-- 50 seeds y 2.630 comparaciones de paridad;
-- reconciliación de saldos/eventos.
-
-Después de la batería, los datos sintéticos fueron eliminados y la tabla de integración quedó vacía.
-
-No hubo deploy ni cambio de Lambda/Kapso/SuperLikers durante esta validación.
-
-## Arquitectura V1
+## Arquitectura actual
 
 ```text
 WhatsApp/Kapso ─┐
-                ├──> Ticket / Submission Engine
+                ├──> Ticket Processing Engine
 App Andrés ─────┘          │
                            ├── evidencia durable
-                           ├── dedup / antifraude
+                           ├── dedup
                            ├── OCR
                            ├── parser
-                           ├── elegibilidad
-                           ├── propuesta en progress_units
-                           ├── revisión humana
+                           ├── document validation
                            ↓
-                    Submission Ledger
+                     Validation Decision
                            │
-                    CREDIT / REVERSAL
-                           ↓
-                         Andrés
-                           ↓
-                   Challenge / Coins
+              ┌────────────┴────────────┐
+              │                         │
+            VALID                 otros estados
+              │                         │
+      upload SuperLikers          cero upload
+              │                         │
+       delivery result            respuesta + motivo
 ```
 
-La V1 será **review-first**. Ningún resultado del parser autoriza crédito por sí solo.
+## Contrato de validación
 
-El engine no administra metas, rankings o coins.
+Estados principales:
 
-## Unidad de progreso
+- **VALID** → todos los gates requeridos por la policy pasaron; puede intentarse el upload;
+- **NOT_VALIDATED** → falta evidencia o una regla necesaria aún no está gobernada; no se sube;
+- **INVALID** → una regla gobernada con inputs gobernados falló; no se sube;
+- **RETAKE_REQUIRED** → la imagen no permite validación suficiente; pedir otra foto;
+- **DUPLICATE** → el documento/imagen ya fue procesado; no generar otro efecto.
 
-La autoridad contable de la V1 será entera:
+Un fallo técnico no se convierte en rechazo comercial.
 
-- **COPA = 1 progress_unit**
-- **BOTELLA = 14 progress_units**
+Validation y delivery están separados: `VALID` no significa por sí solo que SuperLikers haya aceptado el upload.
 
-Ejemplo:
+## V0 de homologación
 
-- 45 BOTELLAS + 129 COPAS = **759 progress_units**.
+La V0 quedó congelada y desplegada en infraestructura aislada de AWS.
 
-No se redondea por ticket. La conversión a botellas equivalentes es derivada/informativa.
+Incluye:
 
-## Antifraude V1
+- Lambda dedicada;
+- Function URL;
+- DynamoDB dedicado;
+- S3 privado de evidencia;
+- OCR Lambda existente;
+- secrets separados;
+- policy de homologación versionada;
+- fixtures gobernadas sólo para probar el happy path;
+- replay/idempotencia durable.
 
-Antifraude es P0 para 1/10.
+No existe deploy de producción.
 
-La base transaccional ya está validada:
+## Smoke externo real
 
-- idempotencia por submission;
-- claims globales;
-- un único crédito original por documento;
-- dedup entre canales;
-- cross-participant control;
-- concorrencia segura;
-- reversal;
-- review obligatoria.
+La homologación técnica pasó de punta a punta:
 
-El siguiente bloque integra esa base con evidencia durable:
+```text
+F0779
+→ OCR real
+→ parser
+→ 12 gates
+→ VALID
+→ SuperLikers LABS
+→ ACCEPTED
+```
 
-- SHA256 de imagen;
-- OCR/content fingerprint;
-- imagen original;
-- RAW OCR;
-- parse result;
-- versiones y reason codes.
+Además:
 
-Near-duplicate visual avanzado no entra en el camino crítico mientras la V1 siga review-first.
+- campaña LABS `3z` confirmada;
+- participante de prueba aceptado por LABS;
+- `credit_applied = false`;
+- replay con el mismo `request_id` devolvió la misma respuesta;
+- replay produjo cero segundo efecto externo;
+- evidencia quedó sólo en el prefix de homologación;
+- logs revisados sin exposición de secrets o payloads sensibles.
+
+Un smoke anterior con un UID no verificado llegó a `VALID` pero el provider respondió 404. Al usar un participante de prueba conocido, LABS aceptó el upload.
 
 ## Integración con Andrés
 
-Regla ya confirmada:
+Ya se entregó a Andrés:
 
-- un mismo ticket puede sumar avance a dos personas;
-- ambas reciben el mismo avance;
-- sólo una queda habilitada para redención/recompensa.
+- endpoint de homologación;
+- colección Postman;
+- environment;
+- token por canal separado;
+- contrato de request/response.
 
-Pendiente cerrar:
+La integración final debe ser server-to-server desde su Lambda.
 
-- `participant_id` canónico;
-- cómo el app determina/entrega los dos beneficiarios;
-- cómo informa el `reward_owner`;
-- contrato app → engine;
-- contrato engine → app;
-- regla de periodo;
-- allowlist elegible;
-- autoridad final de puntos/recompensa;
-- fecha y entorno de UAT.
+**Gate actual:** Andrés debe ejecutar la prueba desde su lado y confirmar que puede consumir el contrato.
 
-Challenge, metas y coins permanecen del lado de Andrés/SuperLikers.
+## Reglas comerciales
 
-## Próximo bloque: durable pipeline
+### Confirmado
 
-El camino crítico inmediato es conectar el pipeline actual al ledger y hacer que el procesamiento sea retomable:
+María/Cami confirmó:
+
+- COPAS aplican;
+- BOTELLAS aplican;
+- existen cócteles;
+- ticket del mes M puede enviarse durante M o hasta el día 5 de M+1 inclusive.
+
+### Preguntas ya enviadas y pendientes
+
+1. ¿La cantidad variable de copas cambia también la equivalencia copa→botella según referencia/cóctel, o sólo cambia la cantidad observada?
+2. ¿Marca→usuario es gate antes del upload o se usa sólo después para reto/puntos?
+3. ¿Cómo tratar cócteles antes de recibir el detalle final del cliente?
+
+### Pendiente adicional para producción
+
+- timezone oficial de la campaña;
+- fuente gobernada de la fecha oficial del ticket;
+- lista/participación final de referencias.
+
+Mientras una regla necesaria no esté establecida, la policy falla cerrado con `NOT_VALIDATED`.
+
+## CDC / doble registro
+
+Existe evidencia documental de que un ticket puede generar actividad para:
+
+- gerente;
+- Centro de Consumo relacionado.
+
+El Centro se resuelve por relación/tags y debe usar un participante real. No se fabrica el UID por concatenación.
+
+Este flujo todavía debe cerrarse sobre el nuevo orden:
 
 ```text
-submission
-→ persist image
-→ claim
-→ OCR
-→ persist RAW OCR
-→ fingerprint
-→ parser
-→ persist parse
-→ proposal
-→ PENDING_REVIEW
+validar
+→ si VALID
+→ registrar efectos necesarios
 ```
 
-Una falla posterior no debe obligar a repetir desde cero ni duplicar efectos externos.
+## Idempotencia y durable pipeline
 
-La evidencia pesada debe quedar fuera de DynamoDB y ser persistida en storage privado; DynamoDB mantiene refs/hashes/estado.
+Ya están validados:
+
+- EvidenceStore con S3 real;
+- Submission Ledger;
+- DynamoDB real;
+- pipeline durable/retomable;
+- retry/restart;
+- concurrencia;
+- lost-response sin repost ciego;
+- exact image dedup;
+- content duplicate como sospecha no concluyente;
+- effect intent antes del network call;
+- replay sin segundo efecto.
+
+La reconciliación automática de resultados `UNKNOWN` queda fuera de la V0.
 
 ## Roadmap hasta 1/10
 
-### 23–24/09
-- Evidencia durable.
-- Pipeline retomable.
-- Validación S3 real.
-- Integración de fingerprints/claims al fluxo.
+### Ahora
+- prueba de Andrés sobre el endpoint;
+- esperar respuestas comerciales de María/Cami.
 
-### 24–26/09
-- Elegibilidad versionada.
-- Review operacional.
-- Cerrar contrato con Andrés.
-- Integración app ↔ engine.
-
-### 27/09
-- Pruebas adversariales cross-channel y antifraude.
-
-### 28–29/09
-- UAT con casos reales:
-  - Layout 1;
-  - Layout 2;
-  - otros formatos;
-  - duplicatas/re-encode;
-  - retry;
-  - concurrencia;
-  - multi-beneficiario;
-  - reversal;
-  - producto no elegible.
-
-### 30/09
-- Producción controlada.
-- Reconciliación.
-- Kill switch.
-- Rollback.
-- Runbook.
+### Después
+- policy real de producción, sin fixtures;
+- cerrar CDC / doble registro;
+- UAT con casos variados y adversariales;
+- producción controlada;
+- rollback y handover.
 
 ### 01/10
-- Go-live controlado, review-first.
+- go-live / ajuste final.
 
-## Dependencias y pendientes
+## Riesgos y pendientes
 
-- Evidencia durable/S3.
-- Elegibilidad inicial aprobada.
-- Identidad canónica del participante.
-- Fuente de los dos beneficiarios y reward owner.
-- Revisores nombrados y flujo de decisión.
-- Contrato real con Andrés.
-- Canal/credenciales de producción.
-- Política de periodo para documentos tardíos.
-- Gate remoto del RAW exacto antes del próximo redeploy del parser.
+- Muchos tickets reales pueden quedar `NOT_VALIDATED` mientras las reglas comerciales definitivas no estén cerradas.
+- La fecha del ticket todavía no tiene una fuente gobernada suficiente para aplicar el periodo automáticamente en producción.
+- Cócteles y marca→usuario dependen de definición comercial.
+- CDC/doble registro aún no está cerrado sobre validation-before-upload.
+- `moderation=rejected` sigue fuera de V0.
+- No se promete antifraude visual absoluto para fotos diferentes de la misma nota.
 
-## Riesgos conocidos
+## Criterio de siguiente gate
 
-- Existe un caso sintético en que una tabla de precios puede ser estructuralmente indistinguible del Layout 2. En la V1 review-first esto no autoriza crédito automático.
-- El flujo actual de SuperLikers ocurre antes del OCR; una falla posterior puede encontrar duplicate 177 en retry. El durable pipeline debe desacoplar/registrar ese efecto.
-- El ZIP actualmente desplegado en test corresponde al checkpoint anterior; el parser congelado más nuevo todavía no fue redeployado.
-- El RAW exacto del E2E que expuso la variante fusionada sigue pendiente.
+La integración con Andrés se considera homologada cuando:
 
-## Criterio de finalización V1
+1. consume el endpoint desde su lado;
+2. recibe y entiende los estados;
+3. confirma el contrato de `participant_uid`, imagen y `request_id`;
+4. valida que el replay no duplica efectos;
+5. no requiere cambio de boundary.
 
-Pernod se considera listo para 1/10 cuando:
-
-1. la misma submission/documento no puede producir dos créditos;
-2. evidencia y decisiones son auditables y recuperables;
-3. antifraude mínimo opera entre canales y participantes;
-4. sólo productos elegibles generan propuesta;
-5. COPA/BOTELLA se convierten a progress_units sin redondeo por ticket;
-6. todo CREDIT tiene review registrada;
-7. dos beneficiarios reciben el progreso de forma atómica cuando corresponde;
-8. existe exactamente un reward owner;
-9. REVERSAL es posible sin editar histórico;
-10. integración real con Andrés está validada;
-11. UAT adversarial pasó;
-12. producción, kill switch, rollback y reconciliación están comprobados.
-
-## Siguiente paso
-
-**INTEGRATE_DURABLE_EVIDENCE_AND_PIPELINE_WITH_LEDGER**.
+Después de ese gate, el camino crítico pasa a **policy real + CDC + UAT + producción controlada**.
 
 ## Historial
 
