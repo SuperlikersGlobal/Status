@@ -3,19 +3,19 @@
 **Responsable:** Bruno Antoniassi  
 **Branch:** `bruno`  
 **Periodo del plan:** 2026-09-17 → 2026-10-17  
-**Última actualización:** 2026-09-22
+**Última actualización:** 2026-09-24
 
 ## Prioridad actual
 
 ### 1. Pernod
 
-**Meta:** Llegar a una V1 operativa y segura antes del **2026-10-01**. La fecha se considera fija; si hace falta, se reduce alcance, no seguridad.
+**Meta:** dejar el flujo operativo y seguro antes del **2026-10-01**. La fecha sigue fija; si hace falta, se reduce alcance, no seguridad.
 
-**Estado actual:** En progreso. El parser está congelado localmente y el **Submission Ledger ya fue validado contra DynamoDB real** en AWS con concurrencia, retries, restart, reversión y soporte multi-beneficiario. El camino crítico pasa ahora a **evidencia durable + pipeline retomable**, elegibilidad, review operativo e integración real con Andrés.
+**Estado actual:** En progreso. La V0 de homologación validation-before-upload está desplegada en AWS y pasó un smoke real de punta a punta con OCR en vivo, `VALID`, upload `ACCEPTED` en SuperLikers LABS y replay sin segundo efecto. El endpoint y Postman ya fueron enviados a Andrés con el token por separado.
 
-**Estrategia V1:** `review-first`. El engine propone el progreso y aplica antifraude; un revisor autoriza el crédito. Challenge, metas y coins quedan fuera del engine y pertenecen a la plataforma de Andrés/SuperLikers.
+**Gate actual:** prueba de integración de Andrés.
 
-**Criterio de éxito:** El flujo debe quedar operable de punta a punta con identidad de submission/documento, evidencia durable, deduplicación entre canales, elegibilidad, conversión `COPA=1 unit / BOTELLA=14 units`, revisión, crédito exactamente una vez, reversión, integración real con Andrés, UAT, rollback y producción controlada.
+**Cambio importante de boundary:** el engine ya no controla puntos, metas, challenge, reward_owner, redención, balances ni crédito para el flujo de Andrés. Su responsabilidad activa es validar el documento y registrar en SuperLikers sólo cuando la policy lo permite.
 
 Ver: `projects/pernod/README.md`
 
@@ -23,54 +23,92 @@ Ver: `projects/pernod/README.md`
 
 | Bloque | Estado | Dependencia principal |
 |---|---|---|
-| Freeze del parser | **Cerrado localmente** | Gate remoto del RAW exacto sigue pendiente antes de redeploy |
-| Submission Ledger | **Validado localmente y en DynamoDB real** | Integración al pipeline |
-| Multi-beneficiario | **Validado** | Regla de identificación con Andrés |
-| Antifraude transaccional / dedup | **Base validada** | Evidencia durable + pipeline |
-| Evidencia durable + pipeline retomable | **Siguiente bloque técnico** | S3 / integración por etapas |
-| Elegibilidad | Pendiente | Allowlist/regla comercial |
-| Review + crédito/reversión | Ledger listo; operación pendiente | Revisores + flujo operativo |
-| Integración real con Andrés | Pendiente | Contrato app ↔ engine |
-| UAT adversarial | Pendiente | Flujo completo en test |
+| Parser / OCR / mapping | **Validado** | Mantener congelado salvo evidencia nueva |
+| Evidencia durable + pipeline retomable | **Validado** | Operación/UAT |
+| Idempotencia / dedup / replay | **Validado** | Reconciliación avanzada queda fuera de V0 |
+| V0 validation-before-upload | **Homologada técnicamente** | Prueba de Andrés |
+| Integración con Andrés | **En progreso** | Andrés debe consumir el endpoint |
+| Reglas comerciales María/Cami | **Pendiente de respuesta** | Copas, marca→usuario, cócteles |
+| Policy real de producción | Pendiente | Reglas comerciales + periodo |
+| CDC / doble registro | Pendiente | Cerrar sobre validation-before-upload |
+| UAT adversarial | Pendiente | Policy real + integración |
 | Producción controlada | Pendiente | UAT + rollback + aprobación |
 
 ## Enfoque hasta el go-live
 
 | Periodo | Foco | Estado |
 |---|---|---|
-| 22 sep | Freeze parser + ledger + DynamoDB real | **Avance principal completado** |
-| 23–24 sep | Evidencia durable + pipeline retomable + antifraude integrado | Siguiente |
-| 24–26 sep | Elegibilidad + review + integración con Andrés | Pendiente |
-| 27 sep | Pruebas adversariales cross-channel | Pendiente |
-| 28–29 sep | UAT real | Pendiente |
-| 30 sep | Producción controlada, rollback y reconciliación | Pendiente |
-| 1 oct | Go-live controlado, review-first | Objetivo |
+| 24 sep | Cerrar homologación técnica + handoff Andrés | **Completado de nuestro lado** |
+| 24–26 sep | Prueba Andrés + reglas comerciales + policy real | En progreso / pendiente externo |
+| 26–28 sep | CDC + UAT + correcciones | Pendiente |
+| 29–30 sep | Producción controlada + rollback + handover | Pendiente |
+| 01 oct | Go-live / ajuste final | Objetivo |
 | Octubre en adelante | Human | Por definir |
 | Octubre en adelante | MyDesk | Por definir |
 
 ## Avance ejecutivo
 
-- Flujo real de WhatsApp/Kapso, Lambda, OCR y SuperLikers Labs validado.
-- Parser congelado localmente con soporte para Layout 1, Layout 2 de 3 celdas y variante real con contexto/item fusionados.
-- Submission Ledger implementado con idempotencia, claims, review-first, crédito exactly-once, reversión append-only y kill switch.
-- Adapter DynamoDB validado localmente y luego contra **DynamoDB real** en AWS.
-- Validación real incluyó concurrencia de 20 callers, CAS/contention, unknown outcome, process restart, reversión y paridad semántica.
-- Regla confirmada con Andrés: un mismo ticket puede generar progreso para **dos beneficiarios**, con un único `reward_owner`.
-- Ledger multi-beneficiario validado atomicamente: ambos reciben el progreso o ninguno recibe.
-- Contabilidad interna definida en enteros: `COPA=1 progress_unit`, `BOTELLA=14 progress_units`.
-- Antifraude e idempotencia siguen como P0; el documento es único aunque aparezca por WhatsApp o app.
-- Arquitetura V1 permanece channel-independent: WhatsApp es un canal; el app de Andrés usará el mismo núcleo.
-- No se ha realizado release de producción con este estado.
+- V0 de homologación congelada y desplegada en infraestructura aislada.
+- OCR real, parser/master y validación ejecutados en runtime de AWS.
+- Smoke externo real pasó `VALID → ACCEPTED` en SuperLikers LABS campaña `3z`.
+- Replay del mismo request produjo cero segundo efecto externo.
+- EvidenceStore/S3, DynamoDB, receipts e idempotencia durable validados.
+- Logs de homologación revisados sin exposición de API key, token, imagen base64, environment completo o provider raw.
+- Policy temporal de update usada durante homologación fue revocada.
+- Endpoint, Postman/environment e instrucciones ya enviados a Andrés; token entregado por separado.
+- `participant_uid` se trata como UID opaco; un participante de prueba conocido fue aceptado por LABS.
+- `credit_applied = false`: el endpoint no aplica puntos/crédito.
+- No hubo deploy de producción.
+
+## Boundary actual confirmado
+
+Nuestro engine:
+
+- recibe/preserva evidencia;
+- ejecuta OCR/parser;
+- deduplica;
+- valida el documento;
+- persiste decisión;
+- si `VALID`, intenta registrar en SuperLikers;
+- persiste resultado de delivery;
+- protege retry/replay contra duplicación.
+
+Andrés/SuperLikers:
+
+- puntos;
+- metas;
+- challenge;
+- reward/redención.
 
 ## Pendientes principales
 
-- Integrar evidencia durable y el pipeline retomable con el ledger.
-- Validar S3 real para imagen, OCR bruto y parse.
-- Cerrar con Andrés: `participant_id`, origen de los dos beneficiarios, `reward_owner`, contrato app ↔ engine y tratamiento de reversal.
-- Definir allowlist inicial de productos/referencias elegibles y regla de periodo.
-- Implementar el flujo operacional de review.
-- Ejecutar UAT real y adversarial.
-- Preparar producción, kill switch, rollback, reconciliación y handover.
+### Andrés
+
+- ejecutar la prueba con Postman/Lambda;
+- confirmar que consume el contrato sin cambio de boundary;
+- validar comportamiento de estados y replay.
+
+### María/Cami
+
+Ya preguntado y pendiente:
+
+- si la variación de copas cambia equivalencia o sólo cantidad;
+- si marca→usuario es gate previo o sólo cálculo posterior;
+- cómo tratar cócteles antes del detalle final.
+
+Después, si sigue sin respuesta:
+
+- timezone oficial;
+- fuente gobernada de la fecha del ticket.
+
+### Producción
+
+- convertir policy de homologación en policy real sin fixtures;
+- cerrar CDC/doble registro;
+- UAT variado/adversarial;
+- producción controlada;
+- rollback;
+- handover.
 
 ## Reglas de seguimiento
 
@@ -78,11 +116,12 @@ Este archivo es la vista ejecutiva para liderazgo.
 
 Para cada proyecto activo:
 
-- actualizar el README del proyecto cuando cambie su estado;
+- actualizar el README cuando cambie el estado;
 - registrar avances relevantes en `projects/<proyecto>/updates/`;
 - mantener bloqueos y pendientes explícitos;
-- no marcar una meta como completada hasta cumplir realmente su criterio de éxito.
+- no convertir una prueba o intención en resultado de producción;
+- no marcar go-live como completado antes de UAT y producción controlada.
 
 ## Próxima revisión
 
-Revisar el resultado de la integración de evidencia durable/pipeline y el cierre del contrato con Andrés.
+Revisar el resultado de la prueba de Andrés y las respuestas de María/Cami. Si Andrés no requiere cambio de boundary, avanzar directamente a policy real + CDC + UAT.
