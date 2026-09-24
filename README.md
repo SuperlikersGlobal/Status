@@ -32,24 +32,68 @@ Cada persona puede tener una branch propia. En el piloto, `bruno` contiene `PERS
 
 La skill vive en `.claude/skills/status/` y debe leer reglas, estado estructurado, branch personal y fechas antes de responder.
 
-**Una fuente más antigua nunca debe anular evidencia más reciente solo por estar más estructurada.**
+**Una fuente más antigua nunca debe anular evidencia más reciente sólo por estar más estructurada.**
 
-## Estado del piloto — 21/09/2026
+## Estado del piloto — 24/09/2026
 
-**Meta de Pernod:** cerrar el alcance actual antes del **1 de octubre**.
+**Meta de Pernod:** llegar a un flujo operativo y seguro antes del **1 de octubre**.
 
-**Ahora:** la capa de lectura y normalización ya fue validada con flujo real y dos layouts. El trabajo está en el **freeze final del parser + nuevo E2E remoto de prueba**.
+**Ahora:** la V0 de homologación validation-before-upload está desplegada y pasó un smoke real de punta a punta: OCR en vivo → `VALID` → upload `ACCEPTED` en SuperLikers LABS. El replay del mismo request produjo cero segundo efecto.
 
-**Próximo gate:** cerrar ese freeze y después avanzar a **elegibilidad + integración con Andrés**.
+**Gate actual:** Andrés ya recibió endpoint, Postman/environment y token por separado. Falta su prueba de integración.
 
-| Ventana | Tarea | Estado |
-|---|---|---|
-| 21–22/09 | Freeze final del parser + E2E remoto | En progreso |
-| 22–24/09 | Elegibilidad + integración con Andrés | Ready |
-| 24–25/09 | Acumulación + idempotencia mínima | Backlog |
-| 26–28/09 | UAT + correcciones | Backlog |
-| 29–30/09 | Producción controlada + rollback/handover | Backlog |
-| 01/10 | Go-live / ajuste final | Backlog |
+**Cambio importante:** el Ticket Engine ya no controla puntos, metas, reward_owner, redención o crédito para el flujo de Andrés. Su responsabilidad activa es validar el documento y registrar en SuperLikers sólo cuando la policy lo permite.
+
+| Bloque | Estado |
+|---|---|
+| Parser / homologación técnica | **Hecho** |
+| Durable pipeline + idempotencia | **Hecho** |
+| Integración con Andrés | **En progreso** |
+| Reglas comerciales / policy real | **Pendiente externo** |
+| CDC / doble registro | Backlog |
+| UAT + correcciones | Backlog |
+| Producción controlada + rollback/handover | Backlog |
+| Go-live / ajuste final 01/10 | Backlog |
+
+## Último avance confirmado
+
+- entorno AWS de homologación aislado;
+- OCR real y parser/master ejecutados en runtime;
+- SuperLikers LABS campaña `3z` aceptó un upload real;
+- replay idempotente sin segundo upload;
+- logs revisados sin exposición de key/token/base64/env/provider raw;
+- policy temporal usada durante homologación revocada;
+- handoff técnico enviado a Andrés.
+
+## Pendencias inmediatas
+
+### Andrés
+
+Debe probar el endpoint desde su lado y confirmar que puede consumir el contrato.
+
+### María/Cami
+
+Ya están enviadas las preguntas sobre:
+
+- equivalencia/variación de copas;
+- si marca→usuario es gate previo o sólo regla posterior de puntos;
+- tratamiento de cócteles antes del detalle final.
+
+Después queda cerrar, si sigue pendiente:
+
+- timezone oficial;
+- fuente gobernada de la fecha del ticket.
+
+### Producción
+
+Después de Andrés + reglas comerciales:
+
+1. policy real sin fixtures;
+2. cerrar CDC/doble registro;
+3. UAT variado/adversarial;
+4. producción controlada;
+5. rollback + handover;
+6. go-live / ajuste final.
 
 ## Reglas importantes
 
