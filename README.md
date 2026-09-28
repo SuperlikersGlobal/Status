@@ -6,23 +6,30 @@ Esta branch contiene el contexto personal y el historial de trabajo de Bruno par
 
 Comenzar por:
 
-1. `PERSONAL_PLAN.md` — prioridad, meta y próximos bloques;
-2. `projects/pernod/README.md` — estado consolidado de Pernod;
-3. `projects/pernod/updates/` — evidencia cronológica.
+1. `PERSONAL_PLAN.md`;
+2. `projects/pernod/README.md`;
+3. la actualización más reciente en `projects/pernod/updates/`.
 
-La actualización fechada más reciente debe revisarse antes de responder sobre el estado actual.
+La evidencia fechada más reciente tiene prioridad sobre snapshots anteriores.
 
 ## Fuente operativa
 
-Las tareas estructuradas de Status v0 viven como GitHub Issues en el repositorio.
+Las tareas estructuradas viven como GitHub Issues.
 
-Esta branch aporta contexto y evidencia de evolución. No debe interpretarse de forma aislada cuando exista información operativa más reciente.
+La branch `bruno` aporta contexto técnico/operativo y debe leerse junto con las Issues.
 
-## Estado actual
+## Estado actual — 28/09/2026
 
 - Prioridad: **Pernod**
-- Meta: **cerrar el alcance actual antes del 1 de octubre de 2026**
-- Estado al 21/09: **freeze final del parser + nuevo E2E remoto de prueba**
-- Próximo gate: **elegibilidad + integración con Andrés**
+- Estado: **En progreso**
+- Contrato Andrés: **v3 cerrado técnicamente**
+- Registro: **foto LEADER + venta LEADER + venta CDC**
+- Quantity: **COPA=1 / BOTELLA=14 internamente; fractional retail quantity en v4**
+- Matrix María: **artefacto governado offline PASS, aún no activado**
+- C1/C2: **commitados localmente, sin push**
+- RC desde C2: **PASS local**
+- V4: **implementado localmente, pendiente de recheck independiente**
+- Próximo gate: **recheck v4 → commit → RC nuevo → smoke LABS**
+- Producción: **no desplegada**
 
-Ver `PERSONAL_PLAN.md` para el resumen ejecutivo actualizado.
+La campaña aún no ha iniciado; las imágenes históricas actuales son fixtures de pre-lanzamiento.
