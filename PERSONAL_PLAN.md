@@ -3,125 +3,113 @@
 **Responsable:** Bruno Antoniassi  
 **Branch:** `bruno`  
 **Periodo del plan:** 2026-09-17 → 2026-10-17  
-**Última actualización:** 2026-09-24
+**Última actualización:** 2026-09-28
 
 ## Prioridad actual
 
 ### 1. Pernod
 
-**Meta:** dejar el flujo operativo y seguro antes del **2026-10-01**. La fecha sigue fija; si hace falta, se reduce alcance, no seguridad.
+**Meta:** cerrar una homologación segura, auditable y lista para UAT antes de producción.
 
-**Estado actual:** En progreso. La V0 de homologación validation-before-upload está desplegada en AWS y pasó un smoke real de punta a punta con OCR en vivo, `VALID`, upload `ACCEPTED` en SuperLikers LABS y replay sin segundo efecto. El endpoint y Postman ya fueron enviados a Andrés con el token por separado.
+**Estado actual:** En progreso. El contrato v3 con Andrés ya está definido, el dual registration LEADER/CDC está implementado localmente y la arquitectura de cantidad COPA/BOTELLA fue rediseñada para conservar toda la información sin estado cross-ticket.
 
-**Gate actual:** prueba de integración de Andrés.
+**Gate actual:** recheck independiente del v4 fractional quantity + campaign scope.
 
-**Cambio importante de boundary:** el engine ya no controla puntos, metas, challenge, reward_owner, redención, balances ni crédito para el flujo de Andrés. Su responsabilidad activa es validar el documento y registrar en SuperLikers sólo cuando la policy lo permite.
+La campaña todavía no ha iniciado. Los tickets históricos se usan como fixtures de homologación/pre-lanzamiento.
 
 Ver: `projects/pernod/README.md`
 
-## Camino crítico hasta 1/10
+## Camino crítico actual
 
 | Bloque | Estado | Dependencia principal |
 |---|---|---|
-| Parser / OCR / mapping | **Validado** | Mantener congelado salvo evidencia nueva |
-| Evidencia durable + pipeline retomable | **Validado** | Operación/UAT |
-| Idempotencia / dedup / replay | **Validado** | Reconciliación avanzada queda fuera de V0 |
-| V0 validation-before-upload | **Homologada técnicamente** | Prueba de Andrés |
-| Integración con Andrés | **En progreso** | Andrés debe consumir el endpoint |
-| Reglas comerciales María/Cami | **Pendiente de respuesta** | Copas, marca→usuario, cócteles |
-| Policy real de producción | Pendiente | Reglas comerciales + periodo |
-| CDC / doble registro | Pendiente | Cerrar sobre validation-before-upload |
-| UAT adversarial | Pendiente | Policy real + integración |
-| Producción controlada | Pendiente | UAT + rollback + aprobación |
-
-## Enfoque hasta el go-live
-
-| Periodo | Foco | Estado |
-|---|---|---|
-| 24 sep | Cerrar homologación técnica + handoff Andrés | **Completado de nuestro lado** |
-| 24–26 sep | Prueba Andrés + reglas comerciales + policy real | En progreso / pendiente externo |
-| 26–28 sep | CDC + UAT + correcciones | Pendiente |
-| 29–30 sep | Producción controlada + rollback + handover | Pendiente |
-| 01 oct | Go-live / ajuste final | Objetivo |
-| Octubre en adelante | Human | Por definir |
-| Octubre en adelante | MyDesk | Por definir |
+| Parser / OCR / frozen mapping core | **Validado / congelado** | No tocar salvo evidencia nueva |
+| Durable pipeline / idempotencia / replay | **Validado** | Reconciliación avanzada sigue fuera |
+| Contrato app Andrés v3 | **Cerrado técnicamente** | Smoke remoto |
+| LEADER + CDC dual-sale | **Implementado y validado localmente** | Smoke remoto |
+| RC v3 desde C2 | **PASS local** | Quedó superado por v4 |
+| Matriz María → artefacto gobernado | **PASS offline** | item_kind/runtime activation |
+| Quantity architecture v4 | **Implementada localmente** | Recheck independiente |
+| Campaign scope / out-of-campaign | **Implementado localmente** | Recheck + policy real |
+| Price gobernado | Pendiente externo | María/Cami |
+| RC nuevo v4 | Pendiente | Recheck + commit |
+| Smoke LABS fractional quantity | Pendiente | RC + data + UIDs |
+| UAT | Pendiente | Smoke remoto |
+| Producción controlada | Pendiente | UAT |
 
 ## Avance ejecutivo
 
-- V0 de homologación congelada y desplegada en infraestructura aislada.
-- OCR real, parser/master y validación ejecutados en runtime de AWS.
-- Smoke externo real pasó `VALID → ACCEPTED` en SuperLikers LABS campaña `3z`.
-- Replay del mismo request produjo cero segundo efecto externo.
-- EvidenceStore/S3, DynamoDB, receipts e idempotencia durable validados.
-- Logs de homologación revisados sin exposición de API key, token, imagen base64, environment completo o provider raw.
-- Policy temporal de update usada durante homologación fue revocada.
-- Endpoint, Postman/environment e instrucciones ya enviados a Andrés; token entregado por separado.
-- `participant_uid` se trata como UID opaco; un participante de prueba conocido fue aceptado por LABS.
-- `credit_applied = false`: el endpoint no aplica puntos/crédito.
+- V0 de homologación original pasó smoke real LABS.
+- Contrato nuevo con Andrés migró a `uid + cdc_uid + campaign_id`.
+- Andrés confirmó 2 ventas por ticket: LEADER y CDC.
+- Foto queda en LEADER por ahora.
+- Códigos de `products[].ref` fueron confirmados.
+- C1 y C2 fueron congelados localmente, sin push.
+- RC reproducible desde C2 pasó verify + E2E desde ZIP.
+- Matriz de María fue fijada por SHA y convertida en artefato governado offline.
+- Nueva canonical quantity: COPA=1 unit, BOTELLA=14 units.
+- No hay acumulación cross-ticket.
+- V4 convierte a botellas decimales sólo en la borda de retail/buy.
+- Producto explícitamente fuera de campaña se excluye de la venta sin invalidar todo el ticket.
+- Unknown product sigue fail-closed.
+- WU v4: 930 tests, 18/18 mutantes y E2E overlay PASS.
 - No hubo deploy de producción.
 
-## Boundary actual confirmado
+## Próxima secuencia
 
-Nuestro engine:
+1. Recheck adversarial independiente del v4.
+2. Si PASS, commit local del v4.
+3. Construir RC nuevo reproducible.
+4. Repetir verify + E2E desde el ZIP.
+5. Activar matrix/campaign scope/price gobernados para homologación.
+6. Smoke LABS con quantity fraccionaria.
+7. UAT con casos representativos.
+8. Producción controlada + handover.
 
-- recibe/preserva evidencia;
-- ejecuta OCR/parser;
-- deduplica;
-- valida el documento;
-- persiste decisión;
-- si `VALID`, intenta registrar en SuperLikers;
-- persiste resultado de delivery;
-- protege retry/replay contra duplicación.
-
-Andrés/SuperLikers:
-
-- puntos;
-- metas;
-- challenge;
-- reward/redención.
-
-## Pendientes principales
+## Pendientes externos principales
 
 ### Andrés
 
-- ejecutar la prueba con Postman/Lambda;
-- confirmar que consume el contrato sin cambio de boundary;
-- validar comportamiento de estados y replay.
+- UID LEADER real LABS;
+- `cdc_uid` real LABS;
+- campaign de homologación;
+- prueba real de quantity fraccionaria y eco de invoice.
 
 ### María/Cami
 
-Ya preguntado y pendiente:
+- price por referencia/campaign para homologación;
+- item_kind de los nombres que usemos en fixture;
+- después: reglas finales de cócteles/properties/date cuando sean necesarias.
 
-- si la variación de copas cambia equivalencia o sólo cantidad;
-- si marca→usuario es gate previo o sólo cálculo posterior;
-- cómo tratar cócteles antes del detalle final.
+## Boundary operativo
 
-Después, si sigue sin respuesta:
+Nuestro engine:
 
-- timezone oficial;
-- fuente gobernada de la fecha del ticket.
+- conserva evidencia;
+- ejecuta OCR/parser;
+- normaliza;
+- clasifica escopo de campaña;
+- valida;
+- persiste plan/basis;
+- protege replay/retry;
+- si corresponde, envía foto;
+- registra LEADER y CDC;
+- audita productos fuera de campaña.
 
-### Producción
+Andrés/SuperLikers:
 
-- convertir policy de homologación en policy real sin fixtures;
-- cerrar CDC/doble registro;
-- UAT variado/adversarial;
-- producción controlada;
-- rollback;
-- handover.
+- challenge;
+- metas;
+- cálculo final de points;
+- redención/recompensas.
 
 ## Reglas de seguimiento
 
-Este archivo es la vista ejecutiva para liderazgo.
-
-Para cada proyecto activo:
-
-- actualizar el README cuando cambie el estado;
-- registrar avances relevantes en `projects/<proyecto>/updates/`;
-- mantener bloqueos y pendientes explícitos;
-- no convertir una prueba o intención en resultado de producción;
-- no marcar go-live como completado antes de UAT y producción controlada.
+- no marcar producción antes de smoke remoto + UAT;
+- no confundir PASS local con provider real;
+- no convertir una decisión temporal de policy en regla hardcoded del parser;
+- mantener claro qué está commitado, qué está sólo local y qué está desplegado.
 
 ## Próxima revisión
 
-Revisar el resultado de la prueba de Andrés y las respuestas de María/Cami. Si Andrés no requiere cambio de boundary, avanzar directamente a policy real + CDC + UAT.
+Después del recheck independiente del v4.
