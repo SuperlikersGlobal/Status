@@ -16,16 +16,15 @@
       "start": "2026-09-17",
       "due": "2026-09-24",
       "order": 1,
-      "summary": "Cerrar el bloque técnico del Ticket Processing Engine y probar validation-before-upload de punta a punta en homologación.",
-      "why": "Confirma que OCR, parser, evidencia durable, validación, delivery e idempotencia funcionan antes de evolucionar el contrato.",
+      "summary": "Cerrar el bloque técnico original de OCR/parser/homologación.",
+      "why": "Base técnica ya validada antes de evolucionar el contrato.",
       "acceptance": [
-        "Parser/OCR/mapping congelados y validados.",
-        "Pipeline durable desplegado en homologación.",
-        "Smoke real ejecutado con VALID y upload ACCEPTED en SuperLikers LABS.",
-        "Replay del mismo request no genera un segundo efecto.",
+        "Parser/OCR/mapping congelados.",
+        "Smoke real LABS VALID→ACCEPTED.",
+        "Replay sin segundo efecto.",
         "Sin deploy de producción."
       ],
-      "technical": "Bloque técnico original de homologación cerrado el 24/09/2026."
+      "technical": "Bloque técnico original cerrado el 24/09."
     },
     {
       "title": "Elegibilidad + integración con Andrés",
@@ -39,17 +38,16 @@
       "start": "2026-09-22",
       "due": "2026-09-24",
       "order": 2,
-      "summary": "Cerrar el contrato v3, la policy de cantidad/escopo de campaña y el nuevo RC antes del smoke remoto con Andrés.",
-      "why": "El contrato principal ya está definido; el gate actual es congelar v4 y validar retail/buy real sin perder copas ni duplicar efectos.",
+      "summary": "Convertir el v4 congelado en un RC reproducible y validar retail/buy real con datos gobernados.",
+      "why": "El contrato v3 y la arquitectura v4 ya están congelados; el riesgo actual está en el artefacto desplegable y el comportamiento real del provider.",
       "acceptance": [
-        "Contrato v3 uid + cdc_uid + campaign_id preservado.",
-        "Dual sale LEADER/CDC validado con replay idempotente.",
-        "Quantity policy y campaign scope pasan recheck independiente.",
-        "Nuevo RC reproducible pasa verify y E2E desde ZIP.",
-        "Smoke LABS valida quantity fraccionaria y eco de invoice.",
-        "Inputs gobernados de matrix/scope/price quedan explícitos."
+        "V4 congelado localmente en commit 5b5d0fb.",
+        "RC v4 reproducible pasa verify y E2E desde ZIP.",
+        "Matrix/scope/price gobernados quedan explícitos.",
+        "Smoke LABS valida fractional quantity y eco de invoice.",
+        "Replay LEADER/CDC no duplica efectos."
       ],
-      "technical": "Gate actual: recheck v4 -> commit -> RC nuevo -> smoke LABS. C1/C2 locales; v4 en working tree con 930 tests y E2E overlay PASS."
+      "technical": "Gate actual: RC v4 build desde 5b5d0fb -> data RC -> smoke LABS."
     },
     {
       "title": "Acumulación + idempotencia mínima",
@@ -63,15 +61,14 @@
       "start": "2026-09-24",
       "due": "2026-09-24",
       "order": 3,
-      "summary": "Asegurar processing durable e idempotente para que retries y replays no dupliquen efectos externos.",
-      "why": "Evita uploads/ventas duplicadas y permite retomar el flujo de forma segura.",
+      "summary": "Asegurar processing durable e idempotente.",
+      "why": "Evita duplicación y permite restart/replay.",
       "acceptance": [
         "Ledger/evidence/pipeline durable validados.",
-        "Intent persistido antes del network call.",
-        "Replay no genera un segundo efecto.",
-        "Execution basis protege retries contra policy drift."
+        "Replay sin segundo efecto.",
+        "Execution basis protege policy drift."
       ],
-      "technical": "Idempotencia durable cerrada; la v3/v4 extiende la protección a foto + LEADER + CDC."
+      "technical": "Idempotencia extendida a foto + LEADER + CDC."
     },
     {
       "title": "UAT con casos variados + correcciones",
@@ -85,14 +82,14 @@
       "start": "2026-09-26",
       "due": "2026-09-28",
       "order": 4,
-      "summary": "Probar el flujo con casos reales/representativos después del nuevo RC y smoke LABS.",
-      "why": "Valida quantity, scope, mapping y fallos parciales antes de producción.",
+      "summary": "Probar el RC/data RC después del smoke remoto.",
+      "why": "Valida casos no ideales antes de producción.",
       "acceptance": [
-        "UAT ejecutado con casos variados.",
-        "Problemas encontrados registrados.",
-        "Correcciones críticas aplicadas y revalidadas."
+        "UAT ejecutado.",
+        "Problemas registrados.",
+        "Correcciones críticas revalidadas."
       ],
-      "technical": "Depende de recheck v4 + RC nuevo + smoke remoto."
+      "technical": "Depende de RC v4 + smoke LABS."
     },
     {
       "title": "Producción controlada + rollback + handover",
@@ -106,14 +103,14 @@
       "start": "2026-09-29",
       "due": "2026-09-30",
       "order": 5,
-      "summary": "Llevar el flujo a producción de forma controlada, con rollback/handover.",
-      "why": "Reduce el riesgo del paso a producción.",
+      "summary": "Llevar el flujo a producción de forma controlada.",
+      "why": "Reduce riesgo y deja rollback/handover.",
       "acceptance": [
-        "Producción controlada ejecutada.",
-        "Rollback comprobado o documentado.",
-        "Handover preparado."
+        "Producción controlada.",
+        "Rollback.",
+        "Handover."
       ],
-      "technical": "No iniciar antes de smoke remoto + UAT."
+      "technical": "No iniciar antes de smoke + UAT."
     },
     {
       "title": "Go-live / ajuste final",
@@ -128,13 +125,13 @@
       "due": "2026-10-01",
       "order": 6,
       "summary": "Mantener el hito de cierre operativo/ajuste final documentado.",
-      "why": "Da una referencia explícita de cierre, sin confundirla con el inicio real de campaña.",
+      "why": "Referencia de cierre sin confundirla con el inicio real de campaña.",
       "acceptance": [
-        "Go-live o ajuste final sólo si los gates previos pasan.",
+        "Activar sólo si gates previos pasan.",
         "Estado final documentado.",
-        "Dependencias restantes explícitas."
+        "Dependencias explícitas."
       ],
-      "technical": "La campaña aún no ha iniciado; no interpretar esta fecha como evidencia de campaña activa."
+      "technical": "La campaña aún no ha iniciado."
     }
   ]
 }
