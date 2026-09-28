@@ -8,7 +8,7 @@ La primera prueba usa **Bruno / Pernod**.
 
 ## Para probarlo hoy
 
-La experiencia principal no depende de la UI. Abre este repositorio en Claude Code sobre `main` y pregunta, por ejemplo:
+Abre este repositorio en Claude Code sobre `main` y pregunta, por ejemplo:
 
 - `/status ¿Cómo va Bruno con Pernod?`
 - `/status ¿Qué está haciendo Bruno ahora?`
@@ -22,100 +22,105 @@ La skill debe leer primero las reglas del repositorio y después traducir la evi
 
 ### GitHub Issues = tareas operativas
 
-Las Issues con marcador `STATUS_V0` representan trabajo concreto: estado, responsable, fechas, objetivo y criterio de finalización.
+Las Issues con marcador `STATUS_V0` representan trabajo concreto.
 
 ### Branch personal = contexto y evolución
 
-Cada persona puede tener una branch propia. En el piloto, `bruno` contiene `PERSONAL_PLAN.md`, el contexto de Pernod y sus updates fechados.
+La branch `bruno` contiene `PERSONAL_PLAN.md`, el contexto de Pernod y updates fechados.
 
 ### `/status` = traducción ejecutiva
 
-La skill vive en `.claude/skills/status/` y debe leer reglas, estado estructurado, branch personal y fechas antes de responder.
+La skill debe leer reglas, estado estructurado, branch personal y fechas antes de responder.
 
-**Una fuente más antigua nunca debe anular evidencia más reciente sólo por estar más estructurada.**
+Una fuente antigua nunca anula evidencia posterior sólo por estar más estructurada.
 
-## Estado del piloto — 24/09/2026
+## Estado del piloto — 28/09/2026
 
-**Meta de Pernod:** llegar a un flujo operativo y seguro antes del **1 de octubre**.
+**Pernod está en progreso.**
 
-**Ahora:** la V0 de homologación validation-before-upload está desplegada y pasó un smoke real de punta a punta: OCR en vivo → `VALID` → upload `ACCEPTED` en SuperLikers LABS. El replay del mismo request produjo cero segundo efecto.
+Desde la actualización del 24/09 cambió de forma material el contrato con Andrés:
 
-**Gate actual:** Andrés ya recibió endpoint, Postman/environment y token por separado. Falta su prueba de integración.
+- request v3 usa `uid`, `cdc_uid`, `campaign_id` e imagen;
+- foto va al LEADER por ahora;
+- cada ticket elegible genera una venta para LEADER y otra para CDC;
+- los códigos de producto usados en `retail/buy` fueron confirmados;
+- campaign deja de estar fija.
 
-**Cambio importante:** el Ticket Engine ya no controla puntos, metas, reward_owner, redención o crédito para el flujo de Andrés. Su responsabilidad activa es validar el documento y registrar en SuperLikers sólo cuando la policy lo permite.
+También cambió la arquitectura de cantidad:
+
+- COPA = 1 unidad canónica;
+- BOTELLA = 14 unidades;
+- se agregan unidades por referencia dentro del ticket;
+- no se acumula entre tickets;
+- el v4 propuesto convierte a botellas decimales sólo al construir `retail/buy`.
+
+Ejemplo:
+
+- 2 COPAS → 0.142857 botella;
+- 14 COPAS → 1 botella.
+
+La clasificación de producto fuera de campaña también pasa a ser explícita y gobernada: un producto conocido como fuera de campaña se excluye de la venta sin invalidar el resto del ticket; un nombre desconocido sigue fail-closed.
+
+## Últimos avances confirmados
+
+- C1 y C2 congelados localmente en el repo Pernod, sin push;
+- RC reproducible desde C2 con verify independiente;
+- E2E desde ZIP: foto + LEADER + CDC + replay sin duplicación;
+- matrix de María fijada por SHA y convertida en artefacto governado offline;
+- WU v4 fractional quantity + campaign scope implementado localmente;
+- 930 tests, 18/18 mutantes dirigidos y E2E overlay PASS;
+- ningún deploy de producción.
+
+## Gate actual
+
+**Recheck independiente del v4.**
+
+Si pasa:
+
+1. commit local;
+2. RC nuevo;
+3. verify + E2E del nuevo ZIP;
+4. configurar matrix/scope/price gobernados;
+5. smoke real en LABS con quantity fraccionaria;
+6. UAT;
+7. producción controlada.
+
+## Pendencias principales
+
+### Externas
+
+- price real/gobernado;
+- item_kind de los nombres usados en fixture;
+- UIDs LEADER/CDC reales en LABS;
+- validar que `retail/buy` acepte quantity fraccionaria y revisar el eco/puntos.
+
+### Después
+
+- cócteles;
+- properties finales;
+- timezone/date final;
+- reconciliación automática de UNKNOWN.
+
+La campaña todavía no ha iniciado. Los tickets históricos se usan para homologación/pre-lanzamiento.
+
+## Tabla ejecutiva
 
 | Bloque | Estado |
 |---|---|
-| Parser / homologación técnica | **Hecho** |
+| Parser / homologación técnica original | **Hecho** |
 | Durable pipeline + idempotencia | **Hecho** |
-| Integración con Andrés | **En progreso** |
-| Reglas comerciales / policy real | **Pendiente externo** |
-| CDC / doble registro | Backlog |
-| UAT + correcciones | Backlog |
-| Producción controlada + rollback/handover | Backlog |
-| Go-live / ajuste final 01/10 | Backlog |
-
-## Último avance confirmado
-
-- entorno AWS de homologación aislado;
-- OCR real y parser/master ejecutados en runtime;
-- SuperLikers LABS campaña `3z` aceptó un upload real;
-- replay idempotente sin segundo upload;
-- logs revisados sin exposición de key/token/base64/env/provider raw;
-- policy temporal usada durante homologación revocada;
-- handoff técnico enviado a Andrés.
-
-## Pendencias inmediatas
-
-### Andrés
-
-Debe probar el endpoint desde su lado y confirmar que puede consumir el contrato.
-
-### María/Cami
-
-Ya están enviadas las preguntas sobre:
-
-- equivalencia/variación de copas;
-- si marca→usuario es gate previo o sólo regla posterior de puntos;
-- tratamiento de cócteles antes del detalle final.
-
-Después queda cerrar, si sigue pendiente:
-
-- timezone oficial;
-- fuente gobernada de la fecha del ticket.
-
-### Producción
-
-Después de Andrés + reglas comerciales:
-
-1. policy real sin fixtures;
-2. cerrar CDC/doble registro;
-3. UAT variado/adversarial;
-4. producción controlada;
-5. rollback + handover;
-6. go-live / ajuste final.
+| Contrato v3 Andrés | **Cerrado técnicamente** |
+| Dual sale LEADER + CDC | **Validado localmente** |
+| Matrix gobernada offline | **Hecho / no activada** |
+| V4 fractional quantity + campaign scope | **En recheck** |
+| RC nuevo v4 | Pendiente |
+| Smoke LABS fractional | Pendiente |
+| UAT | Backlog |
+| Producción controlada | Backlog |
 
 ## Reglas importantes
 
-- No inventar porcentajes de avance.
-- No marcar una tarea como terminada sin evidencia suficiente.
-- No convertir un plan futuro en trabajo realizado.
-- Comparar siempre las fechas de las fuentes.
-- Si dos fuentes se contradicen, usar la evidencia más reciente respaldada y explicar la discrepancia cuando importe.
-- Por defecto, responder para una audiencia no técnica.
-
-## UI experimental
-
-La UI estilo Jira existe como experimento, pero **no es necesaria para validar Status v0**.
-
-Modo demo: `npm start` y abrir `http://127.0.0.1:4173`.
-
-Modo GitHub live: definir `GITHUB_TOKEN` y `GITHUB_REPO` en el entorno antes de iniciar.
-
-Por seguridad, el servidor debe escuchar únicamente en `127.0.0.1` por defecto. El token nunca debe incluirse en archivos públicos ni commits.
-
-## Relación con MyDesk
-
-La v0 prueba el modelo antes de construir la interfaz definitiva: trabajo real → GitHub guarda tareas y evidencia → Status organiza contexto → Claude traduce para liderazgo → futura UI/MyDesk consume el mismo modelo.
-
-Si este flujo resulta útil para Tati, la siguiente etapa es mejorar la experiencia de actualización y después conectar el modelo con MyDesk.
+- No inventar porcentajes.
+- No marcar producción sin evidencia.
+- Diferenciar siempre: local, commitado, RC, homologación y producción.
+- La evidencia fechada más reciente prevalece sobre snapshots antiguos.
