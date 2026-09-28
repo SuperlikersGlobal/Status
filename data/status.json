@@ -1,7 +1,7 @@
 {
   "schema_version": "status-v0",
-  "generated_at": "2026-09-24",
-  "source": "GitHub Issues #1-#6 + actualización personal Bruno/Pernod 2026-09-24",
+  "generated_at": "2026-09-28",
+  "source": "GitHub Issues #1-#6 + actualización personal Bruno/Pernod 2026-09-28",
   "note": "Snapshot de fallback. Comparar siempre con la actualización fechada más reciente de la branch personal.",
   "tasks": [
     {
@@ -17,7 +17,7 @@
       "due": "2026-09-24",
       "order": 1,
       "summary": "Cerrar el bloque técnico del Ticket Processing Engine y probar validation-before-upload de punta a punta en homologación.",
-      "why": "Confirma que OCR, parser, evidencia durable, validación, delivery e idempotencia funcionan antes de entregar el endpoint a Andrés.",
+      "why": "Confirma que OCR, parser, evidencia durable, validación, delivery e idempotencia funcionan antes de evolucionar el contrato.",
       "acceptance": [
         "Parser/OCR/mapping congelados y validados.",
         "Pipeline durable desplegado en homologación.",
@@ -25,7 +25,7 @@
         "Replay del mismo request no genera un segundo efecto.",
         "Sin deploy de producción."
       ],
-      "technical": "Bloque técnico de homologación cerrado el 24/09/2026."
+      "technical": "Bloque técnico original de homologación cerrado el 24/09/2026."
     },
     {
       "title": "Elegibilidad + integración con Andrés",
@@ -39,15 +39,17 @@
       "start": "2026-09-22",
       "due": "2026-09-24",
       "order": 2,
-      "summary": "Cerrar la prueba de integración de Andrés y las reglas comerciales necesarias para convertir la policy de homologación en una policy real.",
-      "why": "El endpoint técnico ya funciona; ahora falta confirmar consumo desde el lado de Andrés y gobernar las reglas que hoy producen NOT_VALIDATED.",
+      "summary": "Cerrar el contrato v3, la policy de cantidad/escopo de campaña y el nuevo RC antes del smoke remoto con Andrés.",
+      "why": "El contrato principal ya está definido; el gate actual es congelar v4 y validar retail/buy real sin perder copas ni duplicar efectos.",
       "acceptance": [
-        "Andrés prueba y confirma el contrato del endpoint.",
-        "Reglas comerciales necesarias quedan gobernadas.",
-        "Policy real de producción queda definida sin fixtures.",
-        "CDC/doble registro queda cerrado sobre validation-before-upload."
+        "Contrato v3 uid + cdc_uid + campaign_id preservado.",
+        "Dual sale LEADER/CDC validado con replay idempotente.",
+        "Quantity policy y campaign scope pasan recheck independiente.",
+        "Nuevo RC reproducible pasa verify y E2E desde ZIP.",
+        "Smoke LABS valida quantity fraccionaria y eco de invoice.",
+        "Inputs gobernados de matrix/scope/price quedan explícitos."
       ],
-      "technical": "Gate actual: prueba de Andrés. Pendientes de negocio: copas, marca→usuario, cócteles, periodo y referencias."
+      "technical": "Gate actual: recheck v4 -> commit -> RC nuevo -> smoke LABS. C1/C2 locales; v4 en working tree con 930 tests y E2E overlay PASS."
     },
     {
       "title": "Acumulación + idempotencia mínima",
@@ -62,13 +64,14 @@
       "due": "2026-09-24",
       "order": 3,
       "summary": "Asegurar processing durable e idempotente para que retries y replays no dupliquen efectos externos.",
-      "why": "Evita uploads duplicados y permite retomar el flujo de forma segura.",
+      "why": "Evita uploads/ventas duplicadas y permite retomar el flujo de forma segura.",
       "acceptance": [
         "Ledger/evidence/pipeline durable validados.",
         "Intent persistido antes del network call.",
-        "Replay real después de ACCEPTED produce cero segundo upload."
+        "Replay no genera un segundo efecto.",
+        "Execution basis protege retries contra policy drift."
       ],
-      "technical": "Idempotencia mínima cerrada. Acumulación económica de puntos queda fuera del boundary activo del Ticket Engine."
+      "technical": "Idempotencia durable cerrada; la v3/v4 extiende la protección a foto + LEADER + CDC."
     },
     {
       "title": "UAT con casos variados + correcciones",
@@ -82,14 +85,14 @@
       "start": "2026-09-26",
       "due": "2026-09-28",
       "order": 4,
-      "summary": "Probar el flujo con distintos casos reales o representativos y corregir problemas antes de producción.",
-      "why": "Valida el comportamiento fuera del happy path con la policy real y la integración final.",
+      "summary": "Probar el flujo con casos reales/representativos después del nuevo RC y smoke LABS.",
+      "why": "Valida quantity, scope, mapping y fallos parciales antes de producción.",
       "acceptance": [
         "UAT ejecutado con casos variados.",
         "Problemas encontrados registrados.",
         "Correcciones críticas aplicadas y revalidadas."
       ],
-      "technical": "Depende de cerrar integración Andrés + reglas comerciales + policy real/CDC."
+      "technical": "Depende de recheck v4 + RC nuevo + smoke remoto."
     },
     {
       "title": "Producción controlada + rollback + handover",
@@ -103,14 +106,14 @@
       "start": "2026-09-29",
       "due": "2026-09-30",
       "order": 5,
-      "summary": "Llevar el flujo a producción de forma controlada, con rollback y handover verificables.",
-      "why": "Reduce riesgo de activación y evita dependencia de una sola persona.",
+      "summary": "Llevar el flujo a producción de forma controlada, con rollback/handover.",
+      "why": "Reduce el riesgo del paso a producción.",
       "acceptance": [
         "Producción controlada ejecutada.",
         "Rollback comprobado o documentado.",
         "Handover preparado."
       ],
-      "technical": "Ventana prevista: 29–30/09/2026."
+      "technical": "No iniciar antes de smoke remoto + UAT."
     },
     {
       "title": "Go-live / ajuste final",
@@ -124,14 +127,14 @@
       "start": "2026-10-01",
       "due": "2026-10-01",
       "order": 6,
-      "summary": "Reservar el 1 de octubre para activar definitivamente el flujo o realizar el último ajuste.",
-      "why": "Mantiene margen explícito antes de cerrar el alcance.",
+      "summary": "Mantener el hito de cierre operativo/ajuste final documentado.",
+      "why": "Da una referencia explícita de cierre, sin confundirla con el inicio real de campaña.",
       "acceptance": [
-        "Go-live realizado o último ajuste aplicado.",
+        "Go-live o ajuste final sólo si los gates previos pasan.",
         "Estado final documentado.",
         "Dependencias restantes explícitas."
       ],
-      "technical": "Hard deadline: 01/10/2026."
+      "technical": "La campaña aún no ha iniciado; no interpretar esta fecha como evidencia de campaña activa."
     }
   ]
 }
