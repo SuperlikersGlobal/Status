@@ -61,15 +61,15 @@ Freeze validado con:
 
 ## Gate actual
 
-**Esperar la explicación/valores de Andrés para el rebuild final y el smoke LABS A/B.**
+**Fase A real PASS. Gate actual: Fase B de homologación en el ambiente V4 paralelo.**
 
 Después:
 
-1. final rebuild parametrizado;
-2. verify + golden;
-3. Fase A sin price;
-4. Fase B con price TEST_ONLY + replay;
-5. confirmación de invoices;
+1. habilitar price TEST_ONLY sólo en V4;
+2. reenviar el mismo request_id;
+3. validar foto LEADER + venta LEADER + venta CDC;
+4. replay sin duplicación;
+5. confirmación en panel;
 6. UAT;
 7. producción controlada.
 
@@ -94,7 +94,8 @@ La campaña todavía no ha iniciado. Los tickets históricos actuales son fixtur
 | V4 + nameless fix | **Congelado / commit local** |
 | Code RC | **PASS** |
 | Data RC | **PASS** |
-| Smoke LABS | **Pendiente de Andrés** |
+| Smoke LABS Fase A | **PASS** |
+| Smoke LABS Fase B | **Pendiente** |
 | UAT | Backlog |
 | Producción controlada | Backlog |
 
@@ -103,3 +104,17 @@ La campaña todavía no ha iniciado. Los tickets históricos actuales son fixtur
 - Diferenciar siempre local, commitado, RC, homologación y producción.
 - No marcar producción sin smoke + UAT.
 - La evidencia fechada más reciente prevalece sobre snapshots antiguos.
+
+
+## Checkpoint Fase A — 29/09
+
+- ambiente V4 paralelo creado sin modificar V2;
+- F1806 real: HTTP 200 / VALID;
+- 4236 = 4.5;
+- 9885 = 2.785714;
+- SALE_PRICE_PENDING;
+- foto y ventas no intentadas;
+- replay idempotente;
+- evidencia DynamoDB/S3 coherente;
+- logs limpios;
+- V2 confirmado intacto.
