@@ -1,7 +1,7 @@
 {
   "schema_version": "status-v0",
-  "generated_at": "2026-09-28",
-  "source": "GitHub Issues #1-#6 + actualización personal Bruno/Pernod 2026-09-28",
+  "generated_at": "2026-09-29",
+  "source": "GitHub Issues #1-#6 + actualización personal Bruno/Pernod 2026-09-29",
   "note": "Snapshot de fallback. Comparar siempre con la actualización fechada más reciente de la branch personal.",
   "tasks": [
     {
@@ -38,16 +38,17 @@
       "start": "2026-09-22",
       "due": "2026-09-24",
       "order": 2,
-      "summary": "Convertir el v4 congelado en un RC reproducible y validar retail/buy real con datos gobernados.",
-      "why": "El contrato v3 y la arquitectura v4 ya están congelados; el riesgo actual está en el artefacto desplegable y el comportamiento real del provider.",
+      "summary": "Ejecutar el rebuild final con los valores de Andrés y cerrar el smoke LABS A/B.",
+      "why": "Code RC y Data RC ya están listos; el gate actual es externo.",
       "acceptance": [
-        "V4 congelado localmente en commit 5b5d0fb.",
-        "RC v4 reproducible pasa verify y E2E desde ZIP.",
-        "Matrix/scope/price gobernados quedan explícitos.",
-        "Smoke LABS valida fractional quantity y eco de invoice.",
-        "Replay LEADER/CDC no duplica efectos."
+        "Code RC b71df3e PASS.",
+        "Data RC b71df3e PASS.",
+        "F1806 golden 33/33.",
+        "Andrés entrega campaign_id, uid y cdc_uid.",
+        "Fase A sin efectos PASS.",
+        "Fase B LEADER+CDC+replay PASS."
       ],
-      "technical": "Gate actual: RC v4 build desde 5b5d0fb -> data RC -> smoke LABS."
+      "technical": "Gate actual: explicación/valores de Andrés -> final rebuild -> smoke A/B."
     },
     {
       "title": "Acumulación + idempotencia mínima",
