@@ -1,78 +1,31 @@
 # Bruno — Plan de acción personal
 
-**Responsable:** Bruno Antoniassi  
-**Branch:** `bruno`  
-**Periodo del plan:** 2026-09-17 → 2026-10-17  
-**Última actualización:** 2026-09-28
+**Responsable:** Bruno Antoniassi
+**Última actualización:** 2026-09-29
 
 ## Prioridad actual
 
 ### 1. Pernod
 
-**Estado actual:** En progreso.
+**Estado:** En progreso.
 
-El v4 fractional quantity + campaign scope ya pasó el freeze gate y quedó commitado localmente en:
+Bloque local listo:
+- código: b71df3e;
+- Code RC: PASS;
+- Data RC: PASS;
+- F1806 golden: 33/33;
+- FULL: 963, 0 failures/skips.
 
-`5b5d0fb976562c65f65f3c63ce8c3c85b7f35e14`
+**Gate actual:** esperar la explicación y los valores de Andrés para el rebuild final.
 
-No hubo push ni deploy.
+Pendiente de Andrés:
+- campaign_id;
+- uid LEADER;
+- cdc_uid.
 
-**Gate actual:** construir RC v4 reproducible desde ese commit.
+Secuencia siguiente:
+Andrés responde → rebuild final → verify/golden → smoke Fase A/B → replay → confirmación de invoices.
 
-## Camino crítico actual
+María/Cami no bloquea el smoke técnico; sí sigue siendo necesaria para datos reales de producción.
 
-| Bloque | Estado | Dependencia principal |
-|---|---|---|
-| Parser / OCR / frozen core | **Validado / congelado** | No tocar |
-| Durable pipeline / idempotencia | **Validado** | — |
-| Contrato v3 Andrés | **Cerrado técnicamente** | Smoke remoto |
-| Dual sale LEADER + CDC | **Validado localmente** | Smoke remoto |
-| Matrix María offline | **PASS** | item_kind/runtime activation |
-| V4 fractional quantity + campaign scope | **Congelado / commit local** | RC build |
-| Freeze validation | **947 tests / 30 mutants / 148 E2E PASS** | — |
-| RC v4 reproducible | En progreso | Commit v4 |
-| Data RC matrix/scope/price | Pendiente | Inputs gobernados |
-| Smoke LABS fractional | Pendiente | RC + data + UIDs |
-| UAT | Pendiente | Smoke |
-| Producción controlada | Pendiente | UAT |
-
-## Próxima secuencia
-
-1. Construir RC v4 reproducible desde `5b5d0fb...`.
-2. Verificar closure, hashes y reproducibilidad.
-3. Ejecutar E2E desde el ZIP extraído.
-4. Preparar data RC con matrix/scope/price gobernados.
-5. Smoke LABS fractional.
-6. UAT.
-7. Producción controlada + handover.
-
-## Inputs externos
-
-### Andrés
-
-- UID LEADER y CDC en LABS;
-- campaign de homologación;
-- validar fractional quantity y eco de invoice.
-
-### María/Cami
-
-- price gobernado;
-- `item_kind` del fixture;
-- reglas posteriores de cócteles/properties/date cuando apliquen.
-
-## Avance técnico congelado
-
-- COPA=1 / BOTELLA=14;
-- aggregate antes de convertir;
-- no cross-ticket accumulation;
-- out-of-campaign explícito y gobernado;
-- unknown fail-closed;
-- receipt overflow 422 determinístico;
-- quantity drift 202 / reconciliation sin repost;
-- replay v3 preservado.
-
-## Producción
-
-No desplegada.
-
-La campaña todavía no ha iniciado; tickets históricos se usan como fixtures de homologación.
+Producción no desplegada.
