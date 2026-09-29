@@ -1,17 +1,24 @@
 # Pernod
 
 **Responsable:** Bruno Antoniassi  
-**Estado:** En progreso — v4 congelado localmente / RC v4 en construcción  
-**Última actualización:** 2026-09-28
+**Estado:** En progreso — Code RC + Data RC listos / aguardando Andrés para rebuild final y smoke  
+**Última actualización:** 2026-09-29
 
-## Objetivo
+## Estado ejecutivo
 
-Construir un **Pernod Ticket Processing Engine** independiente del canal de entrada, capaz de validar tickets y ejecutar efectos idempotentes en SuperLikers para LEADER y CDC.
+El bloque local previo al smoke está listo.
 
-## Contrato v3 con Andrés
+- checkpoint de código: `b71df3e7ed73f2e57d4ff85f4d973cabe2e43d6b`;
+- Code RC SHA-256: `1e96630cc6c07ed590f72feca8522946ce61a112e0429777e5dfd95067ac51fa`;
+- Data RC SHA-256: `b3c6002e82bab74cfe1acb3892f91fd44b513c41059177f22e1fd23637a0fa12`;
+- FULL 963, 0 failures/skips;
+- F1806 golden 33/33;
+- nameless matrix semantics corregida;
+- sin push ni deploy.
 
-Request:
+## Contrato con Andrés
 
+Request v3:
 - `request_id`;
 - `uid`;
 - `cdc_uid`;
@@ -19,132 +26,55 @@ Request:
 - `image`;
 - `client_submitted_at` opcional.
 
-Flujo:
+Flujo elegible:
 
 ```text
-VALID
-→ foto LEADER
+foto LEADER
 → retail/buy LEADER
 → retail/buy CDC
 ```
 
-LEADER usa ref base; CDC usa ref base + `-cdc`.
+## Quantity
 
-## Checkpoints locales
+- COPA = 1 copa_unit;
+- BOTELLA = 14 copa_units;
+- aggregate por referencia;
+- sin acumulación entre tickets;
+- quantity fraccionaria sólo en retail/buy.
 
-- C1: `b676e90...`
-- C2: `2d36f48...`
-- V4 congelado: `5b5d0fb976562c65f65f3c63ce8c3c85b7f35e14`
-- Tree v4: `170ab08fb0de23249897bc177b4212ff0cc6588b`
+## Matrix
 
-El v4 está commitado localmente y no fue pushado.
+- OUT requiere clasificación gobernada;
+- unknown permanece fail-closed;
+- línea sin nombre queda unresolved y recibe veredicto normal;
+- parser evidence malformada devuelve 422, no retry infinito.
 
-## Qué incluye el v4 congelado
+## Fixture F1806
 
-- `sale-plan-v4`;
-- evaluator v0.5;
-- `SaleAmount` en copa units;
-- COPA=1 / BOTELLA=14;
-- fractional bottle quantity sólo en la borda;
-- campaign scope gobernado;
-- `out_of_campaign_products`;
-- warning stripping fail-closed;
-- receipt capacity por `receipt_budget(...).fits`;
-- overflow determinístico 422;
-- quantity drift → reconciliation 202 sin repost;
-- compatibilidad de replay con sale-plan-v3.
-
-## Validación del freeze
-
-- Python: **947**;
-- expected failures: 2 conocidos;
-- fallos/skips reales: 0/0;
-- JS: **16/16**;
-- mutantes: **30/30**;
-- E2E: **148/148**;
-- v3 resume: PASS;
-- freeze files: intactos.
-
-## Matriz de María
-
-Fuente SHA-256:
-
-`d74130f40affc401dd3b61af8b5a59f8e3068e9a7fc39321276e6b9c649f3309`
-
-Artefacto offline:
-
-- 1.681 lookup keys;
-- 0 colisiones elegibles.
-
-La matriz todavía no está activada como policy runtime real. Falta gobernar `item_kind` de los nombres usados en fixture.
-
-## Quantity policy
-
-Default:
-
-`pernod-copa-fraction@1`
-
-Regla:
-
-```text
-COPA = 1 copa_unit
-BOTELLA = 14 copa_units
-quantity_outbound = copa_units / 14
-```
-
-No existe acumulación entre tickets.
-
-## Out of campaign
-
-Una línea sólo puede salir del scope si existe clasificación gobernada explícita.
-
-OUT:
-- se preserva para auditoría;
-- no entra en retail;
-- no exige price.
-
-Unknown:
-- sigue fail-closed.
+- 4236 → 63 copa_units → `4.5`;
+- 9885 → 39 copa_units → `2.785714`.
 
 ## Gate actual
 
-**Construir y verificar RC v4 reproducible desde `5b5d0fb...`.**
+Esperar la explicación adicional de Andrés y recibir:
+- campaign_id;
+- uid LEADER;
+- cdc_uid.
 
-Después:
+Luego:
 
-1. E2E desde ZIP extraído;
-2. data RC con matrix/scope/price gobernados;
-3. smoke LABS fractional;
-4. UAT;
-5. producción controlada.
+1. rebuild final parametrizado;
+2. verify + golden;
+3. deploy controlado sin price;
+4. Fase A;
+5. habilitar price TEST_ONLY;
+6. Fase B + replay;
+7. confirmación de invoices.
 
-## Inputs externos
+## Producción
 
-### Andrés
-
-- UID LEADER LABS;
-- `cdc_uid` LABS;
-- campaign de homologación;
-- validación de fractional quantity/echo/points.
-
-### María/Cami
-
-- price gobernado;
-- `item_kind` del fixture;
-- reglas finales posteriores cuando sean necesarias.
-
-## Riesgos abiertos
-
-- fractional quantity aún no verificada en LABS;
-- price real no configurado;
-- data policies reales todavía no empacadas;
-- outcomes UNKNOWN siguen requiriendo reconciliación;
-- RC v4 aún no construido.
-
-## Campaña
-
-La campaña todavía no ha iniciado. Los tickets históricos actuales son fixtures de homologación/pre-lanzamiento.
+No desplegada. Los datos TEST_ONLY de homologación no son policy de producción.
 
 ## Historial
 
-Ver `updates/2026-09-28.md`.
+Ver `updates/2026-09-29.md`.
