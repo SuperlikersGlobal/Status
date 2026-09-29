@@ -38,18 +38,19 @@
       "start": "2026-09-22",
       "due": "2026-09-24",
       "order": 2,
-      "summary": "Cerrar la Fase B del smoke LABS sobre el ambiente V4 paralelo.",
-      "why": "La Fase A real ya pasó con validation VALID, quantities fraccionarias correctas, replay idempotente y cero efectos externos.",
+      "summary": "Cerrar la verificación visual del smoke técnico A/B ya ejecutado.",
+      "why": "Fase A y Fase B pasaron en el ambiente V4 paralelo, con foto y dos ventas aceptadas y replay sin duplicación.",
       "acceptance": [
         "Code RC b71df3e PASS.",
-        "Data RC final 5c PASS.",
+        "Data RC final PASS.",
         "F1806 golden 33/33.",
-        "Fase A real PASS con 4236=4.5 y 9885=2.785714.",
-        "Replay Fase A PASS sin efectos externos.",
+        "Fase A real PASS.",
+        "Fase B real REGISTERED con foto + LEADER + CDC ACCEPTED.",
+        "Replay idempotente con un único intent/result por efecto.",
         "V2 permanece intacto.",
-        "Fase B valida foto + LEADER + CDC + replay sin duplicación."
+        "Verificación visual confirma las dos ventas esperadas en panel."
       ],
-      "technical": "Gate actual: habilitar price TEST_ONLY solo en V4 -> mismo request_id -> foto + LEADER + CDC -> replay."
+      "technical": "Gate actual: verificación visual en panel -> UAT -> policy comercial real -> producción controlada."
     },
     {
       "title": "Acumulación + idempotencia mínima",
