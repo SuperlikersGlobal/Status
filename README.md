@@ -16,9 +16,10 @@
 - Tests: 963 / 0 failures / 0 skips
 - F1806 golden: 33/33 PASS
 - Fase A real: PASS
-- Replay: PASS
+- Fase B real: PASS
+- Replay idempotente: PASS
 - V2: intacto
-- Próximo gate: Fase B de homologación
+- Próximo gate: verificación visual en panel
 - Producción: no desplegada
 
-La Fase B habilitará únicamente la price table TEST_ONLY en el ambiente V4 paralelo y reutilizará el mismo request_id para validar foto, venta LEADER, venta CDC y replay sin duplicación.
+El smoke técnico A/B está concluido. Falta confirmar visualmente las dos ventas esperadas en el panel antes de avanzar a UAT.
