@@ -1,6 +1,6 @@
 # Bruno — Plan de acción personal
 
-**Responsable:** Bruno Antoniassi
+**Responsable:** Bruno Antoniassi  
 **Última actualización:** 2026-09-29
 
 ## Prioridad actual
@@ -9,23 +9,23 @@
 
 **Estado:** En progreso.
 
-Bloque local listo:
+Bloque local y Fase A real cerrados:
 - código: b71df3e;
 - Code RC: PASS;
 - Data RC: PASS;
+- FULL: 963, 0 failures/skips;
 - F1806 golden: 33/33;
-- FULL: 963, 0 failures/skips.
+- Fase A real: PASS;
+- replay: PASS;
+- V2: intacto.
 
-**Gate actual:** esperar la explicación y los valores de Andrés para el rebuild final.
+## Gate actual
 
-Pendiente de Andrés:
-- campaign_id;
-- uid LEADER;
-- cdc_uid.
+**Fase B de homologación.**
 
-Secuencia siguiente:
-Andrés responde → rebuild final → verify/golden → smoke Fase A/B → replay → confirmación de invoices.
+Siguiente secuencia:
+habilitar price TEST_ONLY → mismo request_id → foto LEADER → venta LEADER → venta CDC → replay → verificación en panel.
 
-María/Cami no bloquea el smoke técnico; sí sigue siendo necesaria para datos reales de producción.
+Producción sigue no desplegada.
 
-Producción no desplegada.
+Las definiciones comerciales y validaciones externas restantes continúan pendientes para producción, pero no bloquean este smoke técnico.
