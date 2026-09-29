@@ -16,7 +16,7 @@ Abre este repositorio en Claude Code sobre `main` y pregunta, por ejemplo:
 - `/status ¿Hay algún bloqueo?`
 - `/status ¿Qué viene después?`
 
-## Estado del piloto — 28/09/2026
+## Estado del piloto — 29/09/2026
 
 **Pernod está en progreso.**
 
@@ -32,20 +32,20 @@ El contrato v3 con Andrés ya está cerrado técnicamente:
 
 El v4 fractional quantity + campaign scope ya no está en recheck.
 
-Quedó commitado localmente en el repo Pernod:
+El checkpoint actual quedó commitado localmente en el repo Pernod:
 
-`5b5d0fb976562c65f65f3c63ce8c3c85b7f35e14`
+`b71df3e7ed73f2e57d4ff85f4d973cabe2e43d6b`
 
 Sin push y sin deploy.
 
 Freeze validado con:
 
-- Python **947**;
+- Python **963**;
 - 2 expected failures conocidos;
 - 0 fallos/skips reales;
-- JS **16/16**;
-- mutantes **30/30**;
-- E2E **148/148**.
+- Code RC reproducible: **PASS**;
+- Data RC reproducible: **PASS**;
+- F1806 golden: **33/33 PASS**.
 
 ## Arquitectura congelada
 
@@ -61,15 +61,17 @@ Freeze validado con:
 
 ## Gate actual
 
-**Construir un RC v4 reproducible desde el commit congelado.**
+**Esperar la explicación/valores de Andrés para el rebuild final y el smoke LABS A/B.**
 
 Después:
 
-1. verify + E2E desde ZIP;
-2. data RC con matrix/scope/price;
-3. smoke LABS fractional;
-4. UAT;
-5. producción controlada.
+1. final rebuild parametrizado;
+2. verify + golden;
+3. Fase A sin price;
+4. Fase B con price TEST_ONLY + replay;
+5. confirmación de invoices;
+6. UAT;
+7. producción controlada.
 
 ## Pendencias externas
 
@@ -89,9 +91,10 @@ La campaña todavía no ha iniciado. Los tickets históricos actuales son fixtur
 | Contrato v3 Andrés | **Cerrado técnicamente** |
 | Dual sale LEADER + CDC | **Validado localmente** |
 | Matrix gobernada offline | **Hecho / no activada** |
-| V4 fractional quantity + campaign scope | **Congelado / commit local** |
-| RC nuevo v4 | **En progreso** |
-| Smoke LABS fractional | Pendiente |
+| V4 + nameless fix | **Congelado / commit local** |
+| Code RC | **PASS** |
+| Data RC | **PASS** |
+| Smoke LABS | **Pendiente de Andrés** |
 | UAT | Backlog |
 | Producción controlada | Backlog |
 
