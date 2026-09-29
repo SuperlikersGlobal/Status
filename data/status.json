@@ -38,17 +38,18 @@
       "start": "2026-09-22",
       "due": "2026-09-24",
       "order": 2,
-      "summary": "Ejecutar el rebuild final con los valores de Andrés y cerrar el smoke LABS A/B.",
-      "why": "Code RC y Data RC ya están listos; el gate actual es externo.",
+      "summary": "Cerrar la Fase B del smoke LABS sobre el ambiente V4 paralelo.",
+      "why": "La Fase A real ya pasó con validation VALID, quantities fraccionarias correctas, replay idempotente y cero efectos externos.",
       "acceptance": [
         "Code RC b71df3e PASS.",
-        "Data RC b71df3e PASS.",
+        "Data RC final 5c PASS.",
         "F1806 golden 33/33.",
-        "Andrés entrega campaign_id, uid y cdc_uid.",
-        "Fase A sin efectos PASS.",
-        "Fase B LEADER+CDC+replay PASS."
+        "Fase A real PASS con 4236=4.5 y 9885=2.785714.",
+        "Replay Fase A PASS sin efectos externos.",
+        "V2 permanece intacto.",
+        "Fase B valida foto + LEADER + CDC + replay sin duplicación."
       ],
-      "technical": "Gate actual: explicación/valores de Andrés -> final rebuild -> smoke A/B."
+      "technical": "Gate actual: habilitar price TEST_ONLY solo en V4 -> mismo request_id -> foto + LEADER + CDC -> replay."
     },
     {
       "title": "Acumulación + idempotencia mínima",
