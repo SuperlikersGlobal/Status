@@ -1,7 +1,7 @@
 # Bruno — Plan de acción personal
 
 **Responsable:** Bruno Antoniassi  
-**Última actualización:** 2026-09-29
+**Última actualización:** 2026-09-30
 
 ## Prioridad actual
 
@@ -10,24 +10,32 @@
 **Estado:** En progreso.
 
 Checkpoint actual:
-- código b71df3e;
+- código commitado: `783f5bdc0f30b829e01334a9b11cc513e04bf2eb`;
 - Code RC PASS;
 - Data RC PASS;
-- FULL 963, 0 failures/skips;
 - F1806 golden 33/33;
 - Fase A real PASS;
 - Fase B real PASS;
+- verificación visual en panel PASS;
 - replay idempotente PASS;
-- V2 intacto.
+- V2 intacto;
+- FAILED_INVOICE_RECORD v0 commitado;
+- capture/outbox v0 implementado localmente y aún no congelado;
+- contrato de rejected invoices definido;
+- histórico de cocktails analizado como evidencia, no como mapping automático.
 
 ## Gate actual
 
-**Verificación visual en panel pendiente.**
+**Cerrar integración WP en homologación y ejecutar UAT.**
 
-El smoke técnico ya validó:
-foto → venta LEADER → venta CDC → replay sin duplicación.
+Pendientes inmediatos:
+- corregir CORS para la prueba desde navegador;
+- revisar el `404 NOT_FOUND` de routing;
+- completar recheck/freeze del capture + outbox;
+- cerrar el contrato de URL de imagen con WP;
+- construir corpus v0 de cocktails sin modificar el master.
 
 Después:
-verificación visual → UAT → policy comercial real → producción controlada / rollback / handover.
+UAT → policy comercial real → producción controlada / rollback / handover.
 
 Producción sigue no desplegada.
