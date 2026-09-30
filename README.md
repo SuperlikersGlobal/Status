@@ -4,17 +4,16 @@
 
 Status v0 permite entender el trabajo de una persona sin tener que leer Git, commits o documentación técnica.
 
-## Estado del piloto — 29/09/2026
+## Estado del piloto — 30/09/2026
 
 **Pernod está en progreso.**
 
 ### Checkpoint técnico
 
-- código congelado: `b71df3e7ed73f2e57d4ff85f4d973cabe2e43d6b`;
+- código base congelado: `b71df3e7ed73f2e57d4ff85f4d973cabe2e43d6b`;
+- commit actual con FAILED_INVOICE_RECORD v0: `783f5bdc0f30b829e01334a9b11cc513e04bf2eb`;
 - Code RC: PASS;
 - Data RC: PASS;
-- Python FULL: 963;
-- 0 failures / 0 skips;
 - F1806 golden: 33/33 PASS;
 - ambiente V4 paralelo;
 - V2 intacto.
@@ -37,15 +36,27 @@ Fase B:
 - replay sin duplicación;
 - un único intent/result por efecto.
 
+Verificación visual:
+- **PASS**.
+
+### Integración actual
+
+- WP en homologación: en curso;
+- primera prueba desde navegador alcanzó V4;
+- CORS pendiente de ajuste temporal;
+- routing `404 NOT_FOUND` pendiente de revisión;
+- rejected invoices: contrato definido con `/v1/events` y `category = record_id`;
+- capture/outbox v0 implementado localmente, aún sin freeze final;
+- cocktails FY26 analizados como evidencia histórica, sin promoción automática al master.
+
 ## Gate actual
 
-**Verificación visual en panel pendiente.**
+**Cerrar integración WP en homologación y ejecutar UAT.**
 
 Después:
-1. UAT;
-2. cerrar policy comercial real;
-3. producción controlada;
-4. rollback + handover.
+1. completar definiciones comerciales reales;
+2. producción controlada;
+3. rollback + handover.
 
 Producción sigue no desplegada.
 
@@ -60,7 +71,11 @@ Producción sigue no desplegada.
 | Data RC | **PASS** |
 | Smoke LABS Fase A | **PASS** |
 | Smoke LABS Fase B | **PASS** |
-| Verificación visual | Pendiente |
+| Verificación visual | **PASS** |
+| Failed invoice record v0 | **Commitado** |
+| Capture/outbox v0 | Implementado localmente / recheck pendiente |
+| Integración WP | En curso |
+| Cocktails FY26 | Analizado / corpus pendiente |
 | UAT | Backlog |
 | Producción controlada | Backlog |
 
