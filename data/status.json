@@ -1,7 +1,7 @@
 {
   "schema_version": "status-v0",
-  "generated_at": "2026-09-29",
-  "source": "GitHub Issues #1-#6 + actualización personal Bruno/Pernod 2026-09-29",
+  "generated_at": "2026-09-30",
+  "source": "GitHub Issues #1-#6 + actualización personal Bruno/Pernod 2026-09-30",
   "note": "Snapshot de fallback. Comparar siempre con la actualización fechada más reciente de la branch personal.",
   "tasks": [
     {
@@ -30,7 +30,7 @@
       "title": "Elegibilidad + integración con Andrés",
       "url": "https://github.com/SuperlikersGlobal/Status/issues/2",
       "state": "open",
-      "commentsCount": 0,
+      "commentsCount": 3,
       "project": "Pernod",
       "owner": "Bruno",
       "status": "in_progress",
@@ -38,8 +38,8 @@
       "start": "2026-09-22",
       "due": "2026-09-24",
       "order": 2,
-      "summary": "Cerrar la verificación visual del smoke técnico A/B ya ejecutado.",
-      "why": "Fase A y Fase B pasaron en el ambiente V4 paralelo, con foto y dos ventas aceptadas y replay sin duplicación.",
+      "summary": "Cerrar la integración WP en homologación después del smoke A/B y panel ya confirmados.",
+      "why": "La validación técnica, los efectos LEADER/CDC, el replay y la verificación visual ya pasaron. El gate actual está en la integración del caller WP y sus bordes de CORS/routing.",
       "acceptance": [
         "Code RC b71df3e PASS.",
         "Data RC final PASS.",
@@ -47,10 +47,13 @@
         "Fase A real PASS.",
         "Fase B real REGISTERED con foto + LEADER + CDC ACCEPTED.",
         "Replay idempotente con un único intent/result por efecto.",
-        "V2 permanece intacto.",
-        "Verificación visual confirma las dos ventas esperadas en panel."
+        "Verificación visual en panel PASS.",
+        "FAILED_INVOICE_RECORD v0 commitado en 783f5bd.",
+        "Contrato de rejected invoices definido con /v1/events y category=record_id.",
+        "Integración WP completa en homologación.",
+        "V2 permanece intacto."
       ],
-      "technical": "Gate actual: verificación visual en panel -> UAT -> policy comercial real -> producción controlada."
+      "technical": "Gate actual: corregir CORS/routing WP, completar recheck/freeze del capture+outbox y cerrar URL de imagen; después UAT y policy comercial real."
     },
     {
       "title": "Acumulación + idempotencia mínima",
@@ -85,14 +88,14 @@
       "start": "2026-09-26",
       "due": "2026-09-28",
       "order": 4,
-      "summary": "Probar el RC/data RC después del smoke remoto.",
+      "summary": "Ejecutar UAT después de cerrar la integración WP en homologación.",
       "why": "Valida casos no ideales antes de producción.",
       "acceptance": [
         "UAT ejecutado.",
         "Problemas registrados.",
         "Correcciones críticas revalidadas."
       ],
-      "technical": "Depende de RC v4 + smoke LABS."
+      "technical": "Smoke A/B y panel ya pasaron; depende ahora del cierre de la integración WP."
     },
     {
       "title": "Producción controlada + rollback + handover",
@@ -113,7 +116,7 @@
         "Rollback.",
         "Handover."
       ],
-      "technical": "No iniciar antes de smoke + UAT."
+      "technical": "No iniciar antes de integración WP + UAT + policy comercial real."
     },
     {
       "title": "Go-live / ajuste final",
