@@ -1,7 +1,7 @@
 {
   "schema_version": "status-v0",
-  "generated_at": "2026-09-30",
-  "source": "GitHub Issues #1-#6 + actualización personal Bruno/Pernod 2026-09-30",
+  "generated_at": "2026-10-02",
+  "source": "GitHub Issues #1-#6 + actualización personal Bruno/Pernod 2026-10-02",
   "note": "Snapshot de fallback. Comparar siempre con la actualización fechada más reciente de la branch personal.",
   "tasks": [
     {
@@ -17,20 +17,20 @@
       "due": "2026-09-24",
       "order": 1,
       "summary": "Cerrar el bloque técnico original de OCR/parser/homologación.",
-      "why": "Base técnica ya validada antes de evolucionar el contrato.",
+      "why": "Base técnica validada antes de evolucionar el contrato.",
       "acceptance": [
         "Parser/OCR/mapping congelados.",
         "Smoke real LABS VALID→ACCEPTED.",
         "Replay sin segundo efecto.",
         "Sin deploy de producción."
       ],
-      "technical": "Bloque técnico original cerrado el 24/09."
+      "technical": "Bloque técnico original cerrado."
     },
     {
       "title": "Elegibilidad + integración con Andrés",
       "url": "https://github.com/SuperlikersGlobal/Status/issues/2",
       "state": "open",
-      "commentsCount": 3,
+      "commentsCount": 4,
       "project": "Pernod",
       "owner": "Bruno",
       "status": "in_progress",
@@ -38,22 +38,26 @@
       "start": "2026-09-22",
       "due": "2026-09-24",
       "order": 2,
-      "summary": "Cerrar la integración WP en homologación después del smoke A/B y panel ya confirmados.",
-      "why": "La validación técnica, los efectos LEADER/CDC, el replay y la verificación visual ya pasaron. El gate actual está en la integración del caller WP y sus bordes de CORS/routing.",
+      "summary": "Cerrar la integración de failed invoices + imagen en homologación antes de UAT.",
+      "why": "Caller, request_id, rejected_invoices y source-image ya tienen contrato confirmado; falta cerrar evidencia del primer smoke source-image y automatizar la entrega con imagen.",
       "acceptance": [
-        "Code RC b71df3e PASS.",
-        "Data RC final PASS.",
-        "F1806 golden 33/33.",
-        "Fase A real PASS.",
-        "Fase B real REGISTERED con foto + LEADER + CDC ACCEPTED.",
-        "Replay idempotente con un único intent/result por efecto.",
-        "Verificación visual en panel PASS.",
-        "FAILED_INVOICE_RECORD v0 commitado en 783f5bd.",
-        "Contrato de rejected invoices definido con /v1/events y category=record_id.",
-        "Integración WP completa en homologación.",
+        "Fase A/B y panel visual PASS.",
+        "Replay idempotente PASS.",
+        "FAILED_INVOICE_RECORD v0 congelado.",
+        "Capture/outbox y durable-registration congelados.",
+        "Primer rejected_invoices HTTP 200 y visible en panel.",
+        "Caller/request_id confirmados con Andrés.",
+        "distinct_id=request.uid y category=record_id confirmados.",
+        "Misma category sobreescribe el evento existente.",
+        "Source-image core + wiring congelados.",
+        "RC source-image reproducible PASS.",
+        "Runtime SOURCE_IMAGE_WIRING_ENABLED + CAPTURE_WIRING_ENABLED.",
+        "Primer smoke real source-image HTTP 200 / NOT_VALIDATED / sin ventas.",
+        "Verificar source_image_result + outbox.image_url.",
+        "Cerrar sender rejected_invoices con image_url.",
         "V2 permanece intacto."
       ],
-      "technical": "Gate actual: corregir CORS/routing WP, completar recheck/freeze del capture+outbox y cerrar URL de imagen; después UAT y policy comercial real."
+      "technical": "Gate actual: verificación read-only de receipts/outbox del smoke source-image; después sender rejected_invoices con image_url y UAT. Producción sigue no desplegada."
     },
     {
       "title": "Acumulación + idempotencia mínima",
@@ -74,7 +78,7 @@
         "Replay sin segundo efecto.",
         "Execution basis protege policy drift."
       ],
-      "technical": "Idempotencia extendida a foto + LEADER + CDC."
+      "technical": "Idempotencia extendida a foto + LEADER + CDC y durable-registration congelado."
     },
     {
       "title": "UAT con casos variados + correcciones",
@@ -88,14 +92,14 @@
       "start": "2026-09-26",
       "due": "2026-09-28",
       "order": 4,
-      "summary": "Ejecutar UAT después de cerrar la integración WP en homologación.",
+      "summary": "Ejecutar UAT después de cerrar delivery de rejected invoices con imagen.",
       "why": "Valida casos no ideales antes de producción.",
       "acceptance": [
-        "UAT ejecutado.",
+        "UAT ejecutado con Andrés.",
         "Problemas registrados.",
         "Correcciones críticas revalidadas."
       ],
-      "technical": "Smoke A/B y panel ya pasaron; depende ahora del cierre de la integración WP."
+      "technical": "Depende del cierre de receipts/outbox source-image y sender rejected_invoices."
     },
     {
       "title": "Producción controlada + rollback + handover",
@@ -112,11 +116,12 @@
       "summary": "Llevar el flujo a producción de forma controlada.",
       "why": "Reduce riesgo y deja rollback/handover.",
       "acceptance": [
-        "Producción controlada.",
+        "Producción review-first.",
+        "Source-image production mode gobernado.",
         "Rollback.",
         "Handover."
       ],
-      "technical": "No iniciar antes de integración WP + UAT + policy comercial real."
+      "technical": "PRODUCTION_REVIEW_ONLY está congelado localmente pero no desplegado. No iniciar producción antes de UAT y gates restantes."
     },
     {
       "title": "Go-live / ajuste final",
@@ -131,13 +136,13 @@
       "due": "2026-10-01",
       "order": 6,
       "summary": "Mantener el hito de cierre operativo/ajuste final documentado.",
-      "why": "Referencia de cierre sin confundirla con el inicio real de campaña.",
+      "why": "Referencia de cierre sin confundirla con un go-live no verificado.",
       "acceptance": [
         "Activar sólo si gates previos pasan.",
         "Estado final documentado.",
         "Dependencias explícitas."
       ],
-      "technical": "La campaña aún no ha iniciado."
+      "technical": "La producción todavía no fue desplegada."
     }
   ]
 }
