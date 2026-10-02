@@ -1,78 +1,89 @@
 # Pernod
 
 **Responsable:** Bruno Antoniassi  
-**Estado:** En progreso — homologación técnica PASS / integración WP en curso  
-**Última actualización:** 2026-09-30
+**Estado:** En progreso — source-image homologación activa / delivery de rechazadas en cierre  
+**Última actualización:** 2026-10-02
 
 ## Estado ejecutivo
 
-El flujo V4 pasó el smoke real A/B y la verificación visual en panel.
+La homologación V4 ya pasó el smoke A/B histórico, panel visual, capture de failed invoices y el primer evento `rejected_invoices`. El foco actual es cerrar la URL de imagen de punta a punta antes de automatizar el sender.
 
-- código base congelado: `b71df3e7ed73f2e57d4ff85f4d973cabe2e43d6b`;
-- commit actual con FAILED_INVOICE_RECORD v0: `783f5bdc0f30b829e01334a9b11cc513e04bf2eb`;
-- Code RC: PASS;
-- Data RC: PASS;
-- F1806 golden: 33/33;
-- Fase A: PASS;
-- Fase B: PASS;
-- panel visual: PASS;
-- replay sin duplicación;
-- V2 intacto.
+Checkpoint local:
+- producción review-only: `8a51851`;
+- source-image core: `c3fccd332fadaeae3c0bd8fed1278758d2a8086b`;
+- source-image wiring homologación: `81b553cfcc345d672125a94d10e8db8ccbad080f`;
+- RC source-image: reproducible PASS;
+- Lambda V4-5c: nuevo código desplegado sólo en homologación;
+- `SOURCE_IMAGE_UPLOAD=ENABLED`;
+- V2 permanece intacto.
 
-## Integración WP
+## Integración con Andrés / WP
 
-El contrato público sigue usando:
-`request_id + uid + cdc_uid + campaign_id + image`.
+Contrato confirmado:
+- caller: ejecutivo o gerente;
+- el usuario que envía queda como `uid`;
+- CDC se identifica por tag/regla acordada;
+- upload nuevo → `request_id` nuevo;
+- retry técnico del payload exacto → mismo `request_id`;
+- cambio de imagen/payload → `request_id` nuevo;
+- para `rejected_invoices`, `distinct_id = request.uid`;
+- repetir la misma `category` sobreescribe el evento existente.
 
-La prueba desde navegador llegó al ambiente V4, pero quedan dos ajustes separados:
-- CORS para permitir temporalmente el origen del navegador durante homologación;
-- revisión del routing por respuesta `404 NOT_FOUND`.
+CORS/routing del endpoint V4 de homologación ya quedaron corregidos.
 
-No se cambia el body de prueba hasta resolver esos dos puntos.
+## Failed invoices / rejected_invoices
 
-## Facturas que no pasan
-
-`FAILED_INVOICE_RECORD v0` está commitado en `783f5bd`.
-
-Contrato acordado para entrega:
-- destino conceptual: `POST /v1/events`;
-- `event = rejected_invoices`;
+Estado:
+- `FAILED_INVOICE_RECORD v0`: congelado;
+- capture/outbox: congelado y desplegado en homologación;
+- durable registration: congelado;
+- primer evento `rejected_invoices`: HTTP 200 y verificado visualmente en panel;
 - `category = record_id`;
-- el record viaja serializado en `properties.info`.
+- `properties.info = record_json` gobernado;
+- imagen/link: requerida por Andrés.
 
-El capture/outbox v0 ya fue implementado localmente:
-- 127 tests nuevos;
-- suite completa: 1179 passed + 2 xfailed;
-- todavía no está commitado;
-- el recheck independiente se detuvo por una precondición de baseline de archivos untracked, no por un defecto identificado en el código.
+## Source image
 
-## Cocktails
+Andrés confirmó que la imagen se sube a SuperLikers y que `POST /v1/photos` devuelve `image_url`.
 
-Se recibió y analizó el histórico FY26:
-- 6.533 registros;
-- 565 nombres raw;
-- 102 nombres ambiguos;
-- 21 referencias válidas asociadas de forma estable a 21 productos tarifarios;
-- el nombre del cocktail por sí solo no es autoridad suficiente para mapping automático.
+Se implementó un stage separado de source-image para homologación:
+- URL fuera de FAILED_INVOICE_RECORD y fuera de `record_id`;
+- duplicate IMAGE local no vuelve a subir;
+- CONTENT duplicate usa su propia imagen;
+- provider 177 no inventa URL;
+- VALID reutiliza el source upload, evitando un segundo `/photos`;
+- producción review-only continúa con cero efectos externos.
 
-Decisión:
-- no modificar el master con aliases automáticos;
-- usar el histórico como corpus de evidencia/revisión;
-- próximo paso: construir PERNOD_COCKTAIL_CORPUS_V0 de forma determinística.
+Runtime probe:
+- `SOURCE_IMAGE_WIRING_ENABLED`;
+- `CAPTURE_WIRING_ENABLED`.
+
+Primer smoke real con imagen nueva:
+- HTTP 200;
+- `NOT_VALIDATED`;
+- `duplicate_of = null`;
+- foto de registro NOT_ATTEMPTED;
+- ventas NOT_ATTEMPTED;
+- crédito false.
+
+Todavía no se marca PASS end-to-end del source-image: falta leer los receipts y confirmar `outbox.image_url`.
 
 ## Gate actual
 
-1. cerrar CORS + routing del WP en homologación;
-2. completar recheck/freeze de capture + outbox;
-3. cerrar URL de imagen;
+1. verificar `source_image_intent/result` del smoke;
+2. confirmar `outbox.image_url` y ausencia de ventas;
+3. cerrar/congelar sender `rejected_invoices` con imagen;
 4. ejecutar UAT;
-5. cerrar policy comercial real;
-6. producción controlada + rollback + handover.
+5. preparar producción controlada.
 
 ## Producción
 
-No desplegada. El ambiente V4 y los datos TEST_ONLY siguen siendo exclusivamente de homologación.
+No desplegada.
+
+Existe un modo `PRODUCTION_REVIEW_ONLY` congelado localmente, pero la producción source-image será una etapa separada y explícita después de homologación + sender + UAT.
 
 ## Historial
 
-Ver `updates/2026-09-30.md`.
+Ver:
+- `updates/2026-09-30.md`
+- `updates/2026-10-02.md`
