@@ -4,31 +4,33 @@
 
 1. PERSONAL_PLAN.md
 2. projects/pernod/README.md
-3. projects/pernod/updates/2026-09-30.md
+3. projects/pernod/updates/2026-10-02.md
 
-## Estado actual — 30/09/2026
+## Estado actual — 02/10/2026
 
 - Prioridad: Pernod
-- Estado: En progreso — integración WP + UAT
-- Código commitado actual: `783f5bdc0f30b829e01334a9b11cc513e04bf2eb`
-- Code RC: PASS
-- Data RC: PASS
-- F1806 golden: 33/33 PASS
-- Fase A real: PASS
-- Fase B real: PASS
-- Verificación visual en panel: PASS
-- Replay idempotente: PASS
+- Estado: En progreso — homologación source-image + cierre de delivery de rechazadas
+- Checkpoint local congelado más reciente: `81b553cfcc345d672125a94d10e8db8ccbad080f`
+- Producción review-only: implementada y congelada localmente en `8a51851`; no desplegada
+- Source-image core: congelado en `c3fccd3`
+- Source-image wiring homologación: congelado en `81b553c`
+- RC source-image reproducible: PASS
+- Lambda V4-5c de homologación: código nuevo desplegado y `SOURCE_IMAGE_UPLOAD=ENABLED`
+- Runtime probe: `SOURCE_IMAGE_WIRING_ENABLED` + `CAPTURE_WIRING_ENABLED`
+- Primer smoke real source-image: HTTP 200 / NOT_VALIDATED / sin ventas ni crédito
+- Verificación pendiente del smoke: `source_image_result` + `outbox.image_url`
+- FAILED_INVOICE_RECORD v0: congelado
+- Capture/outbox + durable registration: congelados y homologados
+- Primer `rejected_invoices`: HTTP 200 y verificado visualmente en panel
+- Contrato con Andrés: caller/request_id confirmados; `distinct_id = uid`; misma `category` sobreescribe
+- Imagen: `/photos` devuelve `image_url`; link debe acompañar el flujo de rechazadas
+- WP: CORS/routing de homologación cerrados
 - V2: intacto
-- FAILED_INVOICE_RECORD v0: commitado
-- Capture/outbox v0: implementación local PASS; recheck independiente pendiente por baseline de archivos untracked, no por defecto encontrado
-- Rejected invoices: contrato de integración definido con `/v1/events` y `category = record_id`
-- Integración WP desde navegador: CORS y routing 404 pendientes de corrección
-- Histórico de cocktails: recibido y analizado; no se promueve automáticamente al master
 - Producción: no desplegada
 
 ## Gate actual
 
-**Cerrar integración WP en homologación y ejecutar UAT.**
+**Cerrar la verificación de receipts + `outbox.image_url` del smoke source-image.**
 
 Después:
-policy comercial real → producción controlada → rollback / handover.
+sender `rejected_invoices` con imagen → UAT → preparación controlada de producción.
