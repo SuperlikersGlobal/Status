@@ -1,89 +1,61 @@
 # Pernod
 
 **Responsable:** Bruno Antoniassi  
-**Estado:** En progreso — source-image homologación activa / delivery de rechazadas en cierre  
-**Última actualización:** 2026-10-02
+**Estado:** En progreso — preparación controlada de producción  
+**Última actualización:** 2026-10-05
 
 ## Estado ejecutivo
 
-La homologación V4 ya pasó el smoke A/B histórico, panel visual, capture de failed invoices y el primer evento `rejected_invoices`. El foco actual es cerrar la URL de imagen de punta a punta antes de automatizar el sender.
+El flujo principal de lectura y validación de facturas ya funciona en el ambiente de pruebas. También quedó validado que podemos conservar la imagen original de una factura aunque termine rechazada, sin generar ventas ni puntos durante esa validación.
 
-Checkpoint local:
-- producción review-only: `8a51851`;
-- source-image core: `c3fccd332fadaeae3c0bd8fed1278758d2a8086b`;
-- source-image wiring homologación: `81b553cfcc345d672125a94d10e8db8ccbad080f`;
-- RC source-image: reproducible PASS;
-- Lambda V4-5c: nuevo código desplegado sólo en homologación;
-- `SOURCE_IMAGE_UPLOAD=ENABLED`;
-- V2 permanece intacto.
+El trabajo actual está dividido en dos frentes:
 
-## Integración con Andrés / WP
+1. terminar los últimos detalles del envío automático de facturas rechazadas;
+2. preparar el ambiente de producción de forma controlada, empezando por una versión que sólo revisa y guarda evidencia, sin generar movimientos comerciales.
 
-Contrato confirmado:
-- caller: ejecutivo o gerente;
-- el usuario que envía queda como `uid`;
-- CDC se identifica por tag/regla acordada;
-- upload nuevo → `request_id` nuevo;
-- retry técnico del payload exacto → mismo `request_id`;
-- cambio de imagen/payload → `request_id` nuevo;
-- para `rejected_invoices`, `distinct_id = request.uid`;
-- repetir la misma `category` sobreescribe el evento existente.
+## Lo que ya está listo
 
-CORS/routing del endpoint V4 de homologación ya quedaron corregidos.
+- lectura y validación de facturas en pruebas;
+- identificación de productos y conversión a botellas;
+- soporte para registrar avance para los perfiles correspondientes;
+- manejo de duplicados y reintentos;
+- conservación de la imagen original de la factura;
+- registro de facturas rechazadas preparado con la imagen incluida;
+- versión de revisión para producción preparada y validada localmente;
+- separación entre pruebas y producción para evitar efectos accidentales.
 
-## Failed invoices / rejected_invoices
+## Facturas rechazadas
 
-Estado:
-- `FAILED_INVOICE_RECORD v0`: congelado;
-- capture/outbox: congelado y desplegado en homologación;
-- durable registration: congelado;
-- primer evento `rejected_invoices`: HTTP 200 y verificado visualmente en panel;
-- `category = record_id`;
-- `properties.info = record_json` gobernado;
-- imagen/link: requerida por Andrés.
+El flujo ya está preparado para enviar una factura rechazada junto con su información e imagen.
 
-## Source image
+Andrés confirmó dónde debe viajar la imagen dentro de la información del rechazo y esa parte ya quedó incorporada.
 
-Andrés confirmó que la imagen se sube a SuperLikers y que `POST /v1/photos` devuelve `image_url`.
+Antes de activar el envío automático faltan dos confirmaciones finales de integración:
 
-Se implementó un stage separado de source-image para homologación:
-- URL fuera de FAILED_INVOICE_RECORD y fuera de `record_id`;
-- duplicate IMAGE local no vuelve a subir;
-- CONTENT duplicate usa su propia imagen;
-- provider 177 no inventa URL;
-- VALID reutiliza el source upload, evitando un segundo `/photos`;
-- producción review-only continúa con cero efectos externos.
+- confirmar exactamente cómo responde el servicio cuando recibe correctamente un rechazo;
+- cerrar la identificación final de la configuración de destino.
 
-Runtime probe:
-- `SOURCE_IMAGE_WIRING_ENABLED`;
-- `CAPTURE_WIRING_ENABLED`.
-
-Primer smoke real con imagen nueva:
-- HTTP 200;
-- `NOT_VALIDATED`;
-- `duplicate_of = null`;
-- foto de registro NOT_ATTEMPTED;
-- ventas NOT_ATTEMPTED;
-- crédito false.
-
-Todavía no se marca PASS end-to-end del source-image: falta leer los receipts y confirmar `outbox.image_url`.
-
-## Gate actual
-
-1. verificar `source_image_intent/result` del smoke;
-2. confirmar `outbox.image_url` y ausencia de ventas;
-3. cerrar/congelar sender `rejected_invoices` con imagen;
-4. ejecutar UAT;
-5. preparar producción controlada.
+Hasta entonces el envío automático permanece bloqueado.
 
 ## Producción
 
-No desplegada.
+Producción todavía no está activa.
 
-Existe un modo `PRODUCTION_REVIEW_ONLY` congelado localmente, pero la producción source-image será una etapa separada y explícita después de homologación + sender + UAT.
+La primera versión preparada para producción es intencionalmente limitada: puede recibir una factura, leerla, validarla y guardar evidencia para revisión humana, pero no genera ventas, puntos, créditos ni otros movimientos comerciales.
+
+Antes de crear o habilitar recursos de producción vamos a revisar el ambiente de AWS con un acceso separado de solo lectura. Después de esa revisión, cualquier creación o activación se hará únicamente con aprobación explícita.
+
+## Próximo paso
+
+1. crear el acceso de solo lectura para revisar producción;
+2. revisar la configuración actual de AWS sin modificar nada;
+3. confirmar los recursos y controles necesarios;
+4. pedir aprobación antes de crear la infraestructura de producción;
+5. desplegar primero sin acceso público;
+6. habilitar pruebas reales sólo después de nuevas aprobaciones.
 
 ## Historial
 
 Ver:
-- `updates/2026-09-30.md`
 - `updates/2026-10-02.md`
+- `updates/2026-10-05.md`
