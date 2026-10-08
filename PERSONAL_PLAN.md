@@ -1,7 +1,7 @@
 # Bruno — Plan de acción personal
 
 **Responsable:** Bruno Antoniassi  
-**Última actualización:** 2026-10-02
+**Última actualización:** 2026-10-08
 
 ## Prioridad actual
 
@@ -41,3 +41,25 @@ Después:
 UAT → modo de producción source-image controlado → producción review-first → habilitación comercial por gates.
 
 Producción sigue no desplegada.
+
+### 2. MyDesk + Jira
+
+**Estado:** En progreso — preparación y validación local; sin migración operativa.
+
+**Meta:** gestionar el trabajo cotidiano de SuperLikers en MyDesk y retirar Jira gradualmente, sin construir un sistema paralelo.
+
+**Avances confirmados:**
+- decisión de reutilizar las tareas nativas de MyDesk, sus tableros, responsables e historial;
+- nueva regla de revisión y aceptación de tareas implementada, probada y revisada localmente, aún no desplegada;
+- mejora del importador para asociar el tablero del responsable incorporada al repositorio del MyDesk; despliegue no verificado;
+- corrección local del estado de entrada de incidencias importadas;
+- clasificación previa de la jerarquía de Jira validada con datos reales en modo solo lectura y sin importar;
+- roadmap acordado: preparar un piloto, migrar por equipo y conservar Jira como archivo temporal.
+
+**Gate actual:** resolver tres relaciones jerárquicas excepcionales y definir cómo conservar el trabajo registrado en elementos padre antes de habilitar la importación.
+
+**Próximo hito:** acordar el tratamiento mínimo de estas excepciones, revalidar lo afectado y continuar el desarrollo únicamente en local.
+
+**Detalle:** `projects/mydesk-jira/README.md` y `projects/mydesk-jira/updates/2026-10-08.md`.
+
+**Jira y MyDesk operativo:** sin importación real ni cutover; ningún despliegue nuevo confirmado.
