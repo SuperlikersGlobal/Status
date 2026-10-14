@@ -18,3 +18,14 @@ Status v0 permite entender el trabajo de una persona sin tener que leer Git, com
 | Puesta en marcha | Pendiente | [#6](https://github.com/SuperlikersGlobal/Status/issues/6) |
 
 Las issues contienen las actualizaciones y los criterios de cierre de cada bloque. Los comentarios anteriores conservan el historial; no sustituyen el estado actual.
+
+## MyDesk — avance de Bruno (14/10/2026)
+
+**En progreso.** La nueva versión de gestión de tareas pasó las pruebas locales, pero todavía no está publicada para el equipo.
+
+- **Último avance:** mejoras de organización, seguimiento y revisión de tareas; respaldo del código realizado y comprobado.
+- **Cambio de plan:** el primer piloto utilizará tareas registradas manualmente, mientras Jira se conserva para consultas.
+- **Pendiente:** respaldar los datos actuales y coordinar una publicación segura.
+- **Próximo hito:** comenzar el trabajo nuevo de un primer equipo en MyDesk.
+
+[Ver actualización del 14/10](https://github.com/SuperlikersGlobal/Status/blob/bruno/projects/mydesk-jira/updates/2026-10-14.md)
