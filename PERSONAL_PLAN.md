@@ -1,7 +1,9 @@
 # Bruno — Plan de acción personal
 
 **Responsable:** Bruno Antoniassi  
-**Última actualización:** 2026-10-08
+**Última actualización:** 2026-10-14
+
+> La sección de Pernod conserva su último checkpoint del 08/10; esta actualización incorpora únicamente el avance de MyDesk.
 
 ## Prioridad actual
 
@@ -44,22 +46,21 @@ Producción sigue no desplegada.
 
 ### 2. MyDesk + Jira
 
-**Estado:** En progreso — preparación y validación local; sin migración operativa.
+**Estado:** En progreso — versión piloto probada localmente; todavía no publicada.
 
-**Meta:** gestionar el trabajo cotidiano de SuperLikers en MyDesk y retirar Jira gradualmente, sin construir un sistema paralelo.
+**Meta:** que SuperLikers gestione sus tareas cotidianas desde MyDesk y reduzca gradualmente el uso de Jira.
 
-**Avances confirmados:**
-- decisión de reutilizar las tareas nativas de MyDesk, sus tableros, responsables e historial;
-- nueva regla de revisión y aceptación de tareas implementada, probada y revisada localmente, aún no desplegada;
-- mejora del importador para asociar el tablero del responsable incorporada al repositorio del MyDesk; despliegue no verificado;
-- corrección local del estado de entrada de incidencias importadas;
-- clasificación previa de la jerarquía de Jira validada con datos reales en modo solo lectura y sin importar;
-- roadmap acordado: preparar un piloto, migrar por equipo y conservar Jira como archivo temporal.
+**Último avance confirmado (14/10):**
+- funciones para organizar, asignar, revisar y finalizar tareas integradas y validadas en pruebas locales;
+- corregidos problemas de cambios simultáneos y tareas duplicadas, sin dar por comprobado todavía el comportamiento del servicio publicado;
+- incorporados cambios recientes del MyDesk existente;
+- respaldo del código actual y de la versión preparada completado y recuperación comprobada;
+- prueba de importación de Jira no apta para el piloto; se eligió registrar manualmente el trabajo inicial.
 
-**Gate actual:** resolver tres relaciones jerárquicas excepcionales y definir cómo conservar el trabajo registrado en elementos padre antes de habilitar la importación.
+**Bloqueo actual:** falta respaldar los datos reales del MyDesk y coordinar la publicación y su verificación con el responsable del servicio.
 
-**Próximo hito:** acordar el tratamiento mínimo de estas excepciones, revalidar lo afectado y continuar el desarrollo únicamente en local.
+**Próximo hito:** preparar una publicación controlada y confirmar equipo, responsables y tablero para el primer piloto.
 
-**Detalle:** `projects/mydesk-jira/README.md` y `projects/mydesk-jira/updates/2026-10-08.md`.
+**Detalle:** `projects/mydesk-jira/README.md` y `projects/mydesk-jira/updates/2026-10-14.md`.
 
-**Jira y MyDesk operativo:** sin importación real ni cutover; ningún despliegue nuevo confirmado.
+**Límite:** los cambios nuevos no están publicados y Jira no ha sido sustituido todavía.

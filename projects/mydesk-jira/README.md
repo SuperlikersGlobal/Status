@@ -1,48 +1,41 @@
 # MyDesk + Jira
 
-**Responsable:** Bruno Antoniassi  
-**Estado:** En progreso — desarrollo y validación local  
-**Última actualización:** 2026-10-08
+**Responsable:** Bruno  
+**Estado:** En progreso — piloto validado localmente, pendiente de publicación.  
+**Última actualización:** 2026-10-14
 
 ## Objetivo
 
-Permitir que los equipos de SuperLikers administren su trabajo cotidiano desde MyDesk, sin tener que operar Jira. Hacer la transición por equipos, con Jira como archivo de consulta temporal, y sin construir otro gestor de tareas.
+Que los equipos de SuperLikers organicen, ejecuten y finalicen su trabajo en MyDesk, sin necesitar Jira para las tareas nuevas.
 
-## Enfoque acordado
+## Qué tenemos
 
-MyDesk ya ofrece tareas, responsables, tableros, estados, comentarios, historial, proyectos, sprints y control de acceso. La decisión es aprovechar esa base.
+- Gestión de tareas con responsables, estados, fechas y prioridades.
+- Tableros, lista de trabajo, proyectos, historias y sprints.
+- Comentarios, seguimiento de avances, revisión y aceptación de entregas.
+- Versión nueva integrada con los cambios recientes del MyDesk existente.
+- Pruebas locales satisfactorias de los flujos principales y del trabajo simultáneo.
+- Respaldo del código actual y de la versión preparada, con recuperación comprobada.
 
-El prototipo `SuperlikersGlobal/Status` se mantiene como referencia de comunicación y presentación; **GitHub Issues no será el backend del MyDesk**.
+**Importante:** estas mejoras están **probadas localmente, no publicadas aún** en el MyDesk oficial.
 
-## Avances confirmados
+## Qué cambió respecto al plan anterior
 
-- **Arquitectura:** revisión independiente concluyó que conviene evolucionar el sistema nativo de MyDesk, no crear una aplicación paralela.
-- **Flujo de tareas:** las reglas de revisión y aceptación quedaron implementadas, probadas y revisadas localmente. Todavía no están desplegadas al equipo.
-- **Importación de Jira:** la asignación de tablero del responsable fue corregida en el repositorio del MyDesk. No se confirmó si ese cambio llegó al sitio publicado.
-- **Incidencias:** el mapeo de su estado inicial se corrigió y probó localmente.
-- **Jerarquía:** se construyó un clasificador previo, sin escritura, que distingue estructuras y tareas por sus relaciones. Se probó con datos reales de Jira obtenidos únicamente en lectura.
-- **Diagnóstico:** la conciliación de identidades fue completa; quedan tres relaciones de jerarquía excepcionales y la revisión del trabajo propio registrado en algunos elementos padre.
+La importación automática de tareas de Jira se probó con un grupo real en un entorno aislado, pero no permitió conservar con seguridad los responsables y relaciones necesarias.
 
-## Gate actual
+**Decisión:** iniciar con carga manual de las tareas del primer equipo y mantener Jira como consulta histórica. No se han migrado tareas operativas.
 
-**Definir el tratamiento mínimo de las excepciones de jerarquía y la preservación del trabajo de los elementos padre.**
+## Bloqueo actual
 
-Después, revalidar sólo los casos afectados. La importación real sigue pendiente y no está autorizada.
+Hace falta respaldar los datos actuales de MyDesk y coordinar la publicación con quien administra el servicio. El respaldo del código ya está terminado.
 
-## Camino mínimo
+## Próximo hito
 
-1. Resolver las excepciones y finalizar la preparación local del importador.
-2. Validar correspondencia de personas, tareas y permisos en un piloto acotado.
-3. Tras autorización explícita, migrar un equipo, confirmar su trabajo en MyDesk y dejar su Jira en solo lectura.
-4. Repetir el proceso por equipo; retirar Jira cuando ya no sea necesario para trabajar ni consultar el histórico esencial.
+**Publicación controlada → validación con el primer equipo → trabajo nuevo gestionado en MyDesk.**
 
-## Límites actuales
+Antes del piloto se confirmarán el equipo, los responsables y quién puede ver cada tablero.
 
-- Desarrollo nuevo y pruebas: **sólo local**.
-- No se ha ejecutado importación real ni cutover.
-- Los cambios locales todavía no constituyen funcionalidad desplegada.
-- Ningún cambio externo adicional sin aprobación explícita.
+## Actualizaciones
 
-## Historial
-
-- `updates/2026-10-08.md`
+- [14/10/2026 — Preparación del piloto](updates/2026-10-14.md)
+- [08/10/2026 — Decisión inicial y preparación](updates/2026-10-08.md)
