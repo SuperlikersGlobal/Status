@@ -6,7 +6,7 @@
 2. projects/pernod/README.md
 3. projects/pernod/updates/2026-10-05.md
 4. projects/mydesk-jira/README.md
-5. projects/mydesk-jira/updates/2026-10-14.md
+5. projects/mydesk-jira/updates/2026-10-15.md
 
 ## Estado actual — 05/10/2026
 
@@ -28,13 +28,13 @@
 Después:
 revisión AWS → aprobación para crear infraestructura → despliegue sin acceso público → pruebas controladas → activación gradual.
 
-## MyDesk + Jira — Estado al 14/10/2026
+## MyDesk + Jira — Estado al 15/10/2026
 
-- **Objetivo:** que el equipo use MyDesk para organizar y completar las tareas nuevas, sin depender del Jira.
-- **Estado:** versión piloto integrada y validada localmente; **aún no publicada** en el MyDesk oficial.
-- **Último avance:** mejor organización de tareas, seguimiento y aceptación; correcciones para trabajar varias personas sin perder cambios; respaldo del código completo y recuperación probada.
-- **Cambio de plan:** la prueba de importación desde Jira no conservó con suficiente seguridad los datos necesarios. El primer piloto comenzará con registro manual de las tareas activas.
-- **Bloqueo:** falta proteger los datos actuales del MyDesk y coordinar una publicación verificable con la persona encargada del servicio.
-- **Próximo hito:** publicar de manera controlada, definir un equipo y comenzar a gestionar sus tareas nuevas en MyDesk.
+- **Meta:** que el primer equipo gestione tareas nuevas en MyDesk sin depender de Jira para el trabajo cotidiano.
+- **Estado:** versión preparada y probada localmente, todavía no publicada.
+- **Avance:** se respaldó y comprobó el código; el MyDesk oficial incorporó nuevas mejoras que vamos a integrar a la versión piloto.
+- **Jira:** Bruno no tiene acceso a su respaldo. La migración histórica queda a cargo de alguien autorizado; el piloto empezará con tareas registradas manualmente.
+- **Bloqueo:** todavía falta respaldo autorizado de los datos operativos actuales del MyDesk, además de la coordinación para publicar.
+- **Próximo hito:** cerrar la integración local, respaldar los datos y validar el primer equipo después de la publicación.
 
-Ver `projects/mydesk-jira/updates/2026-10-14.md` para el avance del día.
+Ver `projects/mydesk-jira/updates/2026-10-15.md` para el avance del día.

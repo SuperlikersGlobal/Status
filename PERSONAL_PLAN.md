@@ -1,9 +1,9 @@
 # Bruno — Plan de acción personal
 
 **Responsable:** Bruno Antoniassi  
-**Última actualización:** 2026-10-14
+**Última actualización:** 2026-10-15
 
-> La sección de Pernod conserva su último checkpoint del 08/10; esta actualización incorpora únicamente el avance de MyDesk.
+> La sección de Pernod conserva su último checkpoint del 08/10; la actualización del 15/10 corresponde únicamente a MyDesk.
 
 ## Prioridad actual
 
@@ -46,21 +46,18 @@ Producción sigue no desplegada.
 
 ### 2. MyDesk + Jira
 
-**Estado:** En progreso — versión piloto probada localmente; todavía no publicada.
+**Estado:** En progreso — versión piloto validada localmente, todavía no publicada.
 
-**Meta:** que SuperLikers gestione sus tareas cotidianas desde MyDesk y reduzca gradualmente el uso de Jira.
+**Último avance confirmado (15/10):**
+- funciones de tareas, tableros, responsables, seguimiento, revisión y aprobación probadas localmente;
+- respaldo del código actual y la nueva versión realizado y recuperación comprobada;
+- la versión oficial recibió actualizaciones adicionales; su integración local al piloto está **pendiente de finalizar**;
+- Bruno no tiene acceso al respaldo de Jira; la recuperación/migración histórica queda a cargo de alguien autorizado y el primer equipo registrará tareas manualmente.
 
-**Último avance confirmado (14/10):**
-- funciones para organizar, asignar, revisar y finalizar tareas integradas y validadas en pruebas locales;
-- corregidos problemas de cambios simultáneos y tareas duplicadas, sin dar por comprobado todavía el comportamiento del servicio publicado;
-- incorporados cambios recientes del MyDesk existente;
-- respaldo del código actual y de la versión preparada completado y recuperación comprobada;
-- prueba de importación de Jira no apta para el piloto; se eligió registrar manualmente el trabajo inicial.
+**Bloqueo:** falta acceso al respaldo de los datos reales del MyDesk y apoyo para la publicación controlada. El respaldo del código no cubre los datos de operación.
 
-**Bloqueo actual:** falta respaldar los datos reales del MyDesk y coordinar la publicación y su verificación con el responsable del servicio.
+**Próximo hito:** integrar las actualizaciones oficiales con el piloto, proteger los datos reales y habilitar un primer equipo.
 
-**Próximo hito:** preparar una publicación controlada y confirmar equipo, responsables y tablero para el primer piloto.
+**Detalle:** `projects/mydesk-jira/README.md` y `projects/mydesk-jira/updates/2026-10-15.md`.
 
-**Detalle:** `projects/mydesk-jira/README.md` y `projects/mydesk-jira/updates/2026-10-14.md`.
-
-**Límite:** los cambios nuevos no están publicados y Jira no ha sido sustituido todavía.
+**Límite:** nada de esto se ha publicado todavía como nueva versión operativa.
