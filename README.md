@@ -19,6 +19,17 @@ Status v0 permite entender el trabajo de una persona sin tener que leer Git, com
 
 Las issues contienen las actualizaciones y los criterios de cierre de cada bloque. Los comentarios anteriores conservan el historial; no sustituyen el estado actual.
 
+## MyDesk — avance de Bruno (15/10/2026)
+
+**En progreso.** La versión piloto ya fue probada localmente y está pendiente de actualización del servicio.
+
+- **Avance:** respaldo del código terminado; preparación para incorporar mejoras recientes del MyDesk oficial.
+- **Jira:** Bruno no tiene acceso al respaldo. La migración histórica queda con una persona autorizada; el piloto comenzará registrando tareas nuevas manualmente.
+- **Bloqueo:** falta respaldar los datos actuales del MyDesk y coordinar su publicación.
+- **Próximo hito:** integrar las mejoras recientes, preparar una publicación segura y comenzar con el primer equipo.
+
+[Ver actualización del 15/10](https://github.com/SuperlikersGlobal/Status/blob/bruno/projects/mydesk-jira/updates/2026-10-15.md)
+
 ## MyDesk — avance de Bruno (14/10/2026)
 
 **En progreso.** La nueva versión de gestión de tareas pasó las pruebas locales, pero todavía no está publicada para el equipo.
