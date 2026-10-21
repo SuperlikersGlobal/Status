@@ -19,6 +19,18 @@ Status v0 permite entender el trabajo de una persona sin tener que leer Git, com
 
 Las issues contienen las actualizaciones y los criterios de cierre de cada bloque. Los comentarios anteriores conservan el historial; no sustituyen el estado actual.
 
+## MyDesk — avance de Bruno (21/10/2026)
+
+**En progreso, ya online.** La nueva gestión de tareas funciona en MyDesk y el lote inicial del DDP fue migrado y verificado. Todavía no se considera Jira retirado.
+
+- **Avance:** 782 tareas Jira incorporadas, con 245 tareas anteriores de MyDesk conservadas; controles de integridad PASS.
+- **Producto:** tableros, listas, búsqueda, Programas, Historias, Sprints y revisión de entregas; ocho correcciones funcionales comprobadas en producción.
+- **Ahora:** última optimización de Lista/Kanban validada únicamente en local; falta publicarla y comprobar rendimiento real.
+- **Pendiente:** cerrar la integración de código, reconciliar el delta de Jira y asignar tareas en triage.
+- **Fuera del alcance:** Calendar no se ha definido ni activado como parte de este proyecto.
+
+[Ver actualización del 21/10](https://github.com/SuperlikersGlobal/Status/blob/bruno/projects/mydesk-jira/updates/2026-10-21.md)
+
 ## MyDesk — avance de Bruno (15/10/2026)
 
 **En progreso.** La versión piloto ya fue probada localmente y está pendiente de actualización del servicio.
