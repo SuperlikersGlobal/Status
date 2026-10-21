@@ -3,7 +3,7 @@
 **Responsable:** Bruno Antoniassi  
 **Última actualización:** 2026-10-21
 
-> La sección de Pernod conserva su último checkpoint del 08/10; la actualización del 21/10 corresponde únicamente a MyDesk.
+> La actualización de MyDesk del 21/10 no sustituye el estado más reciente de Pernod: consultar su actualización fechada más nueva.
 
 ## Prioridad actual
 
@@ -46,20 +46,20 @@ Producción sigue no desplegada.
 
 ### 2. MyDesk + Jira
 
-**Estado:** En progreso — MyDesk online con migración inicial verificada. La última mejora de rendimiento está lista únicamente en local.
+**Estado:** V0 técnica HECHA: MyDesk online y validado, PR de integración fusionado. La transición operativa desde Jira sigue en progreso.
 
 **Último avance confirmado (21/10):**
-- MyDesk ya está publicado; se protegieron los datos y se ejecutó un corte controlado con respaldo final consistente.
-- Jira DDP: 782 tareas abiertas migradas, más Programas, Historias y Sprints necesarios; 245 tareas antiguas preservadas. Verificación final: 1.027 tareas y cero problemas reportados.
-- Solicitantes Jira conservados como autoría de origen, sin inventar usuarios; tareas sin responsables comprobados quedaron en triage.
-- Ocho correcciones funcionales validadas en producción y navegación autenticada comprobada.
-- Última corrección local de Lista/Kanban y arranque: 999/999 pruebas PASS; publicación y medición real pendientes. La carga fría inferior a 3 s no está acreditada.
-- PR de integración todavía abierto; publicación automática mantenida bajo control.
+- MyDesk desplegado con respaldos y rollback conservados; publicación automática todavía bloqueada.
+- Migración inicial DDP: 782 tareas nuevas y jerarquía de Programas/Historias/Sprints; 245 tareas anteriores conservadas, con 1.027 tareas verificadas y cero problemas reportados.
+- Ocho correcciones funcionales probadas en producción.
+- Corrección de Lista y Kanban para alto volumen publicada y comprobada: renderizado sin bloqueos, búsqueda y filtros completos, paginación de 50.
+- QA G4 PASS con la sesión real y sin escrituras; 999/999 pruebas locales PASS. Carga caliente 1,41–1,65 s; una medición fría de 5,56 s, aceptada temporalmente.
+- PR #81 fusionado a `main` (`fef8f0d`); deploy validado permanece publicado.
 
-**Próximo hito:** publicar la corrección de renderizado, verificar estabilidad y tiempos reales, cerrar el PR. Después reconciliar el delta de Jira y distribuir el trabajo en triage.
+**Próximo hito (operativo):** conciliar el delta del Jira DDP y asignar las tareas pendientes de triage con identidades comprobadas, antes de retirar Jira.
 
-**Pendiente para abandonar Jira:** conciliar cambios posteriores al lote y verificar conservación del histórico concluido. La migración inicial no significa retirada de Jira.
+**Límites:** la V0 técnica está cerrada, pero Jira no fue retirado, el histórico completo no se considera conciliado y las tareas no fueron asignadas automáticamente.
 
 **Detalle:** `projects/mydesk-jira/README.md` y `projects/mydesk-jira/updates/2026-10-21.md`.
 
-**Fuera del alcance actual:** Calendar, hasta que Bruno defina el flujo deseado.
+**Fuera del alcance:** Calendar, hasta definir el flujo.
