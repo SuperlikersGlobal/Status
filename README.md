@@ -28,13 +28,13 @@
 Después:
 revisión AWS → aprobación para crear infraestructura → despliegue sin acceso público → pruebas controladas → activación gradual.
 
-## MyDesk + Jira — Estado al 21/10/2026
+## MyDesk + Jira — Cierre técnico V0 al 21/10/2026
 
-- **Meta:** administrar el trabajo cotidiano desde MyDesk, conservando Jira hasta cerrar la transición.
-- **Estado:** MyDesk online y primera migración de tareas DDP verificada; integración final y delta pendientes.
-- **Avance:** 782 tareas Jira incorporadas; 245 tareas anteriores conservadas; integridad y ocho correcciones funcionales verificadas.
-- **Ahora:** última optimización de Lista/Kanban validada solo localmente; falta publicarla y probar estabilidad con datos reales.
-- **Próximo hito:** validar la publicación final y cerrar el PR; después reconciliar delta Jira y distribuir triage.
-- **Límite:** no confundir migración inicial con cierre total de Jira ni pruebas locales con validación en producción. Calendar no forma parte de este avance.
+- **Meta:** gestionar trabajo cotidiano en MyDesk y retirar Jira solo tras completar la transición operativa.
+- **Resultado:** V0 técnica entregada, validada y en producción, con PR #81 integrado a `main` (`fef8f0d`).
+- **Migración inicial:** 782 tareas Jira y 245 tareas anteriores conservadas; 1.027 verificadas, sin problemas reportados.
+- **QA:** ocho correcciones funcionales y renderizado progresivo de Lista/Kanban comprobados en producción con más de 900 tareas; sin congelamientos.
+- **Pendiente operativo:** delta Jira posterior al corte, asignación de triage y verificación del histórico antes de abandonar Jira.
+- **Límites:** carga fría superior a la antigua meta de 3 segundos aceptada por ahora; auto-publish bloqueado; Calendar fuera del alcance.
 
-Ver `projects/mydesk-jira/updates/2026-10-21.md` para el informe completo y la evidencia clasificada por estado.
+[Ver el cierre técnico y las evidencias](projects/mydesk-jira/updates/2026-10-21.md).
