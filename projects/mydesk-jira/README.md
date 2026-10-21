@@ -1,45 +1,39 @@
 # MyDesk + Jira
 
 **Responsable:** Bruno  
-**Estado:** En progreso — MyDesk online; migración inicial DDP verificada; última optimización local pendiente de publicación.  
+**Estado:** V0 técnica COMPLETADA y probada en producción; transición operativa de Jira en progreso.  
 **Última actualización:** 2026-10-21
 
 ## Objetivo
 
-Que los equipos gestionen su trabajo cotidiano en MyDesk sin depender de Jira. La activación está en curso; Jira todavía conserva el histórico y los cambios posteriores al primer lote.
+Que los equipos de SuperLikers gestionen su trabajo cotidiano en MyDesk, sin necesidad de abrir Jira para las tareas nuevas. La V0 técnica ya funciona; todavía falta cerrar el cambio operativo del equipo.
 
 ## Entregado y comprobado
 
-- MyDesk publicado con tareas, estados, prioridades, responsables, comentarios, revisión y aceptación, Kanban, Lista, Programas, Historias, Sprints, búsqueda y Backlog.
-- Respaldo final consistente y publicación controlada, con posibilidad de volver al deploy anterior.
-- Primer lote Jira DDP migrado: **782 tareas**, **83 Programas**, **175 Historias** y **44 Sprints**.
-- **245 tareas anteriores** preservadas: **1.027 tareas** verificadas tras el lote.
-- Reservas de códigos y recibos de creación confirmados; cero problemas en la verificación posterior.
-- Autoría Jira conservada sin crear usuarios ficticios. Las tareas sin responsable vinculado de forma comprobada quedaron en triage.
-- **Ocho correcciones funcionales** probadas en producción mediante QA autenticado, sin problemas P0 reportados.
+- MyDesk en producción con tareas, responsables, estados, prioridades, fechas, comentarios, revisión y aprobación, Lista, Kanban, Programas, Historias, Sprints, búsqueda y Backlog.
+- Migración inicial Jira DDP: **782 tareas**, **83 Programas**, **175 Historias** y **44 Sprints**, conservando **245 tareas anteriores** de MyDesk. Total verificado: **1.027 tareas**, cero problemas de integridad.
+- Copia consistente antes del corte, códigos reservados sin duplicados y rollback de código disponible.
+- El origen Jira se conserva sin inventar usuarios; tareas con responsable no identificado de forma comprobada permanecen en triage.
+- **Ocho correcciones funcionales** validadas en producción.
+- Lista y Kanban ya no se bloquean con más de 900 tareas: 50 ítems visibles inicialmente y opción de mostrar más. El G4 de producción pasó con la cuenta real, sin escrituras ni errores.
+- **Último deploy validado:** `6ad8cc341cd5e9302016d093` (`d40cf0e`).
+- **Integración de código finalizada:** [PR #81](https://github.com/SuperlikersGlobal/ceodesk/pull/81) fusionado a `main` (`fef8f0d`). Publicación automática permanece bloqueada.
 
-## En progreso
+## Límites y pendientes
 
-La Lista/Kanban podían bloquear el navegador con cientos de tareas. La corrección de representación progresiva (50 filas por vez y 50 tarjetas por columna) y arranque paralelo está **probada solo localmente**, con **999/999 pruebas PASS**. Quedan pendientes su publicación y la medición real. La carga fría anterior mejoró, pero no cumplió la meta de 3 segundos.
-
-El PR de integración con la rama principal continúa abierto mientras se valida la última versión.
-
-## Pendientes reales
-
-- Publicar y validar en producción la última corrección, sin repetir la migración.
-- Si pasa, integrar el PR y conservar el deploy validado con publicación automática controlada.
-- Reconciliar el delta de Jira DDP posterior al manifiesto, asignar el trabajo en triage y validar la vista administrativa con una cuenta autorizada.
-- Comprobar el histórico completo antes de retirar Jira. Las tareas cerradas no se importaron al tablero operativo.
-
-**Calendar está fuera del alcance:** su flujo aún no fue definido por Bruno.
+- **Jira no está retirado:** falta conciliar lo que cambió después del manifiesto DDP, asignar las tareas en triage y comprobar el histórico necesario antes del abandono.
+- **Rendimiento frío:** una medición real de 5,56 s, por encima de la antigua meta de 3 s; aceptado temporalmente. Cargas calientes observadas entre 1,41 y 1,65 s.
+- **Detalle no bloqueante:** una etiqueta incorrecta para el estado `rejected` cuando se agrupa por Estado.
+- **Control de deploy:** `stop_builds=false` permite crear builds, aunque el auto-publish permanece bloqueado.
+- **Calendar fuera del alcance:** el flujo deseado aún no fue definido.
 
 ## Próximo hito
 
-**Publicar mejora final → comprobar Lista/Kanban y tiempos reales → cerrar integración del código → continuar delta y triage.**
+**Asignar responsables en triage y reconciliar el delta DDP, con evidencia y aprobación, sin repetir la migración ni el QA ya aprobado.**
 
 ## Actualizaciones
 
-- [21/10/2026 — Migración, go-live, QA y última optimización pendiente](updates/2026-10-21.md)
+- [21/10/2026 — Cierre técnico de V0, migración, producción y QA](updates/2026-10-21.md)
 - [15/10/2026 — Integración y acceso a respaldos](updates/2026-10-15.md)
 - [14/10/2026 — Preparación del piloto](updates/2026-10-14.md)
 - [08/10/2026 — Decisión inicial y preparación](updates/2026-10-08.md)
