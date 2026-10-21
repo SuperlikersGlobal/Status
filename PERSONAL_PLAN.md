@@ -1,9 +1,9 @@
 # Bruno — Plan de acción personal
 
 **Responsable:** Bruno Antoniassi  
-**Última actualización:** 2026-10-15
+**Última actualización:** 2026-10-21
 
-> La sección de Pernod conserva su último checkpoint del 08/10; la actualización del 15/10 corresponde únicamente a MyDesk.
+> La sección de Pernod conserva su último checkpoint del 08/10; la actualización del 21/10 corresponde únicamente a MyDesk.
 
 ## Prioridad actual
 
@@ -46,18 +46,20 @@ Producción sigue no desplegada.
 
 ### 2. MyDesk + Jira
 
-**Estado:** En progreso — versión piloto validada localmente, todavía no publicada.
+**Estado:** En progreso — MyDesk online con migración inicial verificada. La última mejora de rendimiento está lista únicamente en local.
 
-**Último avance confirmado (15/10):**
-- funciones de tareas, tableros, responsables, seguimiento, revisión y aprobación probadas localmente;
-- respaldo del código actual y la nueva versión realizado y recuperación comprobada;
-- la versión oficial recibió actualizaciones adicionales; su integración local al piloto está **pendiente de finalizar**;
-- Bruno no tiene acceso al respaldo de Jira; la recuperación/migración histórica queda a cargo de alguien autorizado y el primer equipo registrará tareas manualmente.
+**Último avance confirmado (21/10):**
+- MyDesk ya está publicado; se protegieron los datos y se ejecutó un corte controlado con respaldo final consistente.
+- Jira DDP: 782 tareas abiertas migradas, más Programas, Historias y Sprints necesarios; 245 tareas antiguas preservadas. Verificación final: 1.027 tareas y cero problemas reportados.
+- Solicitantes Jira conservados como autoría de origen, sin inventar usuarios; tareas sin responsables comprobados quedaron en triage.
+- Ocho correcciones funcionales validadas en producción y navegación autenticada comprobada.
+- Última corrección local de Lista/Kanban y arranque: 999/999 pruebas PASS; publicación y medición real pendientes. La carga fría inferior a 3 s no está acreditada.
+- PR de integración todavía abierto; publicación automática mantenida bajo control.
 
-**Bloqueo:** falta acceso al respaldo de los datos reales del MyDesk y apoyo para la publicación controlada. El respaldo del código no cubre los datos de operación.
+**Próximo hito:** publicar la corrección de renderizado, verificar estabilidad y tiempos reales, cerrar el PR. Después reconciliar el delta de Jira y distribuir el trabajo en triage.
 
-**Próximo hito:** integrar las actualizaciones oficiales con el piloto, proteger los datos reales y habilitar un primer equipo.
+**Pendiente para abandonar Jira:** conciliar cambios posteriores al lote y verificar conservación del histórico concluido. La migración inicial no significa retirada de Jira.
 
-**Detalle:** `projects/mydesk-jira/README.md` y `projects/mydesk-jira/updates/2026-10-15.md`.
+**Detalle:** `projects/mydesk-jira/README.md` y `projects/mydesk-jira/updates/2026-10-21.md`.
 
-**Límite:** nada de esto se ha publicado todavía como nueva versión operativa.
+**Fuera del alcance actual:** Calendar, hasta que Bruno defina el flujo deseado.
