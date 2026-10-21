@@ -19,17 +19,18 @@ Status v0 permite entender el trabajo de una persona sin tener que leer Git, com
 
 Las issues contienen las actualizaciones y los criterios de cierre de cada bloque. Los comentarios anteriores conservan el historial; no sustituyen el estado actual.
 
-## MyDesk — avance de Bruno (21/10/2026)
+## MyDesk — cierre técnico de Bruno (21/10/2026)
 
-**En progreso, ya online.** La nueva gestión de tareas funciona en MyDesk y el lote inicial del DDP fue migrado y verificado. Todavía no se considera Jira retirado.
+**V0 técnica HECHA y en producción.** La capa de gestión de tareas de MyDesk ya está publicada, fue probada con volumen real y el PR de integración quedó fusionado a `main`. **La transición operativa desde Jira continúa** y no debe confundirse con el cierre técnico.
 
-- **Avance:** 782 tareas Jira incorporadas, con 245 tareas anteriores de MyDesk conservadas; controles de integridad PASS.
-- **Producto:** tableros, listas, búsqueda, Programas, Historias, Sprints y revisión de entregas; ocho correcciones funcionales comprobadas en producción.
-- **Ahora:** última optimización de Lista/Kanban validada únicamente en local; falta publicarla y comprobar rendimiento real.
-- **Pendiente:** cerrar la integración de código, reconciliar el delta de Jira y asignar tareas en triage.
-- **Fuera del alcance:** Calendar no se ha definido ni activado como parte de este proyecto.
+- **Migración:** 782 tareas abiertas de Jira DDP incorporadas, más estructuras de proyectos; 245 tareas anteriores preservadas. Total: 1.027 tareas verificadas sin problemas.
+- **Producto:** Lista y Kanban fluidos con paginación de 50, búsqueda en todo el conjunto, filtros, Programas, Historias, Sprints, revisión y aprobación.
+- **Validación:** ocho correcciones funcionales y último hotfix PASS en producción; navegador sin congelamientos y ningún error durante QA.
+- **Código:** [PR #81 integrado](https://github.com/SuperlikersGlobal/ceodesk/pull/81); publicación automática permanece bloqueada.
+- **Siguiente paso:** reconciliar cambios DDP posteriores al corte y asignar las tareas importadas en triage. Jira permanece disponible.
+- **Límites:** carga fría por encima de 3 segundos aceptada temporalmente; Calendar fuera del alcance.
 
-[Ver actualización del 21/10](https://github.com/SuperlikersGlobal/Status/blob/bruno/projects/mydesk-jira/updates/2026-10-21.md)
+[Ver registro del cierre técnico](https://github.com/SuperlikersGlobal/Status/blob/bruno/projects/mydesk-jira/updates/2026-10-21.md)
 
 ## MyDesk — avance de Bruno (15/10/2026)
 
