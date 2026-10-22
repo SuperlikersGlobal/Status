@@ -32,6 +32,20 @@ Las issues contienen las actualizaciones y los criterios de cierre de cada bloqu
 
 [Ver registro del cierre técnico](https://github.com/SuperlikersGlobal/Status/blob/bruno/projects/mydesk-jira/updates/2026-10-21.md)
 
+## MyDesk — feedback operativo y preparación de paridad Jira (21/10/2026)
+
+**En progreso, solo local.** La validación con usuarias frecuentes mostró que la V0 técnica publicada todavía no alcanza la experiencia de planificación y seguimiento de Jira.
+
+- **Bloqueos P0:** filtro por tipo de tarea («Subtarea Diseño») y correspondencia entre identidades Jira y cuentas MyDesk. Las tareas de origen sin responsable deben seguir visibles en Backlog.
+- **Avances locales, sin publicación:** organización del Backlog y sprints activos, filtros de responsable/«Sin asignar» y vencimientos del día. En el checkpoint posterior, **1.024/1.024 pruebas en UTC**; pruebas de reportes dependientes de fecha siguen fallando en TZ Bogotá.
+- **REA:** MyDesk observado en Chrome local; observación de Jira autenticado aún bloqueada. Jira DDP inspeccionado por API en modo lectura. Próxima prioridad: reproducir el flujo real Backlog → filtros → tarea → Kanban con alta fidelidad.
+- **Identidades:** conversión `@superlikers.com → @iwin.im` y backfill idempotente preparados localmente. Dry-run inicial: 37 de 782 tareas potencialmente vinculables, 287 originalmente sin asignar y 458 pendientes. Se recibió un export de **44 cuentas** para verificar su relación con las identidades Jira; ninguna reasignación en producción.
+- **Calendar:** se discutió usar zona IANA por persona, sin implementación ni activación; trabajo pausado.
+
+**Jira permanece en uso.** Estas correcciones y el mapeo no se han desplegado; cualquier cambio en producción requiere aprobación separada.
+
+[Ver seguimiento operativo del 21/10](https://github.com/SuperlikersGlobal/Status/blob/bruno/projects/mydesk-jira/updates/2026-10-21.md)
+
 ## MyDesk — avance de Bruno (15/10/2026)
 
 **En progreso.** La versión piloto ya fue probada localmente y está pendiente de actualización del servicio.
