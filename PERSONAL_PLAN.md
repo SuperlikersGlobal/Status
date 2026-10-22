@@ -56,10 +56,17 @@ Producción sigue no desplegada.
 - QA G4 PASS con la sesión real y sin escrituras; 999/999 pruebas locales PASS. Carga caliente 1,41–1,65 s; una medición fría de 5,56 s, aceptada temporalmente.
 - PR #81 fusionado a `main` (`fef8f0d`); deploy validado permanece publicado.
 
-**Próximo hito (operativo):** conciliar el delta del Jira DDP y asignar las tareas pendientes de triage con identidades comprobadas, antes de retirar Jira.
+**Feedback operativo del equipo (21/10, posterior al cierre técnico):**
+- La reunión confirmó que la interfaz aún no sirve para sustituir Jira: «Subtarea Diseño» es un tipo de issue y no un equipo del destinatario; las tareas importadas siguen sin identidades vinculadas.
+- Claude validó **localmente** mejoras de Backlog, sprints, filtro de responsables/«Sin asignar» y vencimiento del día; no se integraron ni desplegaron. 1.024/1.024 pruebas en TZ UTC durante el checkpoint de identidades.
+- REA aún no observó el Jira autenticado, aunque sí se verificó MyDesk local y se consultó Jira por API. Se está preparando una copia de alta fidelidad del flujo operativo en MyDesk.
+- Backfill local de e-mails: 37/782 tareas potencialmente vinculables con las identidades conocidas, 287 genuinamente sin responsable y 458 pendientes. CSV recibido con 44 cuentas Jira (23 superlikers.com / 21 iwin.im), pendiente de cotejo con las 65 identidades del manifiesto y el roster MyDesk.
+- No hubo commit, push, deploy ni escritura externa de este trabajo posterior al cierre técnico.
+
+**Próximo hito (operativo):** observar Jira autenticado con REA, lograr paridad funcional del Backlog/filtros/Kanban y validar el mapa de usuarios antes de cualquier backfill o publicación. Después, conciliar delta e histórico DDP para poder retirar Jira.
 
 **Límites:** la V0 técnica está cerrada, pero Jira no fue retirado, el histórico completo no se considera conciliado y las tareas no fueron asignadas automáticamente.
 
 **Detalle:** `projects/mydesk-jira/README.md` y `projects/mydesk-jira/updates/2026-10-21.md`.
 
-**Fuera del alcance:** Calendar, hasta definir el flujo.
+**Fuera del alcance por ahora:** Calendar. Se definió como dirección el huso horario individual por usuario, pero no se implementó ni activó y quedó pausado.
