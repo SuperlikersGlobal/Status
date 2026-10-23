@@ -19,7 +19,19 @@ Status v0 permite entender el trabajo de una persona sin tener que leer Git, com
 
 Las issues contienen las actualizaciones y los criterios de cierre de cada bloque. Los comentarios anteriores conservan el historial; no sustituyen el estado actual.
 
-## MyDesk — cierre técnico de Bruno (21/10/2026)
+## MyDesk — avance operativo de Bruno (22/10/2026)
+
+**Hotfix publicado y validado en producción. Recuperación de contenido Jira: PASS. Transición operativa: EN PROGRESO; Jira continúa en uso.**
+
+- **Producción:** deploy `6ada3b6fb61900e56c164ead`, publicado el 22/10 y bloqueado, verificado con inicio de sesión real. Los ocho problemas de Backlog, filtros, sprints, Espacios, Kanban, vencimientos y navegación operativa pasaron validación; no hubo regresiones ni rollback.
+- **Contenido recuperado:** **770 de las 782 tareas Jira importadas** recibieron exclusivamente campos faltantes/corregidos de brief, fechas, país y preview; otras 12 sin cambios. Backfill aprobado, ejecutado y verificado sin conflictos. La descripción de DDP-55869 fue preservada; permisos, responsables y estados no cambiaron.
+- **Pendientes críticos:** el backfill `jiraType` está **en curso**, todavía sin veredicto; faltan identidades Jira→MyDesk, asignación segura por equipos, **35 divergencias de estado** y la incorporación controlada de **54 issues nuevas abiertas**. Adjuntos/comentarios/histórico Jira no se migraron y requieren respaldo antes de la baja.
+- **Código y alcance:** el commit del hotfix `15ad07e` todavía está solo local, sin push a `ceodesk/main`; el flujo «Al equipo»/«Por asignar» solo fue probado localmente y exige decisión de líderes/permisos. REA y Calendar pausados.
+- **Siguiente hito:** cerrar `jiraType` con evidencia, conciliar identidades y probar con solicitantes y líderes reales antes de desactivar Jira. No confundir el avance técnico con el corte operativo.
+
+[Ver actualización completa del 22/10](https://github.com/SuperlikersGlobal/Status/blob/bruno/projects/mydesk-jira/updates/2026-10-22.md)
+
+## MyDesk — cierre técnico de Bruno (21/10/2026; histórico)
 
 **V0 técnica HECHA y en producción.** La capa de gestión de tareas de MyDesk ya está publicada, fue probada con volumen real y el PR de integración quedó fusionado a `main`. **La transición operativa desde Jira continúa** y no debe confundirse con el cierre técnico.
 
@@ -32,7 +44,7 @@ Las issues contienen las actualizaciones y los criterios de cierre de cada bloqu
 
 [Ver registro del cierre técnico](https://github.com/SuperlikersGlobal/Status/blob/bruno/projects/mydesk-jira/updates/2026-10-21.md)
 
-## MyDesk — feedback operativo y preparación de paridad Jira (21/10/2026)
+## MyDesk — feedback operativo y preparación de paridad Jira (21/10/2026; histórico, antes del hotfix)
 
 **En progreso, solo local.** La validación con usuarias frecuentes mostró que la V0 técnica publicada todavía no alcanza la experiencia de planificación y seguimiento de Jira.
 
