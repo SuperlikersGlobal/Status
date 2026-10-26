@@ -1,8 +1,8 @@
 # MyDesk + Jira
 
 **Responsable:** Bruno  
-**Estado:** V0 técnica COMPLETADA; hotfix operativo de ocho problemas y recuperación de contenido Jira comprobados en producción. Transición de Jira aún en progreso.  
-**Última actualización:** 2026-10-22
+**Estado:** paridad operativa y creación de Épicas publicadas; 602 equipos, 685 Programas y delta de 64 tareas conciliados en producción. **Transición de Jira aún en progreso.**  
+**Última actualización:** 2026-10-26
 
 ## Objetivo
 
@@ -18,6 +18,16 @@ Que los equipos de SuperLikers gestionen su trabajo cotidiano en MyDesk, sin nec
 - Lista y Kanban ya no se bloquean con más de 900 tareas: 50 ítems visibles inicialmente y opción de mostrar más. El G4 de producción pasó con la cuenta real, sin escrituras ni errores.
 - **Deploy validado el 22/10:** `6ada3b6fb61900e56c164ead` (código del commit **local** `15ad07e`, todavía no enviado a GitHub). Reemplaza al deploy `6ad8cc34`; éste se conserva como referencia de rollback.
 - **Integración de código finalizada:** [PR #81](https://github.com/SuperlikersGlobal/ceodesk/pull/81) fusionado a `main` (`fef8f0d`). Publicación automática permanece bloqueada.
+
+## Actualización operativa del 26/10
+
+**PASS en producción:** deploy final `6adfd49949827bcb6f1bc28b`, bloqueado, con paridad operativa y nuevo formulario de Épicas (solo título obligatorio). Publicados también filtros, jerarquía y reportes; **falta homologar creación real con sesión autenticada**.
+
+**Datos Jira:** 602 equipos ejecutores y 685 Programas asociados con verificación/rollback; 64 tareas recibieron 164 actualizaciones del delta. Permanecen 180 excepciones de equipos, 97 de Programas y responsables importados sin vincular. **104 creaciones del delta siguen bloqueadas**. No hubo escrituras en Jira.
+
+**UX pendiente:** el menú «Tablero» lleva a un cuadro de sprint/espacio mientras «Tareas» presenta otro Kanban también titulado «Tablero»; corrección local especificada, **no ejecutada ni publicada**.
+
+**Calendar:** huso individual y ventana diaria corregidos **solo localmente**, sin activar sincronizaciones. **Jira NO se ha retirado.** [Detalle del día](updates/2026-10-26.md).
 
 ## Actualización operativa del 22/10
 
@@ -47,14 +57,15 @@ La reunión con usuarias frecuentes confirmó que el cierre de la V0 técnica **
 - **Rendimiento frío:** una medición real de 5,56 s, por encima de la antigua meta de 3 s; aceptado temporalmente. Cargas calientes observadas entre 1,41 y 1,65 s.
 - **Detalle no bloqueante:** una etiqueta incorrecta para el estado `rejected` cuando se agrupa por Estado.
 - **Control de deploy:** `stop_builds=false` permite crear builds, aunque el auto-publish permanece bloqueado.
-- **Calendar pausado y fuera de esta entrega:** la dirección acordada es huso IANA por usuario; todavía no se implementó ni activó.
+- **Calendar:** corrección de husos IANA y ventana diaria **PASS local** al 26/10; sincronización real no activada y contrato bidireccional pendiente.
 
 ## Próximo hito
 
-**Registrar el resultado real de `jiraType`; después, vincular responsables por accountId y configurar líderes/tableros con controles de permisos. Probar el flujo entre equipos, conciliar las 54 issues nuevas y resguardar archivos e historial antes de retirar Jira.** Sin reabrir REA ni Calendar por ahora.
+**Corregir la navegación duplicada «Tablero»/«Tareas» y homologar con usuarios reales Épica → Historia → Subtarea y solicitud → equipo → ejecución → aprobación. Después, desbloquear identidades y las 104 creaciones del delta y asegurar archivos/historial antes de retirar Jira.** No abrir frentes adicionales sin necesidad operativa.
 
 ## Actualizaciones
 
+- [26/10/2026 — Paridad, Épicas, 602 equipos, 685 Programas y delta de 64 tareas](updates/2026-10-26.md)
 - [22/10/2026 — Hotfix operativo publicado y contenido Jira recuperado](updates/2026-10-22.md)
 - [21/10/2026 — Cierre técnico de V0, migración, producción y QA](updates/2026-10-21.md)
 - [15/10/2026 — Integración y acceso a respaldos](updates/2026-10-15.md)
