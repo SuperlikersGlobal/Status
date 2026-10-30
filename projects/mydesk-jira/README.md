@@ -1,8 +1,8 @@
 # MyDesk + Jira
 
 **Responsable:** Bruno  
-**Estado:** paridad operativa y creación de Épicas publicadas; 602 equipos, 685 Programas y delta de 64 tareas conciliados en producción. **Transición de Jira aún en progreso.**  
-**Última actualización:** 2026-10-26
+**Estado:** mejoras operativas y UX publicadas y verificadas técnicamente; adopción por roles, Jira y Calendar todavía pendientes. **NO-GO para retirar Jira.**  
+**Última actualización:** 2026-10-30
 
 ## Objetivo
 
@@ -18,6 +18,16 @@ Que los equipos de SuperLikers gestionen su trabajo cotidiano en MyDesk, sin nec
 - Lista y Kanban ya no se bloquean con más de 900 tareas: 50 ítems visibles inicialmente y opción de mostrar más. El G4 de producción pasó con la cuenta real, sin escrituras ni errores.
 - **Deploy validado el 22/10:** `6ada3b6fb61900e56c164ead` (código del commit **local** `15ad07e`, todavía no enviado a GitHub). Reemplaza al deploy `6ad8cc34`; éste se conserva como referencia de rollback.
 - **Integración de código finalizada:** [PR #81](https://github.com/SuperlikersGlobal/ceodesk/pull/81) fusionado a `main` (`fef8f0d`). Publicación automática permanece bloqueada.
+
+## Actualización operativa del 30/10
+
+**Publicación:** dos releases controlados y verificados técnicamente. El último deploy `6ae4f65069351504bd8e3ca8` quedó activo y locked, con 17 correcciones operativas del release anterior, jerarquía Épica → Historia → Subtarea, estados de Historia, programas y componentes del Jira, formularios y capacidad diaria de **8 h netas**. No hubo escritura operativa propia de los despliegues; **falta homologación de escritura autenticada con roles reales**.
+
+**Auditoría funcional:** 56 requisitos: 18 PROD-PASS de lectura, 22 LOCAL-PASS/PROD-PENDIENTE, 6 FAIL y 10 BLOCKED. ACCESS-01/02 (rol visible y menú «Por asignar») tienen PASS local, **no están publicados ni cambian permisos**. La opción Líder por board + Tráfico está en evaluación; ningún rol real fue modificado.
+
+**Continuidad:** nuevas issues del Jira sin reconciliación clave a clave; tareas sin board, vínculos de personas/equipos insuficientes, Calendar no activado, baja cobertura de capacidad y respaldo del histórico y adjuntos todavía pendientes. Objetivo comunicado: MyDesk exclusivo desde **13/11**, condicionado a decisión GO/NO-GO.
+
+[Registro completo 27–30/10](updates/2026-10-30.md). Las secciones anteriores son checkpoints históricos, no el estado actual de producción.
 
 ## Actualización operativa del 26/10
 
@@ -61,10 +71,11 @@ La reunión con usuarias frecuentes confirmó que el cierre de la V0 técnica **
 
 ## Próximo hito
 
-**Corregir la navegación duplicada «Tablero»/«Tareas» y homologar con usuarios reales Épica → Historia → Subtarea y solicitud → equipo → ejecución → aprobación. Después, desbloquear identidades y las 104 creaciones del delta y asegurar archivos/historial antes de retirar Jira.** No abrir frentes adicionales sin necesidad operativa.
+**Confirmar líderes por board y responsables de Tráfico, homologar con KAM/líder/ejecutor reales y reconciliar el delta Jira/Calendar antes del corte.** ACCESS-01/02 son cambios locales; no conceder permisos ni modificar cadastros sin un lote autorizado.
 
 ## Actualizaciones
 
+- [30/10/2026 — Releases operativos y UX, auditoría de uso y brechas Jira/Calendar](updates/2026-10-30.md)
 - [26/10/2026 — Paridad, Épicas, 602 equipos, 685 Programas y delta de 64 tareas](updates/2026-10-26.md)
 - [22/10/2026 — Hotfix operativo publicado y contenido Jira recuperado](updates/2026-10-22.md)
 - [21/10/2026 — Cierre técnico de V0, migración, producción y QA](updates/2026-10-21.md)
