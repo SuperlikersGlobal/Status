@@ -6,7 +6,7 @@
 2. projects/pernod/README.md
 3. projects/pernod/updates/2026-10-05.md
 4. projects/mydesk-jira/README.md
-5. projects/mydesk-jira/updates/2026-10-21.md
+5. projects/mydesk-jira/updates/2026-10-30.md
 
 ## Estado actual — 05/10/2026
 
@@ -27,6 +27,15 @@
 
 Después:
 revisión AWS → aprobación para crear infraestructura → despliegue sin acceso público → pruebas controladas → activación gradual.
+
+## MyDesk + Jira — actualización 30/10/2026
+
+- **Publicado:** dos releases técnicos de 30/10; último deploy `6ae4f65069351504bd8e3ca8`, activo y locked. Incluye Épica → Historia → Subtarea, programas/componentes del Jira, formularios, correcciones de tareas y capacidad de **8 h netas**.
+- **Auditoría:** 56 requisitos; 18 PASS de lectura en producción, 22 solo locales, 6 fallos y 10 bloqueados. Falta homologación de escritura con roles reales.
+- **Acceso:** ACCESS-01/02 tiene PASS local, **no publicado**. Responsables de boards, política de Tráfico y cadastros efectivos siguen pendientes; ningún permiso se cambió.
+- **Continuidad:** delta Jira y Calendar pendientes; **NO-GO para retirar Jira**, pese a la meta operativa comunicada del 13/11.
+
+[Ver actualización 27–30/10](projects/mydesk-jira/updates/2026-10-30.md).
 
 ## MyDesk + Jira — Cierre técnico V0 al 21/10/2026
 
