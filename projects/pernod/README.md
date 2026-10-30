@@ -1,61 +1,35 @@
 # Pernod
 
 **Responsable:** Bruno Antoniassi  
-**Estado:** En progreso — preparación controlada de producción  
-**Última actualización:** 2026-10-05
+**Estado:** Integración técnica de producción validada; operación comercial **PAUSED**  
+**Última actualización:** 2026-10-30
 
 ## Estado ejecutivo
 
-El flujo principal de lectura y validación de facturas ya funciona en el ambiente de pruebas. También quedó validado que podemos conservar la imagen original de una factura aunque termine rechazada, sin generar ventas ni puntos durante esa validación.
+El motor de lectura de facturas funciona en homologación. La infraestructura y el acceso HTTP de producción ya están instalados y validados, pero **la campaña no está activa** y todavía no procesa fotos ni ventas comerciales.
 
-El trabajo actual está dividido en dos frentes:
+- **Producción:** Lambda `Pernod-production-v0` con OCR versionado, concurrencia reservada **1**, autenticación por token y respuesta controlada durante la pausa.
+- **Pruebas de acceso:** HTTP **401** sin token o con token incorrecto; HTTP **503 PAUSED** con token válido. La cota regional de concurrencia de la cuenta fue ampliada a **1.000**.
+- **Control comercial:** `ADMISSION=PAUSED`; no hay bundle final de precios ni credenciales comerciales instaladas. El endpoint disponible **no equivale a campaña activa**.
+- **Homologación 5c:** foto y venta CDC aceptadas en SuperLikers staging, sin venta LEADER. El 30/10 se procesó una factura de fecha 27/10 y se envió `properties.date` según la factura, no la carga. La persistencia de esa propiedad en el panel todavía requiere confirmación de Andrés.
 
-1. terminar los últimos detalles del envío automático de facturas rechazadas;
-2. preparar el ambiente de producción de forma controlada, empezando por una versión que sólo revisa y guarda evidencia, sin generar movimientos comerciales.
+## Bloqueos para activar ventas reales
 
-## Lo que ya está listo
+1. **María / Pernod:** precio comercial, moneda y vigencia por referencia; confirmar elegibilidad de las 13 referencias de noviembre por CDC y validar la matriz local de 1.008 equivalencias.
+2. **Motor de reglas:** las asignaciones exactas por CDC son incompatibles con el requisito CDC-only actual. La asignación general no se usará sin autorización comercial; en caso de segmentación, corregir el código antes de activar.
+3. **Andrés / SuperLikers:** credencial API y host de fotos de producción, contrato de API, campaña e identificadores CDC, procedimiento de anulación y confirmación en panel de las propiedades de la venta de homologación.
+4. **Despliegue comercial:** cerrar bundle de precios y configuración de producción, aprobar nueva publicación y definir una prueba de venta real independiente. Conservar `ADMISSION=PAUSED` hasta esa autorización.
 
-- lectura y validación de facturas en pruebas;
-- identificación de productos y conversión a botellas;
-- soporte para registrar avance para los perfiles correspondientes;
-- manejo de duplicados y reintentos;
-- conservación de la imagen original de la factura;
-- registro de facturas rechazadas preparado con la imagen incluida;
-- versión de revisión para producción preparada y validada localmente;
-- separación entre pruebas y producción para evitar efectos accidentales.
-
-## Facturas rechazadas
-
-El flujo ya está preparado para enviar una factura rechazada junto con su información e imagen.
-
-Andrés confirmó dónde debe viajar la imagen dentro de la información del rechazo y esa parte ya quedó incorporada.
-
-Antes de activar el envío automático faltan dos confirmaciones finales de integración:
-
-- confirmar exactamente cómo responde el servicio cuando recibe correctamente un rechazo;
-- cerrar la identificación final de la configuración de destino.
-
-Hasta entonces el envío automático permanece bloqueado.
-
-## Producción
-
-Producción todavía no está activa.
-
-La primera versión preparada para producción es intencionalmente limitada: puede recibir una factura, leerla, validarla y guardar evidencia para revisión humana, pero no genera ventas, puntos, créditos ni otros movimientos comerciales.
-
-Antes de crear o habilitar recursos de producción vamos a revisar el ambiente de AWS con un acceso separado de solo lectura. Después de esa revisión, cualquier creación o activación se hará únicamente con aprobación explícita.
+El periodo comercial previsto empieza el **01/11/2026**, con zona horaria **America/Bogota**. No se adelantará para generar ventas de prueba.
 
 ## Próximo paso
 
-1. crear el acceso de solo lectura para revisar producción;
-2. revisar la configuración actual de AWS sin modificar nada;
-3. confirmar los recursos y controles necesarios;
-4. pedir aprobación antes de crear la infraestructura de producción;
-5. desplegar primero sin acceso público;
-6. habilitar pruebas reales sólo después de nuevas aprobaciones.
+Recibir las confirmaciones de María y Andrés; luego completar el bundle o la corrección puntual de reglas necesaria. **No reconstruir ni desplegar otro ZIP antes de resolver esas dependencias.** Retirar los permisos IAM temporales restantes al cerrar el handoff de integración.
 
 ## Historial
 
 Ver:
-- `updates/2026-10-02.md`
-- `updates/2026-10-05.md`
+- `updates/2026-10-22.md`
+- `updates/2026-10-30.md`
+
+Las actualizaciones anteriores siguen disponibles en `updates/`.

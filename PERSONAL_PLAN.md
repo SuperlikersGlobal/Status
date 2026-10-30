@@ -9,40 +9,23 @@
 
 ### 1. Pernod
 
-**Estado:** En progreso.
+**Estado (30/10):** integración técnica de producción **PASS**; campaña comercial **PAUSED**.
 
-Checkpoint actual:
-- producción review-only congelada localmente en `8a51851`;
-- source-image core congelado en `c3fccd332fadaeae3c0bd8fed1278758d2a8086b`;
-- source-image wiring de homologación congelado en `81b553cfcc345d672125a94d10e8db8ccbad080f`;
-- RC source-image reproducible PASS;
-- código desplegado sólo en Lambda V4-5c de homologación;
-- `SOURCE_IMAGE_UPLOAD=ENABLED`;
-- runtime probe confirmó source-image + capture wiring;
-- primer smoke real source-image: HTTP 200 / NOT_VALIDATED / sin ventas;
-- verificación de receipts/outbox del smoke todavía pendiente;
-- primer `rejected_invoices` ya fue creado y verificado en panel;
-- caller/request_id y comportamiento de `category` confirmados con Andrés;
-- FAILED_INVOICE_RECORD, capture/outbox y durable-registration congelados;
-- V2 intacto;
-- producción no desplegada.
+**Confirmado:**
+- Lambda `Pernod-production-v0` desplegada con OCR versionado, endpoint HTTP y token; cota AWS ampliada de 10 a 1.000 y concurrencia reservada **1**.
+- Sondas reales: **401** sin token o con token incorrecto; **503 PAUSED** con token correcto. Sin activación de ventas de producción. Logs y ledger no pudieron leerse directamente para confirmar efectos de las sondas.
+- LABS 5c: foto y venta CDC de homologación aceptadas. Una factura fechada 27/10, cargada 30/10, envió `properties.date` de la factura; persistencia final en el panel **pendiente**.
+- Se compartieron instrucciones de integración a Andrés; su prueba desde el aplicativo sigue pendiente.
 
-## Gate actual
+**Bloqueo comercial:**
+- Confirmar con María precios/moneda/vigencia, atribución de 13 referencias de noviembre por CDC y 1.008 equivalencias.
+- Resolver incompatibilidad entre asignación exacta por CDC y motor CDC-only; no autorizar distribución global por defecto sin confirmación.
+- Confirmar con Andrés API key/host de fotos, campaña/CDC, reversión de ventas y propiedades persistidas.
+- El bundle comercial no está en la Lambda desplegada. `ADMISSION=PAUSED`; inicio previsto 01/11/2026 (America/Bogota).
 
-**Verificar el smoke source-image de punta a punta sin reenviar la imagen.**
+**Siguiente acción:** recibir definiciones de María y Andrés; después preparar solo el cambio de configuración/código indispensable y solicitar aprobación específica antes de activar una primera factura comercial.
 
-Pendientes inmediatos:
-- leer `source_image_intent` / `source_image_result`;
-- confirmar que la URL de SuperLikers quedó persistida;
-- confirmar `outbox.image_url` igual a la URL gobernada;
-- comprobar ausencia de efectos de venta;
-- después construir/congelar el sender `rejected_invoices` con `image_url`;
-- ejecutar UAT conjunto.
-
-Después:
-UAT → modo de producción source-image controlado → producción review-first → habilitación comercial por gates.
-
-Producción sigue no desplegada.
+**Detalle:** `projects/pernod/README.md` y `projects/pernod/updates/2026-10-30.md`.
 
 ### 2. MyDesk + Jira
 
