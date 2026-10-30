@@ -1,9 +1,9 @@
 # Bruno — Plan de acción personal
 
 **Responsable:** Bruno Antoniassi  
-**Última actualización:** 2026-10-22
+**Última actualización:** 2026-10-30
 
-> La actualización de MyDesk del 22/10 no sustituye el estado más reciente de Pernod: consultar su actualización fechada más nueva.
+> MyDesk y Pernod se resumen con sus respectivos checkpoints del 30/10. Las pruebas técnicas no sustituyen las habilitaciones operativas.
 
 ## Prioridad actual
 
@@ -29,25 +29,18 @@
 
 ### 2. MyDesk + Jira
 
-**Estado:** V0 técnica completada; **ocho correcciones de adopción y recuperación de contenido Jira comprobadas en producción**. La transición operativa desde Jira sigue abierta.
+**Estado (30/10):** mejoras operativas y UX publicadas; **NO-GO** para retirar Jira por falta de continuidad de datos, roles validados y pruebas operativas reales.
 
-**Avance confirmado (22/10):**
-- Hotfix operativo publicado y travado en Netlify, deploy `6ada3b6fb61900e56c164ead` (commit `15ad07e` **solo local**; todavía sin push a `ceodesk/main`). G4 con login real de Líder y lectura de datos reales: PASS, sin errores ni regresiones. **1.022/1.022 pruebas UTC** y **195/195 dirigidas en Bogotá**.
-- Backlog, sprints actuales, filtros multiusuario/«Sin asignar», espacios, Kanban de seis columnas y paginación de 50, vencimientos por día y menú operativo simplificado funcionales. La sesión administrativa no fue validada; no se cambiaron tareas en esa prueba.
-- Reunión del equipo detectó pérdida de briefs y plazos porque Jira DDP los guardaba en campos personalizados. **Backfill de contenido aprobado y ejecutado: 770/770 tareas actualizadas**, 12 intactas, cero conflictos. Se recuperaron 385 descripciones, 447 vencimientos, 415 inicios, 392 entregas, 750 países y 41 previews; descripción de DDP-55869 preservada. Cambiaron solo esos seis campos y `jiraSync`; verificación directa en MyDesk PASS.
-- La consulta de Jira encontró **35 tareas ya cerradas/canceladas allí, pero abiertas en MyDesk**, y 284 tareas pasan a verse vencidas por recibir su plazo real. No atribuir incumplimientos individuales sin reconciliar estados, sobre todo antes de vincular identidades.
+**Entregado:** deploy operativo `6ae4cc9eeff7af736d66fa6f` con 17 correcciones; deploy UX `6ae4f65069351504bd8e3ca8` con navegación Épica → Historia → Subtarea, estados e historial, componentes/plantillas del Jira, programas y formularios. Capacidad diaria estándar: **8 h netas**. Los cambios de PR #87 (worklog por sesiones) y #88 (consolidado de esfuerzo) no fueron incorporados en estos releases.
 
-**En progreso o pendiente:**
-- **`jiraType`**: backfill autorizado sobre 782 importadas y **ejecutándose con Opus**. Resultado pendiente: no registrarlo como éxito hasta recibir el informe.
-- **Responsables/identidades**: aún sin vínculo seguro Jira→MyDesk; export de 44 cuentas requiere conciliación por accountId con las identidades de origen. Sin inventar asignaciones.
-- **Trabajo entre equipos**: implementación local de «Al equipo» y cola «Por asignar», sin deploy. Faltan la decisión sobre líderes por tablero y el alta/control de áreas y roles; mantener restricciones de espacios sensibles.
-- **Jerarquía/UX**: facilitar acceso operativo a Épicas e Historias, búsqueda y filtros dependientes; briefs por equipo y selección de informados todavía por mejorar. Reutilizar las relaciones existentes, no crear otro Jira.
-- **Delta Jira**: 54 issues nuevas abiertas (50 tareas, tres Historias y una Épica) todavía no importadas; cambios de estados/board/billing solo mediante decisiones separadas.
-- **Adjuntos, comentarios e histórico**: no migrados; preparar respaldo de Jira con archivos antes de cancelar suscripción. Se propuso convivencia temporal; **Jira no se retira sin prueba real del equipo y acuerdo con dirección**.
-- **Código**: sincronizar `15ad07e` con GitHub mediante una acción separada; el deploy ya está por delante de `main`.
+**Auditoría de 56 requisitos:** 18 PROD-PASS de lectura, 22 LOCAL-PASS y pendientes de producción, 6 FAIL y 10 BLOCKED. No se ha probado con escritura real el circuito completo KAM → equipo → líder → ejecutor → aprobación.
 
-**Siguiente acción:** recibir el resultado del backfill `jiraType`; luego cerrar mapeo de responsables y permisos de líderes, validar «solicitar → equipo → asignación → ejecución», recuperar delta/histórico y acordar corte operativo. No repetir QA ya superado.
+**Acceso:** ACCESS-01/02 mejoraron localmente el rol mostrado y el menú «Por asignar», pero **no están publicados**. La regla Líder por board + Tráfico es solo una propuesta de autorización; quedan sin resolver relaciones entre personas, boards y Épicas. No cambiar cadastros por inferencia.
 
-**Detalle:** `projects/mydesk-jira/README.md` y `projects/mydesk-jira/updates/2026-10-22.md`.
+**Datos e integración:** tareas nuevas del Jira sin conciliación por clave, elementos sin board, Calendar no activado, 1 % de cobertura útil en capacidad en el recorte auditado y adjuntos/comentarios/histórico Jira sin garantía de continuidad.
 
-**Fuera del alcance por ahora:** Google Calendar y REA, pausados. Calendar conserva como dirección la zona horaria IANA por persona, aún no implementada ni activada.
+**Próxima acción:** validar responsables reales de boards y Tráfico; homologar el flujo completo con usuarios autorizados; reconciliar Jira y Calendar por origen, con rollback y sin duplicaciones; respaldar histórico antes del GO/NO-GO.
+
+**Fecha anunciada al equipo:** Jira hasta 12/11 y uso exclusivo de MyDesk desde 13/11, sujeto a la decisión operativa.
+
+**Detalle:** [resumen del proyecto](projects/mydesk-jira/README.md) y [actualización 27–30/10](projects/mydesk-jira/updates/2026-10-30.md).
